@@ -35,3 +35,6 @@
 proj.linux
 proj.ios_mac
 proj.android
+
+# Build files
+win32-build
