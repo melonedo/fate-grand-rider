@@ -18,7 +18,8 @@ void DataSet::init() {
   auto manager = FileUtils::getInstance();
   auto data_str = manager->getStringFromFile("game-config.json");
   _config.Parse(data_str.c_str());
-  assert(_config.IsObject());
+  CCASSERT(_config.IsObject(), "The format is broken or contain non-ascii characters?");
+  _global_zoom_scale = _config["global-zoom-scale"].GetFloat();
 }
 
 static void addCollisionBoxForTile(Sprite*);
@@ -58,7 +59,7 @@ TMXTiledMap* DataSet::load_map(std::string map_dir) {
 
 void addCollisionBoxForTile(Sprite* tile) {
   // 这里计算大小需要变换到真实大小，使用game-config的global-zoom-scale来缩放
-  float scale = DataSet::getConfig()["global-zoom-scale"].GetFloat();
+  float scale = DataSet::getInstance()->getGlobaZoomScale();
   auto box = PhysicsBody::createBox(tile->getContentSize() * scale);
   box->setDynamic(false);
   tile->addComponent(box);

@@ -9,7 +9,7 @@ using namespace cocos2d;
 bool GameScene::init() {
   if (!Scene::initWithPhysics()) return false;
 
-  const auto& config = DataSet::getConfig();
+  const auto& config = DataSet::getInstance()->getConfig();
 
   // Ëõ·Å
   this->setScale(config["global-zoom-scale"].GetFloat());
