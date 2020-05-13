@@ -18,13 +18,14 @@ void DataSet::init() {
   auto manager = FileUtils::getInstance();
   auto data_str = manager->getStringFromFile("game-config.json");
   _config.Parse(data_str.c_str());
-  CCASSERT(_config.IsObject(), "The format is broken or contain non-ascii characters?");
+  CCASSERT(_config.IsObject(),
+           "The format is broken or contain non-ascii characters?");
   _global_zoom_scale = _config["global-zoom-scale"].GetFloat();
 }
 
 static void addCollisionBoxForTile(Sprite*);
 
-TMXTiledMap* DataSet::load_map(std::string map_dir) {
+TMXTiledMap* DataSet::load_map(const std::string& map_dir) {
   auto map = TMXTiledMap::create(map_dir);
 
   // 断言
@@ -63,4 +64,32 @@ void addCollisionBoxForTile(Sprite* tile) {
   auto box = PhysicsBody::createBox(tile->getContentSize() * scale);
   box->setDynamic(false);
   tile->addComponent(box);
+}
+
+
+// 各人物的名字和对应的构造函数
+const static std::unordered_map<std::string, std::function<Hero*()>> kHeroSet{
+    {"sample-man", SampleHero::create}};
+
+Hero* DataSet::load_hero(const std::string& hero_name) {
+  const auto& hero_data = DataSet::getInstance()->getConfig()
+    ["heroes"][hero_name.c_str()].GetObject();
+  Hero* hero = kHeroSet.at(hero_name)();
+  return hero;
+}
+
+SpriteFrame* DataSet::load_frame(const std::string& frame_dir) {
+  auto frame = SpriteFrame::create(frame_dir, Rect(0, 0, 32, 32));
+  CCASSERT(frame, "Unable to load frame");
+  return frame;
+}
+
+Animation* DataSet::load_animation(const rapidjson::Value& animation_obj) {
+  auto animation = Animation::create();
+  animation->setDelayPerUnit(animation_obj["interval"].GetFloat());
+
+  for (const auto& frame_dir : animation_obj["frames"].GetArray()) {
+    animation->addSpriteFrame(load_frame(frame_dir.GetString()));
+  }
+  return animation;
 }

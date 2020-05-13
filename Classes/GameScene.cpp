@@ -11,15 +11,15 @@ bool GameScene::init() {
 
   const auto& config = DataSet::getInstance()->getConfig();
 
-  // Ëõ·Å
+  // ç¼©æ”¾
   this->setScale(config["global-zoom-scale"].GetFloat());
 
-  // Ê×ÏÈÅÐ¶ÏÊÇ²»ÊÇÓÃ²âÊÔ¼¯
+  // é¦–å…ˆåˆ¤æ–­æ˜¯ä¸æ˜¯ç”¨æµ‹è¯•é›†
 
   if (config["use-debug-mode"].GetBool()) {
     const auto& debug_set = config["debug-set"].GetObject();
 
-    // ¼ÓÔØµØÍ¼
+    // åŠ è½½åœ°å›¾
     auto map_dir = debug_set["map"].GetString();
     auto map = DataSet::load_map(map_dir);
 
@@ -29,8 +29,17 @@ bool GameScene::init() {
 
     this->addChild(map);
 
+    // åŠ è½½è§’è‰²
+    auto hero = DataSet::load_hero(debug_set["hero"].GetString());
+    hero->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    auto spawn = map->getObjectGroup("obj")->getObject("spawn");
+    hero->setPosition(spawn["x"].asFloat(), spawn["y"].asFloat());
+    this->addChild(hero, kMapPrioritySprite);
+
+    return true;
   } else {
     CCASSERT(false, "Only debug set is supported now");
+    return false;
   }
 }
 

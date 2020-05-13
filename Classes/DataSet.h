@@ -1,6 +1,8 @@
 #pragma once
 #include "cocos2d.h"
 #include "json/document.h"
+#include "Hero.h"
+using namespace cocos2d;
 // 全局的数据集
 class DataSet {
  public:
@@ -12,7 +14,16 @@ class DataSet {
   const rapidjson::Document& getConfig() const { return _config; }
 
   // 从map_dir加载一张地图，并不往上面放生物
-  static cocos2d::TMXTiledMap* load_map(std::string map_dir);
+  static cocos2d::TMXTiledMap* load_map(const std::string& map_dir);
+
+  // 加载一个人物
+  static Hero* load_hero(const std::string& hero_name);
+
+  // 加载一个动画，读取对应的interval作为间隔，然后依次读取frame中的图片
+  static Animation* load_animation(const rapidjson::Value& animation_obj);
+
+  // 加载一张32x32图片
+  static SpriteFrame* load_frame(const std::string& frame_dir);
 
   // 获取缩放倍数，由于实在是太常用了这里直接预加载
   float getGlobaZoomScale() const { return _global_zoom_scale; }

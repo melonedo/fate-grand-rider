@@ -2,15 +2,21 @@
 	"use-debug-mode":true, 
 	"debug-set": {
 		"map": "maps/sample_map.tmx",
-		"hero": {
-			"stand": "man1_rt2.png",
-			"walk": [
-			"man1_rt2.png",
-			"man1_rt1.png"
-			]
-		}
+		"hero": "sample-man"
 	},
-	"global-zoom-scale": 2,
+	"global-zoom-scale": 1,
 	"show-physics-debug-boxes": true,
-	"display-cocos-stats": false
+	"display-cocos-stats": false,
+	"heroes": {
+		"sample-man": {
+			"stand": {
+				"interval": 1,
+				"frames": ["man1_rt2.png", "man1_rt1.png"]
+			},
+			"walk": {
+				"interval": 0.2,
+				"frames": ["man1_rt2.png", "man1_rt1.png"]
+			}
+		}
+	}
 }
