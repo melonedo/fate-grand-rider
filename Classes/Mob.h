@@ -10,5 +10,6 @@ class Mob : public cocos2d::Sprite {
  protected:
   bool init() override {
     if (!Sprite::init()) return false;
+    return true;
   }
 };

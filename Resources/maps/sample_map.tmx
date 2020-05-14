@@ -8,8 +8,8 @@
    </properties>
   </tile>
  </tileset>
- <objectgroup id="4" name="obj" locked="1">
-  <object id="1" name="spawn" x="129" y="803">
+ <objectgroup id="4" name="obj">
+  <object id="1" name="spawn" x="434" y="635">
    <point/>
   </object>
  </objectgroup>

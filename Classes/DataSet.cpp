@@ -66,20 +66,22 @@ void addCollisionBoxForTile(Sprite* tile) {
   tile->addComponent(box);
 }
 
-
 // 各人物的名字和对应的构造函数
 const static std::unordered_map<std::string, std::function<Hero*()>> kHeroSet{
     {"sample-man", SampleHero::create}};
 
+static void addCollisionBoxForMob(Mob*, int size);
 Hero* DataSet::load_hero(const std::string& hero_name) {
-  const auto& hero_data = DataSet::getInstance()->getConfig()
-    ["heroes"][hero_name.c_str()].GetObject();
+  const auto& hero_data =
+      DataSet::getConfig()["heroes"][hero_name.c_str()].GetObject();
   Hero* hero = kHeroSet.at(hero_name)();
+  addCollisionBoxForMob(hero, kSpriteResolution);
   return hero;
 }
 
 SpriteFrame* DataSet::load_frame(const std::string& frame_dir) {
-  auto frame = SpriteFrame::create(frame_dir, Rect(0, 0, 32, 32));
+  auto frame = SpriteFrame::create(
+      frame_dir, Rect(0, 0, kSpriteResolution, kSpriteResolution));
   CCASSERT(frame, "Unable to load frame");
   return frame;
 }
@@ -92,4 +94,13 @@ Animation* DataSet::load_animation(const rapidjson::Value& animation_obj) {
     animation->addSpriteFrame(load_frame(frame_dir.GetString()));
   }
   return animation;
+}
+
+void addCollisionBoxForMob(Mob* mob, int size) {
+  float scale = DataSet::getInstance()->getGlobaZoomScale();
+  auto body =
+      PhysicsBody::createCircle(scale * size / 4, PHYSICSBODY_MATERIAL_DEFAULT,
+                                scale * Vec2(size / 2, size / 4));
+  body->setDynamic(false);
+  mob->addComponent(body);
 }
