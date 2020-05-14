@@ -27,6 +27,8 @@ bool GameScene::init() {
       this->getPhysicsWorld()->setDebugDrawMask(~0);
     }
 
+    _metaLayer = map->getLayer("meta");
+
     this->addChild(map);
 
     // 加载角色

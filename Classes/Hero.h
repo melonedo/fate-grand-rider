@@ -4,6 +4,7 @@
 #include "AutoRef.h"
 #include <unordered_map>
 #include <unordered_set>
+using namespace cocos2d;
 
 // 英雄
 class Hero : public Mob {
@@ -28,28 +29,26 @@ class Hero : public Mob {
   virtual void registerUserInput();
 
   // 按键事件
-  virtual void onKeyPressed(cocos2d::EventKeyboard::KeyCode, cocos2d::Event*);
-  virtual void onKeyReleased(cocos2d::EventKeyboard::KeyCode, cocos2d::Event*);
+  virtual void onKeyPressed(EventKeyboard::KeyCode, Event*);
+  virtual void onKeyReleased(EventKeyboard::KeyCode, Event*);
 
   // 计算按键对应的速度
   void updateSpeed();
 
   // 移动速度
-  cocos2d::Vec2 _speed;
+  Vec2 _speed;
 
   // 站立动画（应该可以重复使用同一个action，这里存起来）
-  AutoRef<cocos2d::Animation> _standAnimation;
+  AutoRef<Animation> _standAnimation;
 
   // 行走动画
-  AutoRef<cocos2d::Animation> _walkAnimation;
+  AutoRef<Animation> _walkAnimation;
 
   // wasd对应的方向
-  const static std::unordered_map<cocos2d::EventKeyboard::KeyCode,
-                                  cocos2d::Vec2>
-      kWasdDirections;
+  const static std::unordered_map<EventKeyboard::KeyCode, Vec2> kWasdDirections;
 
   // 按下的方向键
-  std::unordered_set<cocos2d::EventKeyboard::KeyCode> _wasdPressed;
+  std::unordered_set<EventKeyboard::KeyCode> _wasdPressed;
 
   // 移动速度的大小
   float _speedScale;

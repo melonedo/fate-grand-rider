@@ -76,6 +76,8 @@ Hero* DataSet::load_hero(const std::string& hero_name) {
       DataSet::getConfig()["heroes"][hero_name.c_str()].GetObject();
   Hero* hero = kHeroSet.at(hero_name)();
   addCollisionBoxForMob(hero, kSpriteResolution);
+  // 圆心的位置
+  hero->setAnchorPoint(Vec2(0.5f, 0.25f));
   return hero;
 }
 
@@ -97,7 +99,7 @@ Animation* DataSet::load_animation(const rapidjson::Value& animation_obj) {
 }
 
 void addCollisionBoxForMob(Mob* mob, int size) {
-  float scale = DataSet::getInstance()->getGlobaZoomScale();
+  float scale = DataSet::getGlobaZoomScale();
   auto body =
       PhysicsBody::createCircle(scale * size / 4, PHYSICSBODY_MATERIAL_DEFAULT,
                                 scale * Vec2(size / 2, size / 4));

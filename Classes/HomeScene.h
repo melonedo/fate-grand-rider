@@ -12,5 +12,4 @@ class HomeScene : public Scene {
 
  private:
   CREATE_FUNC(HomeScene);
-
 };

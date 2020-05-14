@@ -3,6 +3,7 @@
 #include "DataSet.h"
 #include <unordered_map>
 #include <unordered_set>
+#include "GameScene.h"
 using namespace cocos2d;
 
 
@@ -94,9 +95,13 @@ void Hero::updateSpeed() {
 
 
 void Hero::update(float delta) {
-  this->setPosition(this->getPosition() + _speed * delta);
+  auto new_pos = this->getPosition() + _speed * delta;
+  // 不要越界
+  auto meta_layer = dynamic_cast<GameScene*>(this->getScene())->getMetaLayer();
+  
   // 滚动屏幕（Size和Vec没有减法只有加法，所以倒过来）
-  this->getScene()->setPosition(-this->getPosition() *
-                                    DataSet::getGlobaZoomScale() +
-                                designResolutionSize);
+  auto scene = this->getScene();
+  float scale = DataSet::getGlobaZoomScale();
+  scene->setPosition(-new_pos * scale + designResolutionSize / 2 * scale);
+  this->setPosition(new_pos);
 }
