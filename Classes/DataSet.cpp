@@ -20,7 +20,8 @@ void DataSet::init() {
   _config.Parse(data_str.c_str());
   CCASSERT(_config.IsObject(),
            "The format is broken or contain non-ascii characters?");
-  _global_zoom_scale = _config["global-zoom-scale"].GetFloat();
+  _globalZoomScale = _config["global-zoom-scale"].GetFloat();
+  _showPhysicsDebugBoxes = _config["show-physics-debug-boxes"].GetBool();
 }
 
 static void addCollisionBoxForTile(Sprite*);
@@ -37,47 +38,23 @@ TMXTiledMap* DataSet::load_map(const std::string& map_dir) {
   map->getLayer("fg")->setLocalZOrder(kMapPriorityForeground);
   auto meta_layer = map->getLayer("meta");
   meta_layer->setVisible(false);
-  auto obj_layer = map->getObjectGroup("obj");
+  //auto obj_layer = map->getObjectGroup("obj");
 
-  // 给所有type写了wall的方块加上碰撞箱
-  auto layer_size = meta_layer->getLayerSize();
-  auto map_size = map->getMapSize();
-  CCASSERT(map_size.width == layer_size.width &&
-               map_size.height == layer_size.height,
-           "Size of map and meta layer must be the same.");
-  for (int x = 0; x < map_size.width; x++) {
-    for (int y = 0; y < map_size.height; y++) {
-      Vec2 pos(x, y);
-      auto prop = map->getPropertiesForGID(meta_layer->getTileGIDAt(pos));
-      if (!prop.isNull() && prop.asValueMap().at("type").asString() == "wall") {
-        addCollisionBoxForTile(meta_layer->getTileAt(pos));
-      }
-    }
-  }
+  chipmunk::initPhysicsForMap(map);
 
   return map;
 }
 
-void addCollisionBoxForTile(Sprite* tile) {
-  // 这里计算大小需要变换到真实大小，使用game-config的global-zoom-scale来缩放
-  float scale = DataSet::getInstance()->getGlobaZoomScale();
-  auto box = PhysicsBody::createBox(tile->getContentSize() * scale);
-  box->setDynamic(false);
-  tile->addComponent(box);
-}
+
 
 // 各人物的名字和对应的构造函数
 const static std::unordered_map<std::string, std::function<Hero*()>> kHeroSet{
     {"sample-man", SampleHero::create}};
 
-static void addCollisionBoxForMob(Mob*, int size);
 Hero* DataSet::load_hero(const std::string& hero_name) {
   const auto& hero_data =
       DataSet::getConfig()["heroes"][hero_name.c_str()].GetObject();
   Hero* hero = kHeroSet.at(hero_name)();
-  addCollisionBoxForMob(hero, kSpriteResolution);
-  // 圆心的位置
-  hero->setAnchorPoint(Vec2(0.5f, 0.25f));
   return hero;
 }
 
@@ -96,13 +73,4 @@ Animation* DataSet::load_animation(const rapidjson::Value& animation_obj) {
     animation->addSpriteFrame(load_frame(frame_dir.GetString()));
   }
   return animation;
-}
-
-void addCollisionBoxForMob(Mob* mob, int size) {
-  float scale = DataSet::getGlobaZoomScale();
-  auto body =
-      PhysicsBody::createCircle(scale * size / 4, PHYSICSBODY_MATERIAL_DEFAULT,
-                                scale * Vec2(size / 2, size / 4));
-  body->setDynamic(false);
-  mob->addComponent(body);
 }

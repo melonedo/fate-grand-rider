@@ -11,7 +11,7 @@ class AutoRef {
   ~AutoRef();
   // 赋值
   AutoRef& operator=(const AutoRef&);
-  AutoRef& operator=(AutoRef&&);
+  AutoRef& operator=(AutoRef&&) noexcept;
   AutoRef& operator=(T*);
   operator T*() const;
   T* data() const;
@@ -65,7 +65,7 @@ AutoRef<T>& AutoRef<T>::operator=(const AutoRef<T>& other) {
 }
 
 template <typename T>
-AutoRef<T>& AutoRef<T>::operator=(AutoRef<T>&& other) {
+AutoRef<T>& AutoRef<T>::operator=(AutoRef<T>&& other) noexcept {
   if (_ref != nullptr) {
     _ref->release();
   }

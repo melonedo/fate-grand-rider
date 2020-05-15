@@ -11,7 +11,9 @@ class DataSet {
 
   // 返回数据集game-data.json
   // 请一定要用const&来接受，这个类是不能复制的。
-  static const rapidjson::Document& getConfig() { return getInstance()->_config; }
+  static const rapidjson::Document& getConfig() {
+    return getInstance()->_config;
+  }
 
   // 从map_dir加载一张地图，并不往上面放生物
   static cocos2d::TMXTiledMap* load_map(const std::string& map_dir);
@@ -25,13 +27,17 @@ class DataSet {
   // 加载一张32x32图片
   static SpriteFrame* load_frame(const std::string& frame_dir);
 
-  // 获取缩放倍数，由于实在是太常用了这里直接预加载
-  static float getGlobaZoomScale() { return getInstance()->_global_zoom_scale; }
+  // 一些常用玩意就预加载了
+  static float getGlobaZoomScale() { return getInstance()->_globalZoomScale; }
+  static bool getShowPhysicsDebugBoxes() {
+    return getInstance()->_showPhysicsDebugBoxes;
+  }
 
  private:
   DataSet() = default;
   void init();
 
   rapidjson::Document _config;
-  float _global_zoom_scale;
+  float _globalZoomScale;
+  bool _showPhysicsDebugBoxes;
 };

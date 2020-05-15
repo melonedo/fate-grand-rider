@@ -19,8 +19,6 @@ bool Hero::init() {
 void Hero::loadAnimation() {
   const auto& config = DataSet::getConfig();
   assert(config["heroes"].IsObject());
-  assert(config["heroes"].HasMember("sample-man"));
-  log("%s", getHeroName());
   assert(config["heroes"].HasMember(getHeroName()));
   // 加载站立和行走动画
   const auto& data = DataSet::getConfig()["heroes"][getHeroName()];
@@ -95,10 +93,23 @@ void Hero::updateSpeed() {
 
 
 void Hero::update(float delta) {
-  auto new_pos = this->getPosition() + _speed * delta;
-  // 不要越界
-  auto meta_layer = dynamic_cast<GameScene*>(this->getScene())->getMetaLayer();
-  
+  auto old_pos = this->getPosition();
+  auto new_pos = old_pos + _speed * delta;
+
+
+  // 碰撞检测
+  cpSegmentQueryInfo info;
+  auto space = GameScene::getRunningScene()->getPhysicsSpace()->getSpace();
+  cpSpaceSegmentQueryFirst(space, cpv(old_pos.x, old_pos.y),
+                           cpv(new_pos.x, new_pos.y), 1, CP_SHAPE_FILTER_ALL,
+                           &info);
+  if (info.shape != nullptr) {
+    this->setPosition(new_pos);
+    Sprite* spr = chipmunk::getSpriteFromShape(info.shape);
+    //spr->setScale(2);
+    new_pos = old_pos + info.alpha * (new_pos - old_pos);
+  }
+
   // 滚动屏幕（Size和Vec没有减法只有加法，所以倒过来）
   auto scene = this->getScene();
   float scale = DataSet::getGlobaZoomScale();

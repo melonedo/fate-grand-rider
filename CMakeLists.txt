@@ -61,6 +61,8 @@ list(APPEND GAME_SOURCE
 	 Classes/DataSet.cpp
 	 Classes/GameScene.cpp
      Classes/Hero.cpp
+     Classes/Physics.cpp
+     Classes/Mob.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -71,6 +73,7 @@ list(APPEND GAME_HEADER
 	 Classes/AutoRef.h
      Classes/Mob.h
      Classes/Hero.h
+     Classes/Physics.h
      )
 
 if(ANDROID)

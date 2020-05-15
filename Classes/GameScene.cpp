@@ -4,10 +4,18 @@
 #include "constants.h"
 using namespace cocos2d;
 
-
+#include "Physics.h"
 
 bool GameScene::init() {
-  if (!Scene::initWithPhysics()) return false;
+  bool result;
+  if (DataSet::getShowPhysicsDebugBoxes()) {
+    result = Scene::initWithPhysics();
+  } else {
+    result = Scene::init();
+  }
+  if (!result) return false;
+
+  runningGameScene = this;
 
   const auto& config = DataSet::getConfig();
 
@@ -27,13 +35,10 @@ bool GameScene::init() {
       this->getPhysicsWorld()->setDebugDrawMask(~0);
     }
 
-    _metaLayer = map->getLayer("meta");
-
     this->addChild(map);
 
     // 加载角色
     auto hero = DataSet::load_hero(debug_set["hero"].GetString());
-    hero->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     auto spawn = map->getObjectGroup("obj")->getObject("spawn");
     hero->setPosition(spawn["x"].asFloat(), spawn["y"].asFloat());
     this->addChild(hero, kMapPrioritySprite);
@@ -45,3 +50,10 @@ bool GameScene::init() {
   }
 }
 
+GameScene* GameScene::runningGameScene = nullptr;
+
+GameScene::~GameScene() {
+  if (runningGameScene == this) {
+    runningGameScene = nullptr;
+  }
+}
