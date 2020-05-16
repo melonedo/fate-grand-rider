@@ -1,0 +1,42 @@
+{
+	"use-debug-mode":true, 
+	"global-zoom-scale": 2,
+	"show-physics-debug-boxes": false,
+	"display-cocos-stats": true,
+	"skip-starting-scene": true,
+	"hero-speed-scale": 100,
+	"debug-set": {
+		"map": "maps/sample_map.tmx",
+		"hero": "sample-man",
+		"weapon": "basic-bow"
+	},
+	"heroes": {
+		"sample-man": {
+			"stand": {
+				"interval": 1,
+				"frames": ["man1_rt2.png", "man1_rt1.png"]
+			},
+			"walk": {
+				"interval": 0.2,
+				"frames": ["man1_rt2.png", "man1_rt1.png"]
+			},
+			"hand-pos": [0.75,0.44]
+		}
+	},
+	"weapons": {
+		"basic-bow": {
+			"type": "bow",
+			"bow": {
+				"frame": "W_Bow02.png",
+				"angle-offset": -45,
+				"anchor": [0.5,0.5]
+			},
+			"arrow": {
+				"frame": "S_Bow04.png",
+				"angle-offset": -135,
+				"anchor": [0.5,0.5],
+				"speed": 400
+			}
+		}
+	}
+}
