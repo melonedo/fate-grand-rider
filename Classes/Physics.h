@@ -45,8 +45,8 @@ class Body {
     std::swap(_shape, other._shape);
     return *this;
   }
-  static Body createCircle(cpFloat radius, cpVect offset);
-  static Body createBox(cpFloat width, cpFloat height, cpFloat radius = 1);
+  void initAsCircle(cpFloat radius, cpVect offset);
+  void initAsBox(cpFloat width, cpFloat height, cpFloat radius = 1);
   cpBody* getBody() { return _body; }
   cpShape* getShape() { return _shape; }
 
@@ -68,5 +68,8 @@ void initPhysicsForMob(Mob*);
 // 从cpShape获得对应的精灵，initPhysics的时候把指针存到了shape里。
 //Sprite* getSpriteFromShape(const Body*);
 cocos2d::Sprite* getSpriteFromShape(const cpShape* shape);
+
+// 把cocos2d的Vec2转换为cpv
+inline cpVect cpvFromVec2(cocos2d::Vec2 vec) { return cpv(vec.x, vec.y); }
 
 };  // namespace chipmunk

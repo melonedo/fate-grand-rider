@@ -2,6 +2,7 @@
 #include "cocos2d.h"
 #include "json/document.h"
 #include "Hero.h"
+#include "Weapon.h"
 using namespace cocos2d;
 // 全局的数据集
 class DataSet {
@@ -24,8 +25,12 @@ class DataSet {
   // 加载一个动画，读取对应的interval作为间隔，然后依次读取frame中的图片
   static Animation* load_animation(const rapidjson::Value& animation_obj);
 
-  // 加载一张32x32图片
-  static SpriteFrame* load_frame(const std::string& frame_dir);
+  // 加载一张图片
+  static SpriteFrame* load_frame(const std::string& frame_dir,
+                                 int size = kSpriteResolution);
+
+  // 加载一个武器
+  static Weapon* load_weapon(const std::string& weapon_name);
 
   // 一些常用玩意就预加载了
   static float getGlobaZoomScale() { return getInstance()->_globalZoomScale; }

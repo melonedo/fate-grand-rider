@@ -9,9 +9,8 @@
 bool Mob::init() {
 
   if (!Sprite::init()) return false;
-  // 为保证位置正确，anchorPoint应该设为(0.5, 0.25)，即圆心
+  // 涓轰繚璇佷綅缃纭紝anchorPoint搴旇璁句负(0.5, 0.25)锛屽嵆鍦嗗績
   this->setAnchorPoint(Vec2(0.5f, 0.25f));
-  //setAnchorPoint(Vec2(0, 0));
   chipmunk::initPhysicsForMob(this);
   return true;
 }

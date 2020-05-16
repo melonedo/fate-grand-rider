@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <unordered_set>
 using namespace cocos2d;
+class Weapon;
 
 // 英雄
 class Hero : public Mob {
@@ -14,6 +15,9 @@ class Hero : public Mob {
   void setMoveSpeed(float vx, float vy);
   
   virtual const char* getHeroName() const = 0;
+
+  // 拾取武器
+  void pickWeapon(Weapon*);
 
  protected:
   // 初始化，设置update，加载动画
@@ -52,6 +56,12 @@ class Hero : public Mob {
 
   // 移动速度的大小
   float _speedScale;
+
+  // 手相对于左下的位置
+  Vec2 _handPos;
+
+  // 手持的武器
+  Weapon* _weapon;
 };
 
 class SampleHero : public Hero {

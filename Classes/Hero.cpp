@@ -13,6 +13,10 @@ bool Hero::init() {
   scheduleUpdate();
   loadAnimation();
   registerUserInput();
+  // 手的位置
+  const auto& hand_data =
+      DataSet::getConfig()["heroes"][getHeroName()]["hand-pos"];
+  _handPos = Vec2(hand_data[0].GetFloat(), hand_data[1].GetFloat());
   return true;
 }
 
@@ -44,6 +48,18 @@ void Hero::registerUserInput() {
   keyboard_listener->onKeyReleased = std::bind(&Hero::onKeyReleased, this, _1, _2);
   this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(
       keyboard_listener, this);
+
+  auto mouse_listener = EventListenerMouse::create();
+  mouse_listener->onMouseMove = [this](EventMouse* event) {
+    this->_weapon->pointTo(Vec2(event->getCursorX(), event->getCursorY()) -
+                           designResolutionSize / 2);
+  };
+  mouse_listener->onMouseDown = [this](EventMouse* event) {
+    this->_weapon->fire(Vec2(event->getCursorX(), event->getCursorY()) -
+                        designResolutionSize / 2);
+  };
+  this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(
+      mouse_listener, this);
 }
 
 const std::unordered_map<EventKeyboard::KeyCode, Vec2>
@@ -63,8 +79,12 @@ void Hero::onKeyPressed(EventKeyboard::KeyCode code, Event*) {
     }
     if (code == EventKeyboard::KeyCode::KEY_A) {
       this->setFlippedX(true);
+      _weapon->setFlippedX(true);
+      _weapon->setPositionNormalized(Vec2(1 - _handPos.x, _handPos.y));
     } else if (code == EventKeyboard::KeyCode::KEY_D) {
       this->setFlippedX(false);
+      _weapon->setFlippedX(false);
+      _weapon->setPositionNormalized(_handPos);
     }
     updateSpeed();
   }
@@ -115,4 +135,13 @@ void Hero::update(float delta) {
   float scale = DataSet::getGlobaZoomScale();
   scene->setPosition(-new_pos * scale + designResolutionSize / 2 * scale);
   this->setPosition(new_pos);
+}
+
+void Hero::pickWeapon(Weapon* weapon) {
+  _weapon = weapon;
+  weapon->setVisible(true);
+  weapon->setPositionNormalized(_handPos);
+  //weapon->setPosition(Vec2(100, 100));
+  this->addChild(weapon, 1);
+  weapon->_owner = this;
 }

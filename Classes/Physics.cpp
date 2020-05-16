@@ -24,19 +24,17 @@ Space::~Space() {
   cpSpaceFree(_space);
 }
 
-Body Body::createBox(cpFloat width, cpFloat height,
+void Body::initAsBox(cpFloat width, cpFloat height,
                                       cpFloat radius) {
-  Body body;
-  body._body = cpBodyNew(0, 0);
-  body._shape = cpBoxShapeNew(body._body, width, height, radius);
-  return body;
+  this->~Body();
+  _body = cpBodyNew(0, 0);
+  _shape = cpBoxShapeNew(_body, width, height, radius);
 }
 
-Body Body::createCircle(cpFloat radius, cpVect offset) {
-  Body body;
-  body._body = cpBodyNew(0, 0);
-  body._shape = cpCircleShapeNew(body._body, radius, offset);
-  return body;
+void Body::initAsCircle(cpFloat radius, cpVect offset) {
+  this->~Body();
+  _body = cpBodyNew(0, 0);
+  _shape = cpCircleShapeNew(_body, radius, offset);
 }
 
 static void initPhysicsForTile(cocos2d::Sprite*);
@@ -61,7 +59,8 @@ void initPhysicsForMap(cocos2d::TMXTiledMap* map) {
 }
 
 static void initPhysicsForTile(Sprite* tile) {
-  Body body = Body::createBox(kTileResolution, kTileResolution);
+  Body body;
+  body.initAsBox(kTileResolution, kTileResolution);
   cpBodySetType(body.getBody(), cpBodyType::CP_BODY_TYPE_STATIC);
   auto bb = tile->getBoundingBox();
   cpBodySetPosition(body.getBody(), cpv(bb.getMidX(), bb.getMidY()));
@@ -80,7 +79,7 @@ static void initPhysicsForTile(Sprite* tile) {
 
 void initPhysicsForMob(Mob* mob) {
   float size = kSpriteResolution;
-  mob->_body = Body::createCircle(kSpriteResolution / 4, cpv(0, 0));
+  mob->_body.initAsCircle(kSpriteResolution / 4, cpv(0, 0));
   cpBodySetType(mob->_body.getBody(), cpBodyType::CP_BODY_TYPE_KINEMATIC);
   // 存储指针在shape里
   cpShapeSetUserData(mob->_body.getShape(), mob);

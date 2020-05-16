@@ -43,6 +43,9 @@ bool GameScene::init() {
     hero->setPosition(spawn["x"].asFloat(), spawn["y"].asFloat());
     this->addChild(hero, kMapPrioritySprite);
 
+    // 配上武器
+    hero->pickWeapon(DataSet::load_weapon(debug_set["weapon"].GetString()));
+
     return true;
   } else {
     CCASSERT(false, "Only debug set is supported now");

@@ -2,6 +2,7 @@
 #include "cocos2d.h"
 #include "json/document.h"
 #include "constants.h"
+#include "Hero.h"
 using namespace cocos2d;
 
 DataSet* DataSet::getInstance() {
@@ -34,8 +35,8 @@ TMXTiledMap* DataSet::load_map(const std::string& map_dir) {
   CCASSERT(map->getLayer("fg") && map->getLayer("bg") && map->getLayer("meta"),
            "The map does not have layers fg, bg, obj and meta");
 
-  map->getLayer("bg")->setLocalZOrder(kMapPriorityBackground);
-  map->getLayer("fg")->setLocalZOrder(kMapPriorityForeground);
+  map->getLayer("bg")->setGlobalZOrder(kMapPriorityBackground);
+  map->getLayer("fg")->setGlobalZOrder(kMapPriorityForeground);
   auto meta_layer = map->getLayer("meta");
   meta_layer->setVisible(false);
   //auto obj_layer = map->getObjectGroup("obj");
@@ -44,8 +45,6 @@ TMXTiledMap* DataSet::load_map(const std::string& map_dir) {
 
   return map;
 }
-
-
 
 // 各人物的名字和对应的构造函数
 const static std::unordered_map<std::string, std::function<Hero*()>> kHeroSet{
@@ -58,9 +57,8 @@ Hero* DataSet::load_hero(const std::string& hero_name) {
   return hero;
 }
 
-SpriteFrame* DataSet::load_frame(const std::string& frame_dir) {
-  auto frame = SpriteFrame::create(
-      frame_dir, Rect(0, 0, kSpriteResolution, kSpriteResolution));
+SpriteFrame* DataSet::load_frame(const std::string& frame_dir, int size) {
+  auto frame = SpriteFrame::create(frame_dir, Rect(0, 0, size, size));
   CCASSERT(frame, "Unable to load frame");
   return frame;
 }
@@ -73,4 +71,14 @@ Animation* DataSet::load_animation(const rapidjson::Value& animation_obj) {
     animation->addSpriteFrame(load_frame(frame_dir.GetString()));
   }
   return animation;
+}
+
+// 各种类的武器和对应的构造函数
+const static std::unordered_map<std::string,
+                                std::function<Weapon*(const std::string&)>>
+    kWeaponSet{{"bow", Bow::create}};
+
+Weapon* DataSet::load_weapon(const std::string& weapon_name) {
+  const auto& weapon_data = getConfig()["weapons"][weapon_name.c_str()];
+  return kWeaponSet.at(weapon_data["type"].GetString())(weapon_name);
 }
