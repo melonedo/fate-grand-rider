@@ -37,28 +37,28 @@ void Body::initAsCircle(cpFloat radius, cpVect offset) {
   _shape = cpCircleShapeNew(_body, radius, offset);
 }
 
-static void initPhysicsForTile(cocos2d::Sprite*);
-void initPhysicsForMap(cocos2d::TMXTiledMap* map) {
-  using namespace cocos2d;
-  // 给所有type写了wall的方块加上碰撞箱
-  auto meta_layer = map->getLayer("meta");
-  auto layer_size = meta_layer->getLayerSize();
-  auto map_size = map->getMapSize();
-  CCASSERT(map_size.width == layer_size.width &&
-               map_size.height == layer_size.height,
-           "Size of map and meta layer must be the same.");
-  for (int x = 0; x < map_size.width; x++) {
-    for (int y = 0; y < map_size.height; y++) {
-      Vec2 pos(x, y);
-      auto prop = map->getPropertiesForGID(meta_layer->getTileGIDAt(pos));
-      if (!prop.isNull() && prop.asValueMap().at("type").asString() == "wall") {
-        initPhysicsForTile(meta_layer->getTileAt(pos));
-      }
-    }
-  }
-}
 
-static void initPhysicsForTile(Sprite* tile) {
+//void initPhysicsForMap(cocos2d::TMXTiledMap* map) {
+//  using namespace cocos2d;
+//  // 给所有type写了wall的方块加上碰撞箱
+//  auto meta_layer = map->getLayer("meta");
+//  auto layer_size = meta_layer->getLayerSize();
+//  auto map_size = map->getMapSize();
+//  CCASSERT(map_size.width == layer_size.width &&
+//               map_size.height == layer_size.height,
+//           "Size of map and meta layer must be the same.");
+//  for (int x = 0; x < map_size.width; x++) {
+//    for (int y = 0; y < map_size.height; y++) {
+//      Vec2 pos(x, y);
+//      auto prop = map->getPropertiesForGID(meta_layer->getTileGIDAt(pos));
+//      if (!prop.isNull()) {
+//        initPhysicsForTile(meta_layer->getTileAt(pos));
+//      }
+//    }
+//  }
+//}
+
+void initPhysicsForTile(Sprite* tile) {
   Body body;
   body.initAsBox(kTileResolution, kTileResolution);
   cpBodySetType(body.getBody(), cpBodyType::CP_BODY_TYPE_STATIC);

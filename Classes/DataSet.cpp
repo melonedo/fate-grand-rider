@@ -3,6 +3,7 @@
 #include "json/document.h"
 #include "constants.h"
 #include "Hero.h"
+#include "Interaction.h"
 using namespace cocos2d;
 
 DataSet* DataSet::getInstance() {
@@ -25,7 +26,11 @@ void DataSet::init() {
   _showPhysicsDebugBoxes = _config["show-physics-debug-boxes"].GetBool();
 }
 
-static void addCollisionBoxForTile(Sprite*);
+const static std::unordered_map<std::string, int> kTagSet{
+    {"wall", kTagWall}, {"interactable", kTagInteractable}};
+
+const static std::unordered_map<std::string, std::function<Interaction*()>>
+    kInteractionSet{{"hide", HideSpot::create}};
 
 TMXTiledMap* DataSet::load_map(const std::string& map_dir) {
   auto map = TMXTiledMap::create(map_dir);
@@ -39,9 +44,32 @@ TMXTiledMap* DataSet::load_map(const std::string& map_dir) {
   map->getLayer("fg")->setGlobalZOrder(kMapPriorityForeground);
   auto meta_layer = map->getLayer("meta");
   meta_layer->setVisible(false);
-  //auto obj_layer = map->getObjectGroup("obj");
-
-  chipmunk::initPhysicsForMap(map);
+  
+  // 加入标签
+  auto layer_size = meta_layer->getLayerSize();
+  auto map_size = map->getMapSize();
+  CCASSERT(map_size.width == layer_size.width &&
+               map_size.height == layer_size.height,
+           "Size of map and meta layer must be the same.");
+  for (int x = 0; x < map_size.width; x++) {
+    for (int y = 0; y < map_size.height; y++) {
+      Vec2 pos(x, y);
+      auto prop = map->getPropertiesForGID(meta_layer->getTileGIDAt(pos));
+      if (!prop.isNull()) {
+        auto value_map = prop.asValueMap();
+        auto tile = meta_layer->getTileAt(pos);
+        chipmunk::initPhysicsForTile(tile);
+        auto type = value_map.at("type").asString();
+        tile->setTag(kTagSet.at(type));
+        if (type == "interactable") {
+          auto intraction =
+              kInteractionSet.at(value_map.at("interaction").asString())();
+          intraction->setName("interaction");
+          tile->addComponent(intraction);
+        }
+      }
+    }
+  }
 
   return map;
 }
@@ -54,6 +82,7 @@ Hero* DataSet::load_hero(const std::string& hero_name) {
   const auto& hero_data =
       DataSet::getConfig()["heroes"][hero_name.c_str()].GetObject();
   Hero* hero = kHeroSet.at(hero_name)();
+  hero->setTag(kTagHero);
   return hero;
 }
 

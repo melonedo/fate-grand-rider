@@ -23,7 +23,7 @@ class Space {
   void addBodyAndOwn(Body&& body);
   // 添加一个body，但不管理对应内存
   void addBody(Body* body);
-  // 删除一个body，必须是不由space管理的，否则是运行错误
+  // 删除一个body，不管理对应内存
   void removeBody(Body* body);
  private:
   cpSpace* _space;
@@ -59,8 +59,8 @@ class Body {
   cpShape* _shape;
 };
 
-// 为地图生成对应碰撞箱
-void initPhysicsForMap(cocos2d::TMXTiledMap*);
+// 为地图中的瓦片生成对应碰撞箱
+void initPhysicsForTile(cocos2d::Sprite*);
 
 // 为生物生成碰撞箱
 void initPhysicsForMob(Mob*);

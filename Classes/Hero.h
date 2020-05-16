@@ -4,6 +4,7 @@
 #include "AutoRef.h"
 #include <unordered_map>
 #include <unordered_set>
+#include "Interaction.h"
 using namespace cocos2d;
 class Weapon;
 
@@ -62,6 +63,9 @@ class Hero : public Mob {
 
   // 手持的武器
   Weapon* _weapon;
+
+  // 正在互动的建筑
+  Interaction* _interacting;
 };
 
 class SampleHero : public Hero {

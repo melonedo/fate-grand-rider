@@ -13,6 +13,8 @@ enum MapPriority{ kMapPriorityBackground = -100, kMapPrioritySprite = 0, kMapPri
 
 const static int kSpriteResolution = 32, kTileResolution = 16, kWeaponResolution = 34;
 
-enum { 
+enum AnimationTag{ 
   kTagStandAnimation = 1000, 
   kTagWalkingAnimation };
+
+enum SpriteTag { kTagHero = 2000, kTagWeapon, kTagWall, kTagInteractable};

@@ -64,6 +64,7 @@ list(APPEND GAME_SOURCE
      Classes/Physics.cpp
      Classes/Mob.cpp
      Classes/Weapon.cpp
+     Classes/Interaction.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -76,6 +77,7 @@ list(APPEND GAME_HEADER
      Classes/Hero.h
      Classes/Physics.h
      Classes/Weapon.h
+     Classes/Interaction.h
      )
 
 if(ANDROID)

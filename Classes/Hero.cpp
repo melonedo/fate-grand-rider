@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "GameScene.h"
+#include "Interaction.h"
 using namespace cocos2d;
 
 
@@ -100,6 +101,9 @@ void Hero::onKeyReleased(EventKeyboard::KeyCode code, Event*) {
       animate->setTag(kTagStandAnimation);
       this->runAction(animate);
     }
+  } else if (code == EventKeyboard::KeyCode::KEY_SPACE &&
+             _interacting != nullptr) {
+    _interacting->dialog();
   }
 }
 
@@ -126,8 +130,20 @@ void Hero::update(float delta) {
   if (info.shape != nullptr) {
     this->setPosition(new_pos);
     Sprite* spr = chipmunk::getSpriteFromShape(info.shape);
-    //spr->setScale(2);
     new_pos = old_pos + info.alpha * (new_pos - old_pos);
+
+    // 尝试互动
+    switch (spr->getTag()) {
+      case kTagInteractable: {
+        auto interaction =
+            dynamic_cast<Interaction*>(spr->getComponent("interaction"));
+        interaction->touch();
+        _interacting = interaction;
+        break;
+      }
+      default:
+        break;
+    }
   }
 
   // 滚动屏幕（Size和Vec没有减法只有加法，所以倒过来）
