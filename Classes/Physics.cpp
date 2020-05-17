@@ -36,37 +36,19 @@ void Body::initAsCircle(cpFloat radius, cpVect offset) {
   _body = cpBodyNew(0, 0);
   _shape = cpCircleShapeNew(_body, radius, offset);
 }
-
-
-//void initPhysicsForMap(cocos2d::TMXTiledMap* map) {
-//  using namespace cocos2d;
-//  // 给所有type写了wall的方块加上碰撞箱
-//  auto meta_layer = map->getLayer("meta");
-//  auto layer_size = meta_layer->getLayerSize();
-//  auto map_size = map->getMapSize();
-//  CCASSERT(map_size.width == layer_size.width &&
-//               map_size.height == layer_size.height,
-//           "Size of map and meta layer must be the same.");
-//  for (int x = 0; x < map_size.width; x++) {
-//    for (int y = 0; y < map_size.height; y++) {
-//      Vec2 pos(x, y);
-//      auto prop = map->getPropertiesForGID(meta_layer->getTileGIDAt(pos));
-//      if (!prop.isNull()) {
-//        initPhysicsForTile(meta_layer->getTileAt(pos));
-//      }
-//    }
-//  }
-//}
-
-void initPhysicsForTile(Sprite* tile) {
+void Space::addBoxForTile(Sprite* tile, cpShapeFilter filter) {
   Body body;
   body.initAsBox(kTileResolution, kTileResolution);
   cpBodySetType(body.getBody(), cpBodyType::CP_BODY_TYPE_STATIC);
   auto bb = tile->getBoundingBox();
+  // 设置位置
   cpBodySetPosition(body.getBody(), cpv(bb.getMidX(), bb.getMidY()));
   // 存储指针到shape
   cpShapeSetUserData(body.getShape(), tile);
-  GameScene::getRunningScene()->getPhysicsSpace()->addBodyAndOwn(std::move(body));
+  // 设置筛选器
+  if (filter.group == 0) filter.group = _groupCount++;
+  cpShapeSetFilter(body.getShape(), filter);
+  addBodyAndOwn(std::move(body));
 
   if (DataSet::getShowPhysicsDebugBoxes()) {
     // 这里计算大小需要变换到真实大小，使用game-config的global-zoom-scale来缩放
@@ -76,14 +58,20 @@ void initPhysicsForTile(Sprite* tile) {
     tile->addComponent(box);
   }
 }
+void initPhysicsForTile(Sprite* tile) {
+  GameScene::getRunningScene()->getPhysicsSpace()->addBoxForTile(tile);
+}
 
-void initPhysicsForMob(Mob* mob) {
+void Space::addCircleForMob(Mob* mob, cpShapeFilter filter) {
   float size = kSpriteResolution;
   mob->_body.initAsCircle(kSpriteResolution / 4, cpv(0, 0));
   cpBodySetType(mob->_body.getBody(), cpBodyType::CP_BODY_TYPE_KINEMATIC);
   // 存储指针在shape里
   cpShapeSetUserData(mob->_body.getShape(), mob);
-  GameScene::getRunningScene()->getPhysicsSpace()->addBody(&mob->_body);
+  // 设置筛选器
+  if (filter.group == 0) filter.group = _groupCount++;
+  cpShapeSetFilter(mob->_body.getShape(), filter);
+  addBody(&mob->_body);
 
   if (DataSet::getShowPhysicsDebugBoxes()) {
     // 按照cocos2d-x的方法放上碰撞箱
@@ -96,12 +84,99 @@ void initPhysicsForMob(Mob* mob) {
   }
 }
 
+void initPhysicsForMob(Mob* mob) {
+  GameScene::getRunningScene()->getPhysicsSpace()->addCircleForMob(mob);
+}
+
 //Sprite* getSprteFromShape(const Body* body) {
 //  return getSprteFromShape(body->getShape());
 //}
 cocos2d::Sprite* getSpriteFromShape(const cpShape* shape) {
-  return static_cast<Sprite*>(cpShapeGetUserData(shape));
+  if (shape != nullptr) {
+    return static_cast<Sprite*>(cpShapeGetUserData(shape));
+  } else {
+    return nullptr;
+  }
 }
 
+
+Body::Body(Body&& other) noexcept 
+: _body(other._body), _shape(other._shape) {
+  other._body = nullptr;
+  other._shape = nullptr;
+}
+
+Body& Body::operator=(Body&& other) noexcept {
+  std::swap(_body, other._body);
+  std::swap(_shape, other._shape);
+  return *this;
+}
+
+Body::~Body() {
+  if (_body != nullptr) cpBodyFree(_body);
+  if (_shape != nullptr) cpShapeFree(_shape);
+}
+
+void Body::setPosition(float x, float y) const {
+  cpBodySetPosition(_body, cpv(x, y));
+  cpSpaceReindexShape(cpShapeGetSpace(_shape), _shape);
+}
+
+
+Sprite* Space::queryPointNearest(Vec2 point, float radius, cpShapeFilter filter,
+                                 cpPointQueryInfo* out) const {
+  cpShape* result =
+      cpSpacePointQueryNearest(_space, cpvFromVec2(point), radius, filter, out);
+  if (result != nullptr) {
+    return static_cast<Sprite*>(cpShapeGetUserData(result));
+  } else {
+    return nullptr;
+  }
+}
+
+Sprite* Space::querySegmentFirst(Vec2 start, Vec2 end, cpShapeFilter filter,
+                                   cpSegmentQueryInfo* out,
+                                   float radius) const {
+  cpShape* result = cpSpaceSegmentQueryFirst(
+      _space, cpvFromVec2(start), cpvFromVec2(end), radius, filter, out);
+  if (result != nullptr) {
+    return static_cast<Sprite*>(cpShapeGetUserData(result));
+  } else {
+    return nullptr;
+  }
+}
+
+auto Space::querySegmentAll(Vec2 start, Vec2 end, cpShapeFilter filter,
+                            float radius) const
+    -> std::vector<SegmentQueryInfo> {
+  typedef std::vector<SegmentQueryInfo> result_type;
+  result_type result;
+  cpSpaceSegmentQueryFunc query_func = [](cpShape* shape, cpVect point,
+                                          cpVect normal, cpFloat alpha,
+                                          void* data) {
+    result_type* result = static_cast<result_type*>(data);
+    result->push_back({getSpriteFromShape(shape), Vec2(point.x, point.y),
+                       Vec2(normal.x, normal.y), alpha});
+  };
+  cpSpaceSegmentQuery(_space, cpvFromVec2(start), cpvFromVec2(end), radius,
+                      filter, query_func, &result);
+  return result;
+}
+
+auto Space::queryPointAll(cocos2d::Vec2 point, float radius,
+                          cpShapeFilter filter) const
+    -> std::vector<PointQueryInfo> {
+  typedef std::vector<PointQueryInfo> result_type;
+  result_type result;
+  cpSpacePointQueryFunc query_func = [](cpShape* shape, cpVect point,
+                                        cpFloat dist, cpVect grad, void* data) {
+    result_type* result = static_cast<result_type*>(data);
+    result->push_back({getSpriteFromShape(shape), Vec2(point.x, point.y), dist,
+                       Vec2(grad.x, grad.y)});
+  };
+  cpSpacePointQuery(_space, cpvFromVec2(point), radius, filter, query_func,
+                    &result);
+  return result;
+}
 
 };

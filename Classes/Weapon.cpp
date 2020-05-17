@@ -35,7 +35,6 @@ void Bow::pointTo(Vec2 offset) {
   float angle = -offset.getAngle() * 180 / M_PI + angle_offset;
 
   this->setRotation(angle);
-  log("%f,%f %f", offset.x, offset.y, angle);
 }
 
 void Bow::fire(Vec2 offset) {
@@ -50,15 +49,14 @@ void Bow::fire(Vec2 offset) {
   Vec2 delta = speed / _arrowSpeed;
   new_arrow->runAction(RepeatForever::create(MoveBy::create(1, speed)));
   // 碰撞检测
-  auto space = GameScene::getRunningScene()->getPhysicsSpace()->getSpace();
-  auto collision_detect = [space, new_arrow, delta](float) {
-    if (cpSpaceSegmentQueryFirst(
-            space, chipmunk::cpvFromVec2(new_arrow->getPosition()),
-            chipmunk::cpvFromVec2(new_arrow->getPosition() + delta), 1,
-            CP_SHAPE_FILTER_ALL, nullptr)) {
+  auto space = GameScene::getRunningScene()->getPhysicsSpace();
+  auto filter = _owner->getBody().getFilter();
+  auto collision_detect = [space, new_arrow, delta, filter](float) {
+    if (space->querySegmentFirst(new_arrow->getPosition(),
+                                   new_arrow->getPosition() + delta, filter)) {
       new_arrow->stopAllActions();
       new_arrow->unscheduleAllCallbacks();
     }
   };
-  new_arrow->schedule(collision_detect, 0, "collistion_detect");
+  new_arrow->schedule(collision_detect, 0, "collision_detect");
 }

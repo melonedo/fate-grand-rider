@@ -123,20 +123,18 @@ void Hero::update(float delta) {
 
   // 碰撞检测
   cpSegmentQueryInfo info;
-  auto space = GameScene::getRunningScene()->getPhysicsSpace()->getSpace();
-  cpSpaceSegmentQueryFirst(space, cpv(old_pos.x, old_pos.y),
-                           cpv(new_pos.x, new_pos.y), 1, CP_SHAPE_FILTER_ALL,
-                           &info);
-  if (info.shape != nullptr) {
+  auto space = GameScene::getRunningScene()->getPhysicsSpace();
+  auto result =
+      space->querySegmentFirst(old_pos, new_pos, _body.getFilter(), &info);
+  if (result != nullptr) {
     this->setPosition(new_pos);
-    Sprite* spr = chipmunk::getSpriteFromShape(info.shape);
     new_pos = old_pos + info.alpha * (new_pos - old_pos);
 
     // 尝试互动
-    switch (spr->getTag()) {
+    switch (result->getTag()) {
       case kTagInteractable: {
         auto interaction =
-            dynamic_cast<Interaction*>(spr->getComponent("interaction"));
+            dynamic_cast<Interaction*>(result->getComponent("interaction"));
         interaction->touch();
         _interacting = interaction;
         break;

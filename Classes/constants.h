@@ -18,3 +18,10 @@ enum AnimationTag{
   kTagWalkingAnimation };
 
 enum SpriteTag { kTagHero = 2000, kTagWeapon, kTagWall, kTagInteractable};
+
+enum PhysicsShapeMask {
+  //kShapeMaskPlayer = 1 << 1,
+  kShapeMaskMob = 1 << 2,
+  kShapeMaskTile = 1 << 3,
+  kShapeMaskBullet = 1 << 4
+};

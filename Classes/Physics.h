@@ -8,68 +8,128 @@
 class Mob;
 
 // cocos2d-x自动的物理引擎有一些非常奇怪的特性，且接口不多，非常不方便，
-// 这里直接把chipmunk包装上，我们要用的只是查询功能，比较简单
+// 这里直接把chipmunk包装上，我们要用的只是查询功能，比较简单。
+
+
 namespace chipmunk {
 class Body;
-// 整个空间，包含所有要查询的物体
+// 整个空间，包含所有要查询的物体。
 class Space {
  public:
-  Space() : _space(cpSpaceNew()), _bodies() {}
+  Space() : _space(cpSpaceNew()), _bodies(), _groupCount(0) {}
   Space(const Space&) = delete;
   ~Space();
   // 获取cpSpace
   cpSpace* getSpace() const { return _space; }
-  // 添加一个body，并获得所有权，管理对应内存
+
+  //// 管理空间中的刚体
+
+  // 添加一个body，并获得所有权，管理对应内存。
   void addBodyAndOwn(Body&& body);
-  // 添加一个body，但不管理对应内存
+  // 添加一个body，但不管理对应内存。
   void addBody(Body* body);
-  // 删除一个body，不管理对应内存
+  // 删除一个body，不管理对应内存。
   void removeBody(Body* body);
+  // 将精灵对应为空间中静态的方形，并把指针写入cpShape中，若filter的第一个参数是0,则分配一个独立的组。
+  void addBoxForTile(cocos2d::Sprite* tile,
+                     cpShapeFilter filter = {0, kShapeMaskTile, CP_ALL_CATEGORIES});
+  // 将精灵下部对应的圆形加入空间，并把指针写入cpShape中，若filter的第一个参数是0,则分配一个独立的组。
+  // 注意为了保证位置对应关系，应将锚点设定为(0.5,0.25)。
+  void addCircleForMob(Mob* mob, cpShapeFilter filter = {0, kShapeMaskMob, CP_ALL_CATEGORIES});
+  // 如果以其他的形状添加，请自行使用chipmunk的接口。
+
+  //// 查询
+  // 提供几个常用的，若需要更多可自行使用chipmunk的函数。
+  // 关于cpShapeFilter：有分组和类别两个部分，同组内不会检测
+  // 分组则是交叉检测，A与B碰，A的分组和B的碰撞分组做与，B的分组和B的碰撞分组做与，
+  // 要求两个都是非0
+
+  // 查询一点圆形范围内最近的精灵
+  cocos2d::Sprite* queryPointNearest(cocos2d::Vec2 point, float radius,
+                                     cpShapeFilter filter = CP_SHAPE_FILTER_ALL,
+                                     cpPointQueryInfo* out = nullptr) const;
+  // 查询一射线段上最近的精灵
+  cocos2d::Sprite* querySegmentFirst(cocos2d::Vec2 start, cocos2d::Vec2 end,
+                                       cpShapeFilter = CP_SHAPE_FILTER_ALL,
+                                       cpSegmentQueryInfo* out = nullptr,
+                                       float radius = 1) const;
+
+  struct PointQueryInfo {
+    cocos2d::Sprite* sprite;       // 查询到的对象
+    cocos2d::Vec2 point;           // 最近点
+    float distance;                // 距离
+    cocos2d::Vec2 grad;            // 方向向量
+  };
+  std::vector<PointQueryInfo> queryPointAll(
+      cocos2d::Vec2 point, float radius,
+      cpShapeFilter filter = CP_SHAPE_FILTER_ALL) const;
+
+  struct SegmentQueryInfo {
+    cocos2d::Sprite* sprite;       // 查询到的对象
+    cocos2d::Vec2 point;           // 交点
+    cocos2d::Vec2 normal;          // 对应平面在交点点处的法线
+    float alpha;                   // 归一化长度，即到起点的路程占总长度的比例，在区间[0,1]
+  };
+  std::vector<SegmentQueryInfo> querySegmentAll(
+      cocos2d::Vec2 start, cocos2d::Vec2 end,
+      cpShapeFilter filter = CP_SHAPE_FILTER_ALL, float radius = 1) const;
+
  private:
   cpSpace* _space;
-  // 往Sprite里面注入有关的管理代码不太现实，所以在外部进行管理
+  // 往Sprite里面注入有关的管理代码不太现实，所以在外部进行管理。
   std::vector<Body> _bodies;
+  // 或许可以用Component管理?
+
+  mutable int _groupCount;
 };
 
-// 这里每个shape对应一个body，不单独分离出shape了
+// 物理刚体，各自对应一个形状。
 class Body {
  public:
   Body() : _body(nullptr), _shape(nullptr) {}
   Body(const Body&) = delete;
-  Body(Body&& other) noexcept : _body(other._body), _shape(other._shape) {
-    other._body = nullptr;
-    other._shape = nullptr;
-  }
-  Body& operator=(Body&& other) noexcept {
-    std::swap(_body, other._body);
-    std::swap(_shape, other._shape);
-    return *this;
-  }
-  void initAsCircle(cpFloat radius, cpVect offset);
+  Body(Body&&) noexcept;
+  Body& operator=(Body&& other) noexcept;
+  ~Body();
+  // 初始化为圆形，offset为相对物体位置的偏移，通常为0。
+  void initAsCircle(cpFloat radius, cpVect offset = cpv(0,0));
+  // 初始化为方形，radius为边框的粗细。
   void initAsBox(cpFloat width, cpFloat height, cpFloat radius = 1);
-  cpBody* getBody() { return _body; }
-  cpShape* getShape() { return _shape; }
 
-  ~Body() {
-    if (_body != nullptr) cpBodyFree(_body);
-    if (_shape != nullptr) cpShapeFree(_shape);
+  // 获取cpBody，供chipmunk引擎使用。
+  cpBody* getBody() const { return _body; }
+  // 获取cpShape，供chipmunk引擎使用。
+  cpShape* getShape() const { return _shape; }
+
+  // 设置位置，注意只有动态的物体可以改变位置（生物默认都可以）
+  void setPosition(cocos2d::Vec2 pos) const { setPosition(pos.x, pos.y); }
+  // 设置位置，注意只有动态的物体可以改变位置（生物默认都可以）
+  void setPosition(float x, float y) const;
+  // 似乎静态的也可以用?
+
+  // 获取筛选器
+  cpShapeFilter getFilter() const { return cpShapeGetFilter(_shape); }
+  // 设置筛选器
+  void setFilter(cpShapeFilter filter) const {
+    cpShapeSetFilter(_shape, filter);
   }
  private:
   cpBody* _body;
   cpShape* _shape;
 };
 
-// 为地图中的瓦片生成对应碰撞箱
+// 为地图中的瓦片生成对应碰撞箱。
+// 为兼容性暂时保留。
 void initPhysicsForTile(cocos2d::Sprite*);
 
-// 为生物生成碰撞箱
+// 为生物生成碰撞箱。
+// 为兼容性暂时保留。
 void initPhysicsForMob(Mob*);
 
-// 从cpShape获得对应的精灵，initPhysics的时候把指针存到了shape里。
-//Sprite* getSpriteFromShape(const Body*);
+// 从cpShape获得对应的精灵，加入到空间的时候把指针存到了cpShape里。
 cocos2d::Sprite* getSpriteFromShape(const cpShape* shape);
 
-// 把cocos2d的Vec2转换为cpv
+// 把cocos2d的Vec2转换为cpv。
 inline cpVect cpvFromVec2(cocos2d::Vec2 vec) { return cpv(vec.x, vec.y); }
 
 };  // namespace chipmunk
