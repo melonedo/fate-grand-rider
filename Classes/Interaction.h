@@ -16,7 +16,7 @@ class Interaction : public cocos2d::Component {
 class HideSpot : public Interaction {
  public:
   CREATE_FUNC(HideSpot);
-  virtual void touch() override {}
+  virtual void touch() override { cocos2d::log("You can hide here."); }
   virtual void dialog() override {
     using cocos2d::Director;
     auto hero =

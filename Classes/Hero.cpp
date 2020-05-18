@@ -122,26 +122,31 @@ void Hero::update(float delta) {
 
 
   // 碰撞检测
-  cpSegmentQueryInfo info;
+  chipmunk::Space::PointQueryInfo info;
   auto space = GameScene::getRunningScene()->getPhysicsSpace();
-  auto result =
-      space->querySegmentFirst(old_pos, new_pos, _body.getFilter(), &info);
+  auto result = space->queryPointNearest(new_pos, kSpriteResolution / 4,
+                                         _body.getFilter(), &info);
   if (result != nullptr) {
-    this->setPosition(new_pos);
-    new_pos = old_pos + info.alpha * (new_pos - old_pos);
+    // 贴墙
+    new_pos = info.point + info.grad * (kSpriteResolution / 4);
 
     // 尝试互动
     switch (result->getTag()) {
       case kTagInteractable: {
         auto interaction =
             dynamic_cast<Interaction*>(result->getComponent("interaction"));
-        interaction->touch();
-        _interacting = interaction;
+        if (interaction != _interacting) {
+          interaction->touch();
+          _interacting = interaction;
+        }
         break;
       }
       default:
         break;
     }
+  } else if (_speed.length() != 0) {
+    // 取消互动
+    _interacting = nullptr;
   }
 
   // 滚动屏幕（Size和Vec没有减法只有加法，所以倒过来）

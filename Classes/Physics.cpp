@@ -124,26 +124,31 @@ void Body::setPosition(float x, float y) const {
 
 
 Sprite* Space::queryPointNearest(Vec2 point, float radius, cpShapeFilter filter,
-                                 cpPointQueryInfo* out) const {
-  cpShape* result =
-      cpSpacePointQueryNearest(_space, cpvFromVec2(point), radius, filter, out);
-  if (result != nullptr) {
-    return static_cast<Sprite*>(cpShapeGetUserData(result));
-  } else {
-    return nullptr;
+                                 PointQueryInfo* out) const {
+  cpPointQueryInfo cp_out;
+  cpSpacePointQueryNearest(_space, cpvFromVec2(point), radius, filter, &cp_out);
+
+  if (out != nullptr) {
+    out->sprite = getSpriteFromShape(cp_out.shape);
+    out->point = vec2FromCpv(cp_out.point);
+    out->distance = cp_out.distance;
+    out->grad = vec2FromCpv(cp_out.gradient);
   }
+  return getSpriteFromShape(cp_out.shape);
 }
 
 Sprite* Space::querySegmentFirst(Vec2 start, Vec2 end, cpShapeFilter filter,
-                                   cpSegmentQueryInfo* out,
-                                   float radius) const {
-  cpShape* result = cpSpaceSegmentQueryFirst(
-      _space, cpvFromVec2(start), cpvFromVec2(end), radius, filter, out);
-  if (result != nullptr) {
-    return static_cast<Sprite*>(cpShapeGetUserData(result));
-  } else {
-    return nullptr;
+                                 SegmentQueryInfo* out, float radius) const {
+  cpSegmentQueryInfo cp_out;
+  cpSpaceSegmentQueryFirst(_space, cpvFromVec2(start), cpvFromVec2(end), radius,
+                           filter, &cp_out);
+  if (out != nullptr) {
+    out->sprite = getSpriteFromShape(cp_out.shape);
+    out->point = vec2FromCpv(cp_out.point);
+    out->normal = vec2FromCpv(cp_out.normal);
+    out->alpha = cp_out.alpha;
   }
+  return getSpriteFromShape(cp_out.shape);
 }
 
 auto Space::querySegmentAll(Vec2 start, Vec2 end, cpShapeFilter filter,

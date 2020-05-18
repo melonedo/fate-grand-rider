@@ -44,15 +44,7 @@ class Space {
   // 分组则是交叉检测，A与B碰，A的分组和B的碰撞分组做与，B的分组和B的碰撞分组做与，
   // 要求两个都是非0
 
-  // 查询一点圆形范围内最近的精灵
-  cocos2d::Sprite* queryPointNearest(cocos2d::Vec2 point, float radius,
-                                     cpShapeFilter filter = CP_SHAPE_FILTER_ALL,
-                                     cpPointQueryInfo* out = nullptr) const;
-  // 查询一射线段上最近的精灵
-  cocos2d::Sprite* querySegmentFirst(cocos2d::Vec2 start, cocos2d::Vec2 end,
-                                       cpShapeFilter = CP_SHAPE_FILTER_ALL,
-                                       cpSegmentQueryInfo* out = nullptr,
-                                       float radius = 1) const;
+
 
   struct PointQueryInfo {
     cocos2d::Sprite* sprite;       // 查询到的对象
@@ -60,9 +52,15 @@ class Space {
     float distance;                // 距离
     cocos2d::Vec2 grad;            // 方向向量
   };
+
+  // 查询圆形范围内的所有精灵
   std::vector<PointQueryInfo> queryPointAll(
       cocos2d::Vec2 point, float radius,
       cpShapeFilter filter = CP_SHAPE_FILTER_ALL) const;
+  // 查询一点圆形范围内最近的精灵
+  cocos2d::Sprite* queryPointNearest(cocos2d::Vec2 point, float radius,
+                                     cpShapeFilter filter = CP_SHAPE_FILTER_ALL,
+                                     PointQueryInfo* out = nullptr) const;
 
   struct SegmentQueryInfo {
     cocos2d::Sprite* sprite;       // 查询到的对象
@@ -70,6 +68,13 @@ class Space {
     cocos2d::Vec2 normal;          // 对应平面在交点点处的法线
     float alpha;                   // 归一化长度，即到起点的路程占总长度的比例，在区间[0,1]
   };
+
+  // 查询一射线段上最近的精灵
+  cocos2d::Sprite* querySegmentFirst(cocos2d::Vec2 start, cocos2d::Vec2 end,
+                                     cpShapeFilter = CP_SHAPE_FILTER_ALL,
+                                     SegmentQueryInfo* out = nullptr,
+                                     float radius = 1) const;
+  // 查询一线段上所有精灵
   std::vector<SegmentQueryInfo> querySegmentAll(
       cocos2d::Vec2 start, cocos2d::Vec2 end,
       cpShapeFilter filter = CP_SHAPE_FILTER_ALL, float radius = 1) const;
@@ -129,7 +134,12 @@ void initPhysicsForMob(Mob*);
 // 从cpShape获得对应的精灵，加入到空间的时候把指针存到了cpShape里。
 cocos2d::Sprite* getSpriteFromShape(const cpShape* shape);
 
-// 把cocos2d的Vec2转换为cpv。
+// 把cocos2d的Vec2转换为cpVect。
 inline cpVect cpvFromVec2(cocos2d::Vec2 vec) { return cpv(vec.x, vec.y); }
+
+// 把cpVect转成cocos2d::Vec2
+inline cocos2d::Vec2 vec2FromCpv(cpVect vec) {
+  return cocos2d::Vec2(vec.x, vec.y);
+}
 
 };  // namespace chipmunk
