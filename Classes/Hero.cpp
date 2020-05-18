@@ -129,6 +129,10 @@ void Hero::update(float delta) {
   if (result != nullptr) {
     // 贴墙
     new_pos = info.point + info.grad * (kSpriteResolution / 4);
+    // 奇怪的NaN问题以及负距离问题会在无聊进去箱子里面的时候出现
+    if (info.distance < 0 || isnan(new_pos.x) || isnan(new_pos.y)) {
+      new_pos = old_pos;
+    }
 
     // 尝试互动
     switch (result->getTag()) {
