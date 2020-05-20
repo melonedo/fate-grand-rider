@@ -31,3 +31,18 @@ class Bow : public Weapon {
   // 箭的速度
   float _arrowSpeed;
 };
+
+//矛
+class Spear : public Weapon {
+ public:
+  static Spear* create(const std::string& name);
+  void pointTo(cocos2d::Vec2) override;
+  void fire(cocos2d::Vec2) override;
+
+ protected:
+  Spear() = default;
+  // 矛图片的角度
+  float _spearAngleOffset;
+  // 矛刺出的速度
+  float _spearSpeed;
+};

@@ -3,7 +3,7 @@
 #include "DataSet.h"
 #include "GameScene.h"
 using namespace cocos2d;
-
+/***武器——弓***/
 Bow* Bow::create(const std::string& name) {
   Bow* bow = new Bow;
   bow->Weapon::init();
@@ -61,4 +61,38 @@ void Bow::fire(Vec2 offset) {
     }
   };
   new_arrow->schedule(collision_detect, 0, "collistion_detect");
+}
+
+/***武器——矛***/
+Spear* Spear::create(const std::string& name) { 
+  Spear* spear = new Spear;
+  spear->Weapon::init();
+  spear->setName(name);
+  const auto& data = DataSet::getConfig()["weapons"][name.c_str()];
+  const auto& spear_data = data["spear"];
+  spear->_spearAngleOffset = spear_data["angle-offset"].GetFloat();
+  spear->setSpriteFrame(
+      DataSet::load_frame(spear_data["frame"].GetString(), kWeaponResolution));
+  const auto& anchor_data = spear_data["anchor"].GetArray();
+  spear->_spearSpeed = spear_data["speed"].GetFloat();
+  spear->setAnchorPoint(
+      Vec2(anchor_data[0].GetFloat(), anchor_data[1].GetFloat()));
+
+  return spear;
+}
+
+void Spear::pointTo(Vec2 offset) {
+  float angle_offset = isFlippedX() ? 180 - _spearAngleOffset : _spearAngleOffset;
+  float angle = -offset.getAngle() * 180 / M_PI + angle_offset;
+  this->setRotation(angle);
+  log("%f,%f %f", offset.x, offset.y, angle);
+}
+
+void Spear::fire(Vec2 offset) {
+  Vec2 speed = _spearSpeed * offset / offset.getLength();
+  Vec2 delta = speed / _spearSpeed;
+  auto flipxAction = FlipX::create(true);
+  auto moveBy = MoveBy::create(0.3f, speed);
+  auto action = Sequence::create(moveBy, flipxAction, moveBy->reverse(), NULL);
+  runAction(action);
 }
