@@ -18,6 +18,7 @@ bool Mob::init() {
 
 void Mob::setPosition(float x, float y) {
   Sprite::setPosition(x, y);
-  cpBodySetPosition(_body.getBody(), cpv(x, y));
+  //cpBodySetPosition(_body.getBody(), cpv(x, y));
+  _body.setPosition(x, y);
 }
 

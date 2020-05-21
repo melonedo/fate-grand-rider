@@ -122,28 +122,35 @@ void Hero::update(float delta) {
 
 
   // 碰撞检测
-  cpSegmentQueryInfo info;
-  auto space = GameScene::getRunningScene()->getPhysicsSpace()->getSpace();
-  cpSpaceSegmentQueryFirst(space, cpv(old_pos.x, old_pos.y),
-                           cpv(new_pos.x, new_pos.y), 1, CP_SHAPE_FILTER_ALL,
-                           &info);
-  if (info.shape != nullptr) {
-    this->setPosition(new_pos);
-    Sprite* spr = chipmunk::getSpriteFromShape(info.shape);
-    new_pos = old_pos + info.alpha * (new_pos - old_pos);
+  chipmunk::Space::PointQueryInfo info;
+  auto space = GameScene::getRunningScene()->getPhysicsSpace();
+  auto result = space->queryPointNearest(new_pos, kSpriteResolution / 4,
+                                         _body.getFilter(), &info);
+  if (result != nullptr) {
+    // 贴墙
+    new_pos = info.point + info.grad * (kSpriteResolution / 4);
+    // 奇怪的NaN问题以及负距离问题会在无聊进去箱子里面的时候出现
+    if (info.distance < 0 || isnan(new_pos.x) || isnan(new_pos.y)) {
+      new_pos = old_pos;
+    }
 
     // 尝试互动
-    switch (spr->getTag()) {
+    switch (result->getTag()) {
       case kTagInteractable: {
         auto interaction =
-            dynamic_cast<Interaction*>(spr->getComponent("interaction"));
-        interaction->touch();
-        _interacting = interaction;
+            dynamic_cast<Interaction*>(result->getComponent("interaction"));
+        if (interaction != _interacting) {
+          interaction->touch();
+          _interacting = interaction;
+        }
         break;
       }
       default:
         break;
     }
+  } else if (_speed.length() != 0) {
+    // 取消互动
+    _interacting = nullptr;
   }
 
   // 滚动屏幕（Size和Vec没有减法只有加法，所以倒过来）
