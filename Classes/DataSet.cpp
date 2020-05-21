@@ -79,8 +79,7 @@ const static std::unordered_map<std::string, std::function<Hero*()>> kHeroSet{
     {"sample-man", SampleHero::create}};
 
 Hero* DataSet::load_hero(const std::string& hero_name) {
-  const auto& hero_data =
-      DataSet::getConfig()["heroes"][hero_name.c_str()].GetObject();
+
   Hero* hero = kHeroSet.at(hero_name)();
   hero->setTag(kTagHero);
   return hero;

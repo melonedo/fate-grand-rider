@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="2020.04.10" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="2">
+ <tileset firstgid="1" name="walls" tilewidth="16" tileheight="16" tilecount="256" columns="16">
+  <image source="0x72_16x16DungeonTileset_walls.v2.png" width="256" height="256"/>
+  <tile id="49">
+   <properties>
+    <property name="type" value="wall"/>
+   </properties>
+  </tile>
+  <tile id="89">
+   <properties>
+    <property name="interaction" value="hide"/>
+    <property name="type" value="interactable"/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="257" name="buildings" tilewidth="16" tileheight="16" tilecount="256" columns="16">
+  <image source="0x72_16x16DungeonTileset.v4.png" width="256" height="256"/>
+ </tileset>
+ <objectgroup id="4" name="obj" locked="1">
+  <object id="1" name="spawn" x="434" y="635">
+   <point/>
+  </object>
+ </objectgroup>
+ <layer id="5" name="meta" width="60" height="60" locked="1">
+  <data encoding="base64" compression="zlib">
+   eJzt0NENQEAYBGE1XTn6L0RUsLIuxzBf4m3jN7ZNkiRJkqRsTNpQ2NttKOztNhT2dhsKe7sNhb3dhsLebkNhb7ehsLfbUNjbbSi+1jsuPDPe8ZZ/cn7HvujOG6z6DnufYS/7TmIv+05iL/tOYi/7TmIv+05iL/tOYi/7TmIv+07yx95Vj6R7Dq8uGPc=
+  </data>
+ </layer>
+ <layer id="7" name="building-bg" width="60" height="60" locked="1">
+  <data encoding="base64" compression="zlib">
+   eJztwQENAAAAwqD3T20PBxQAAAAAAAAAAAAAAAAA8GY4QAAB
+  </data>
+ </layer>
+ <layer id="3" name="bg" width="60" height="60" locked="1">
+  <data encoding="base64" compression="zlib">
+   eJztz7EJwDAUQ0HP5NWyP2QEuQjhW9wDlSpuLUmSJEmSznrC2uLlbYqXtyle3qZ4eZvi5W2Kl7epNu8OS9703/9RjkqeLzYpXl5eXl7eCfHy8vLy8k6Il5eX9xavpDt6AeTgL3Y=
+  </data>
+ </layer>
+ <layer id="6" name="building-fg" width="60" height="60" locked="1">
+  <data encoding="base64" compression="zlib">
+   eJztzwENADAIwDCuFgnYx8QDT94q2CIAAAAAAAAAAN6XZ7tgVn32CwAAAADAfQ05agDh
+  </data>
+ </layer>
+ <layer id="2" name="fg" width="60" height="60" locked="1">
+  <data encoding="base64" compression="zlib">
+   eJzt0VsKwjAQhtGqKxB34GUB6v73Zvs8YIN0Mo2cA/9bSfORaQIAAIB154ZvLum36EdvpHdceiO949Ib6R2X3kjvuPRGeselN9K7X4d51y97NJxxXzlj2Wnri/+o5f22cOv0nzV6c+itoTeH3hp6c+itoTeH3hp6c+itoTeH3hpL77HD9tL7nPfqsHevIOBvfAANiQ6A
+  </data>
+ </layer>
+</map>

@@ -106,13 +106,13 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     Scene* scene;
-    if (DataSet::getConfig()["skip-starting-scene"].GetBool()) {
-      scene = GameScene::create();
-    } else {
-      scene = HomeScene::create(
-          [director] { director->replaceScene(GameScene::create()); },
+   // if (DataSet::getConfig()["skip-starting-scene"].GetBool()) {
+      //scene = GameScene::create();
+  //  } else {
+     scene = HomeScene::create(
+         [director] { director->replaceScene(GameScene::create()); },
           [] { log("settings"); });
-    }
+   // }
 
     // run
     director->runWithScene(scene);

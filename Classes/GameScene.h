@@ -2,6 +2,7 @@
 #include "cocos2d.h"
 #include "DataSet.h"
 #include "Physics.h"
+#include "PauseGame.h"
 
 class GameScene : public cocos2d::Scene {
  public:
@@ -14,6 +15,8 @@ class GameScene : public cocos2d::Scene {
   
   // 获取物理空间
   chipmunk::Space* getPhysicsSpace() { return &_space; }
+
+
  private:
   bool init() override;
   

@@ -7,10 +7,14 @@ using namespace cocos2d;
 #include "Physics.h"
 
 bool GameScene::init() {
+    //暂停
+    auto m_pause = PauseGame::create();
+    this->addChild(m_pause);
   bool result;
   if (DataSet::getShowPhysicsDebugBoxes()) {
     result = Scene::initWithPhysics();
-  } else {
+  }
+  else {
     result = Scene::init();
   }
   if (!result) return false;
@@ -18,6 +22,9 @@ bool GameScene::init() {
   runningGameScene = this;
 
   const auto& config = DataSet::getConfig();
+
+
+
 
   // 缩放
   this->setScale(config["global-zoom-scale"].GetFloat());
@@ -47,7 +54,8 @@ bool GameScene::init() {
     hero->pickWeapon(DataSet::load_weapon(debug_set["weapon"].GetString()));
 
     return true;
-  } else {
+  }
+  else {
     CCASSERT(false, "Only debug set is supported now");
     return false;
   }
