@@ -118,22 +118,66 @@ void Hero::updateSpeed() {
 
 void Hero::update(float delta) {
   auto old_pos = this->getPosition();
-  auto new_pos = old_pos + _speed * delta;
-
+  auto disp = _speed * delta;
+  auto new_pos = old_pos + disp;
 
   // 碰撞检测
-  chipmunk::Space::PointQueryInfo info;
-  auto space = GameScene::getRunningScene()->getPhysicsSpace();
-  auto result = space->queryPointNearest(new_pos, kSpriteResolution / 4,
-                                         _body.getFilter(), &info);
-  if (result != nullptr) {
-    // 贴墙
-    new_pos = info.point + info.grad * (kSpriteResolution / 4);
-    // 奇怪的NaN问题以及负距离问题会在无聊进去箱子里面的时候出现
-    if (info.distance < 0 || isnan(new_pos.x) || isnan(new_pos.y)) {
-      new_pos = old_pos;
+  using namespace chipmunk;
+  Sprite* result = nullptr;
+  if (disp != Vec2(0, 0)) {
+    // 找到附近的所有物体
+    auto space = GameScene::getRunningScene()->getPhysicsSpace();
+    auto radius = kSpriteResolution / 4;
+    auto near_obj =
+        space->queryPointAll(new_pos, 2 * radius, _body.getFilter());
+    // 附近没别的就直接继续
+    if (near_obj.size() != 0 && disp != Vec2(0, 0)) {
+      // 找到向原方向移动的最大距离
+      int nearest_obj = -1;
+      cpSegmentQueryInfo nearest_info;
+      nearest_info.alpha = 1;
+      for (int i = 0; i < near_obj.size(); i++) {
+        cpSegmentQueryInfo info;
+        cpShapeSegmentQuery(near_obj[i].shape, cpvFromVec2(old_pos),
+                            cpvFromVec2(new_pos), radius, &info);
+        if (nearest_info.alpha > info.alpha &&
+            cpvdot(info.normal, cpvFromVec2(disp)) < 0) {
+          nearest_obj = i;
+          nearest_info = info;
+        }
+      }
+      // 如果不能完全地移动到new_pos则进一步修正
+      if (nearest_obj != -1) {
+        log("%f,%f", getPosition().x, getPosition().y);
+        // 先设置好互动对象
+        result = getSpriteFromShape(nearest_info.shape);
+        // 除去这个障碍
+        near_obj.erase(near_obj.begin() + nearest_obj);
+        // 移动到贴上，然后平行切面移动
+        old_pos = old_pos + disp * nearest_info.alpha;
+        disp *= 1 - nearest_info.alpha;
+        disp -= disp.dot(vec2FromCpv(nearest_info.normal)) *
+                vec2FromCpv(nearest_info.normal);
+        new_pos = old_pos + disp;
+        // 再试一次
+        nearest_info.alpha = 1;
+        for (int i = 0; i < near_obj.size(); i++) {
+          cpSegmentQueryInfo info;
+          cpShapeSegmentQuery(near_obj[i].shape, cpvFromVec2(old_pos),
+                              cpvFromVec2(new_pos), radius, &info);
+          if (nearest_info.alpha > info.alpha &&
+              !cpveql(info.normal, nearest_info.normal) &&
+              cpvdot(info.normal, cpvFromVec2(disp)) < -0.01) {
+            nearest_obj = i;
+            nearest_info = info;
+          }
+        }
+        new_pos = old_pos + disp * nearest_info.alpha;
+      }
     }
-
+  }
+ 
+  if (result != nullptr) {
     // 尝试互动
     switch (result->getTag()) {
       case kTagInteractable: {

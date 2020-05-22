@@ -1,8 +1,9 @@
 #include "Physics.h"
-#include "cocos2d.h"
+
 #include "DataSet.h"
 #include "GameScene.h"
 #include "Mob.h"
+#include "cocos2d.h"
 
 namespace chipmunk {
 void Space::addBodyAndOwn(Body&& body) {
@@ -20,12 +21,9 @@ void Space::removeBody(Body* body) {
   cpSpaceRemoveBody(_space, body->getBody());
 }
 
-Space::~Space() {
-  cpSpaceFree(_space);
-}
+Space::~Space() { cpSpaceFree(_space); }
 
-void Body::initAsBox(cpFloat width, cpFloat height,
-                                      cpFloat radius) {
+void Body::initAsBox(cpFloat width, cpFloat height, cpFloat radius) {
   this->~Body();
   _body = cpBodyNew(0, 0);
   _shape = cpBoxShapeNew(_body, width, height, radius);
@@ -88,7 +86,7 @@ void initPhysicsForMob(Mob* mob) {
   GameScene::getRunningScene()->getPhysicsSpace()->addCircleForMob(mob);
 }
 
-//Sprite* getSprteFromShape(const Body* body) {
+// Sprite* getSprteFromShape(const Body* body) {
 //  return getSprteFromShape(body->getShape());
 //}
 cocos2d::Sprite* getSpriteFromShape(const cpShape* shape) {
@@ -99,9 +97,7 @@ cocos2d::Sprite* getSpriteFromShape(const cpShape* shape) {
   }
 }
 
-
-Body::Body(Body&& other) noexcept 
-: _body(other._body), _shape(other._shape) {
+Body::Body(Body&& other) noexcept : _body(other._body), _shape(other._shape) {
   other._body = nullptr;
   other._shape = nullptr;
 }
@@ -117,19 +113,20 @@ Body::~Body() {
   if (_shape != nullptr) cpShapeFree(_shape);
 }
 
-void Body::setPosition(float x, float y) const {
+void Body::setPosition(float x, float y) {
   cpBodySetPosition(_body, cpv(x, y));
   cpSpaceReindexShape(cpShapeGetSpace(_shape), _shape);
 }
 
-
-Sprite* Space::queryPointNearest(Vec2 point, float radius, cpShapeFilter filter,
+Sprite* Space::queryPointNearest(const Vec2& point, float radius,
+                                 cpShapeFilter filter,
                                  PointQueryInfo* out) const {
   cpPointQueryInfo cp_out;
   cpSpacePointQueryNearest(_space, cpvFromVec2(point), radius, filter, &cp_out);
 
   if (out != nullptr) {
     out->sprite = getSpriteFromShape(cp_out.shape);
+    out->shape = cp_out.shape;
     out->point = vec2FromCpv(cp_out.point);
     out->distance = cp_out.distance;
     out->grad = vec2FromCpv(cp_out.gradient);
@@ -137,13 +134,15 @@ Sprite* Space::queryPointNearest(Vec2 point, float radius, cpShapeFilter filter,
   return getSpriteFromShape(cp_out.shape);
 }
 
-Sprite* Space::querySegmentFirst(Vec2 start, Vec2 end, cpShapeFilter filter,
-                                 SegmentQueryInfo* out, float radius) const {
+Sprite* Space::querySegmentFirst(const Vec2& start, const Vec2& end,
+                                 cpShapeFilter filter, SegmentQueryInfo* out,
+                                 float radius) const {
   cpSegmentQueryInfo cp_out;
   cpSpaceSegmentQueryFirst(_space, cpvFromVec2(start), cpvFromVec2(end), radius,
                            filter, &cp_out);
   if (out != nullptr) {
     out->sprite = getSpriteFromShape(cp_out.shape);
+    out->shape = cp_out.shape;
     out->point = vec2FromCpv(cp_out.point);
     out->normal = vec2FromCpv(cp_out.normal);
     out->alpha = cp_out.alpha;
@@ -151,8 +150,8 @@ Sprite* Space::querySegmentFirst(Vec2 start, Vec2 end, cpShapeFilter filter,
   return getSpriteFromShape(cp_out.shape);
 }
 
-auto Space::querySegmentAll(Vec2 start, Vec2 end, cpShapeFilter filter,
-                            float radius) const
+auto Space::querySegmentAll(const Vec2& start, const Vec2& end,
+                            cpShapeFilter filter, float radius) const
     -> std::vector<SegmentQueryInfo> {
   typedef std::vector<SegmentQueryInfo> result_type;
   result_type result;
@@ -160,7 +159,7 @@ auto Space::querySegmentAll(Vec2 start, Vec2 end, cpShapeFilter filter,
                                           cpVect normal, cpFloat alpha,
                                           void* data) {
     result_type* result = static_cast<result_type*>(data);
-    result->push_back({getSpriteFromShape(shape), Vec2(point.x, point.y),
+    result->push_back({getSpriteFromShape(shape), shape, Vec2(point.x, point.y),
                        Vec2(normal.x, normal.y), alpha});
   };
   cpSpaceSegmentQuery(_space, cpvFromVec2(start), cpvFromVec2(end), radius,
@@ -168,7 +167,7 @@ auto Space::querySegmentAll(Vec2 start, Vec2 end, cpShapeFilter filter,
   return result;
 }
 
-auto Space::queryPointAll(cocos2d::Vec2 point, float radius,
+auto Space::queryPointAll(const Vec2& point, float radius,
                           cpShapeFilter filter) const
     -> std::vector<PointQueryInfo> {
   typedef std::vector<PointQueryInfo> result_type;
@@ -176,12 +175,12 @@ auto Space::queryPointAll(cocos2d::Vec2 point, float radius,
   cpSpacePointQueryFunc query_func = [](cpShape* shape, cpVect point,
                                         cpFloat dist, cpVect grad, void* data) {
     result_type* result = static_cast<result_type*>(data);
-    result->push_back({getSpriteFromShape(shape), Vec2(point.x, point.y), dist,
-                       Vec2(grad.x, grad.y)});
+    result->push_back({getSpriteFromShape(shape), shape, Vec2(point.x, point.y),
+                       dist, Vec2(grad.x, grad.y)});
   };
   cpSpacePointQuery(_space, cpvFromVec2(point), radius, filter, query_func,
                     &result);
   return result;
 }
 
-};
+};  // namespace chipmunk
