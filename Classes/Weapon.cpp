@@ -2,13 +2,15 @@
 #include "cocos2d.h"
 #include "DataSet.h"
 #include "GameScene.h"
+#include "CCVector.h"
 using namespace cocos2d;
+
 /***武器——弓***/
 Bow* Bow::create(const std::string& name) {
   Bow* bow = new Bow;
   bow->Weapon::init();
   bow->setName(name);
-  const auto& data = DataSet::getConfig()["weapons"][name.c_str()];
+  const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
   const auto& bow_data = data["bow"];
   bow->_bowAngleOffset = bow_data["angle-offset"].GetFloat();
   bow->setSpriteFrame(
@@ -39,28 +41,72 @@ void Bow::pointTo(Vec2 offset) {
 }
 
 void Bow::fire(Vec2 offset) {
-  auto new_arrow = Sprite::create();
-  new_arrow->setRotation(-offset.getAngle() * 180 / M_PI + _arrow->getRotation());
-  new_arrow->setSpriteFrame(_arrow->getSpriteFrame());
-  new_arrow->setAnchorPoint(_arrow->getAnchorPoint());
-  new_arrow->setPosition(_owner->getPosition());
-  new_arrow->setVisible(true);
-  getScene()->addChild(new_arrow);
-  Vec2 speed = _arrowSpeed * offset / offset.getLength();
-  Vec2 delta = speed / _arrowSpeed;
-  new_arrow->runAction(RepeatForever::create(MoveBy::create(1, speed)));
+  auto new_arrow1 = Sprite::create();
+  auto new_arrow2 = Sprite::create();
+  auto new_arrow3 = Sprite::create();
+  auto v1 = Vec2((offset.y*5 + offset.x*12) / 15, (offset.y*12 - offset.x*5) / 15);
+  auto v2 = Vec2((offset.x * 12 - offset.y *5) / 15, (offset.y * 12 + offset.x * 5) / 15);
+  new_arrow1->setRotation(-offset.getAngle() * 180 / M_PI + _arrow->getRotation() + 22);
+  new_arrow1->setSpriteFrame(_arrow->getSpriteFrame());
+  new_arrow1->setAnchorPoint(_arrow->getAnchorPoint());
+  new_arrow1->setPosition((_owner->getPosition()));
+  new_arrow2->setRotation(-offset.getAngle() * 180 / M_PI +
+                          _arrow->getRotation());
+  new_arrow2->setSpriteFrame(_arrow->getSpriteFrame());
+  new_arrow2->setAnchorPoint(_arrow->getAnchorPoint());
+  new_arrow2->setPosition((_owner->getPosition()));
+  new_arrow3->setRotation(-offset.getAngle() * 180 / M_PI +
+                          _arrow->getRotation()-22);
+  new_arrow3->setSpriteFrame(_arrow->getSpriteFrame());
+  new_arrow3->setAnchorPoint(_arrow->getAnchorPoint());
+  new_arrow3->setPosition((_owner->getPosition()));
+  new_arrow1->setVisible(true);
+  new_arrow2->setVisible(true);
+  new_arrow3->setVisible(true);
+  getScene()->addChild(new_arrow1);
+  getScene()->addChild(new_arrow2);
+  getScene()->addChild(new_arrow3);
+  Vec2 speed1 = _arrowSpeed * (v1) / offset.getLength();
+  Vec2 speed2 = _arrowSpeed * (offset) / offset.getLength();
+  Vec2 speed3 = _arrowSpeed * (v2) / offset.getLength();
+  Vec2 delta1 = speed1 / _arrowSpeed;
+  Vec2 delta2 = speed2 / _arrowSpeed;
+  Vec2 delta3 = speed3 / _arrowSpeed;
+  new_arrow1->runAction(RepeatForever::create(MoveBy::create(1, speed1)));
+  new_arrow2->runAction(RepeatForever::create(MoveBy::create(1, speed2)));
+  new_arrow3->runAction(RepeatForever::create(MoveBy::create(1, speed3)));
   // 碰撞检测
   auto space = GameScene::getRunningScene()->getPhysicsSpace()->getSpace();
-  auto collision_detect = [space, new_arrow, delta](float) {
+  auto collision_detect = [space, new_arrow1, delta1](float) {
     if (cpSpaceSegmentQueryFirst(
-            space, chipmunk::cpvFromVec2(new_arrow->getPosition()),
-            chipmunk::cpvFromVec2(new_arrow->getPosition() + delta), 1,
+            space, chipmunk::cpvFromVec2(new_arrow1->getPosition()),
+            chipmunk::cpvFromVec2(new_arrow1->getPosition() + delta1), 1,
             CP_SHAPE_FILTER_ALL, nullptr)) {
-      new_arrow->stopAllActions();
-      new_arrow->unscheduleAllCallbacks();
+      new_arrow1->stopAllActions();
+      new_arrow1->unscheduleAllCallbacks();
     }
   };
-  new_arrow->schedule(collision_detect, 0, "collistion_detect");
+  new_arrow1->schedule(collision_detect, 0, "collistion_detect");
+  auto collision_detect2 = [space, new_arrow2, delta2](float) {
+    if (cpSpaceSegmentQueryFirst(
+            space, chipmunk::cpvFromVec2(new_arrow2->getPosition()),
+            chipmunk::cpvFromVec2(new_arrow2->getPosition() + delta2), 1,
+            CP_SHAPE_FILTER_ALL, nullptr)) {
+      new_arrow2->stopAllActions();
+      new_arrow2->unscheduleAllCallbacks();
+    }
+  };
+  new_arrow2->schedule(collision_detect2, 0, "collistion_detect");
+  auto collision_detect3 = [space, new_arrow3, delta3](float) {
+    if (cpSpaceSegmentQueryFirst(
+            space, chipmunk::cpvFromVec2(new_arrow3->getPosition()),
+            chipmunk::cpvFromVec2(new_arrow3->getPosition() + delta3), 1,
+            CP_SHAPE_FILTER_ALL, nullptr)) {
+      new_arrow3->stopAllActions();
+      new_arrow3->unscheduleAllCallbacks();
+    }
+  };
+  new_arrow3->schedule(collision_detect3, 0, "collistion_detect");
 }
 
 /***武器——矛***/
@@ -68,7 +114,7 @@ Spear* Spear::create(const std::string& name) {
   Spear* spear = new Spear;
   spear->Weapon::init();
   spear->setName(name);
-  const auto& data = DataSet::getConfig()["weapons"][name.c_str()];
+  const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
   const auto& spear_data = data["spear"];
   spear->_spearAngleOffset = spear_data["angle-offset"].GetFloat();
   spear->setSpriteFrame(
