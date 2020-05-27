@@ -4,6 +4,7 @@
 #include "GameScene.h"
 #include "CCVector.h"
 using namespace cocos2d;
+using namespace std;
 
 /***武器——弓***/
 Bow* Bow::create(const std::string& name) {
@@ -41,22 +42,66 @@ void Bow::pointTo(Vec2 offset) {
 }
 
 void Bow::fire(Vec2 offset) {
-  auto new_arrow1 = Sprite::create();
+  auto v1 = Vec2((offset.y * 5 + offset.x * 12) / 15,
+                 (offset.y * 12 - offset.x * 5) / 15);
+  auto v2 = Vec2((offset.x * 12 - offset.y * 5) / 15,
+                 (offset.y * 12 + offset.x * 5) / 15);
+  AutoRef<Sprite> arrows[3];
+  for (int i = 0;i < 3;i++) {
+    arrows[i] = Sprite::create();
+    arrows[i]->setSpriteFrame(_arrow->getSpriteFrame());
+    arrows[i]->setAnchorPoint(_arrow->getAnchorPoint());
+    arrows[i]->setPosition((_owner->getPosition()));
+    Vec2 speed;
+    auto space = GameScene::getRunningScene()->getPhysicsSpace()->getSpace();
+    if (i == 0) {
+      arrows[i]->setRotation(-offset.getAngle() * 180 / M_PI +
+                             _arrow->getRotation() + 22);
+      speed = _arrowSpeed * (v1) / offset.getLength();
+    } else if (i == 1) {
+      arrows[i]->setRotation(-offset.getAngle() * 180 / M_PI +
+                             _arrow->getRotation());
+      speed = _arrowSpeed * (offset) / offset.getLength();
+    } else if (i == 2) {
+      arrows[i]->setRotation(-offset.getAngle() * 180 / M_PI +
+                             _arrow->getRotation() - 22);
+      speed = _arrowSpeed * (v2) / offset.getLength();
+    }
+    Vec2 delta = speed / _arrowSpeed;
+    arrows[i]->setVisible(true);
+    getScene()->addChild(arrows[i]);
+    arrows[i]->runAction(RepeatForever::create(MoveBy::create(1, speed)));
+    /*auto temp = arrows[i];
+    auto collision_detect = [space, delta](float) {
+      if (cpSpaceSegmentQueryFirst(
+              space, chipmunk::cpvFromVec2(temp->getPosition()),
+              chipmunk::cpvFromVec2(temp->getPosition() + delta), 1,
+              CP_SHAPE_FILTER_ALL, nullptr)) {
+        temp->stopAllActions();
+        temp->unscheduleAllCallbacks();
+      }
+    };
+    arrows[i]->schedule(collision_detect, 0, "collistion_detect");*/
+  }
+  
+ /* auto new_arrow1 = Sprite::create();
   auto new_arrow2 = Sprite::create();
   auto new_arrow3 = Sprite::create();
-  auto v1 = Vec2((offset.y*5 + offset.x*12) / 15, (offset.y*12 - offset.x*5) / 15);
-  auto v2 = Vec2((offset.x * 12 - offset.y *5) / 15, (offset.y * 12 + offset.x * 5) / 15);
+  
   new_arrow1->setRotation(-offset.getAngle() * 180 / M_PI + _arrow->getRotation() + 22);
+  loading(new_arrow1);
   new_arrow1->setSpriteFrame(_arrow->getSpriteFrame());
   new_arrow1->setAnchorPoint(_arrow->getAnchorPoint());
   new_arrow1->setPosition((_owner->getPosition()));
   new_arrow2->setRotation(-offset.getAngle() * 180 / M_PI +
                           _arrow->getRotation());
+  loading(new_arrow2);
   new_arrow2->setSpriteFrame(_arrow->getSpriteFrame());
   new_arrow2->setAnchorPoint(_arrow->getAnchorPoint());
   new_arrow2->setPosition((_owner->getPosition()));
   new_arrow3->setRotation(-offset.getAngle() * 180 / M_PI +
                           _arrow->getRotation()-22);
+  loading(new_arrow3);
   new_arrow3->setSpriteFrame(_arrow->getSpriteFrame());
   new_arrow3->setAnchorPoint(_arrow->getAnchorPoint());
   new_arrow3->setPosition((_owner->getPosition()));
@@ -106,7 +151,7 @@ void Bow::fire(Vec2 offset) {
       new_arrow3->unscheduleAllCallbacks();
     }
   };
-  new_arrow3->schedule(collision_detect3, 0, "collistion_detect");
+  new_arrow3->schedule(collision_detect3, 0, "collistion_detect");*/
 }
 
 /***武器——矛***/
@@ -142,3 +187,13 @@ void Spear::fire(Vec2 offset) {
   auto action = Sequence::create(moveBy, flipxAction, moveBy->reverse(), NULL);
   runAction(action);
 }
+
+void Bow::loading(Sprite* temp_arrow) {
+  temp_arrow->setSpriteFrame(_arrow->getSpriteFrame());
+   temp_arrow->setAnchorPoint(_arrow->getAnchorPoint());
+   temp_arrow->setPosition((_owner->getPosition()));
+   temp_arrow->setVisible(true);
+   getScene()->addChild(temp_arrow);
+}
+
+void Spear::loading(Sprite* temp_arrow) {}
