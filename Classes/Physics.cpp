@@ -6,9 +6,10 @@
 #include "cocos2d.h"
 
 namespace chipmunk {
-void Space::addBodyAndOwn(Body&& body) {
+Body& Space::addBodyAndOwn(Body&& body) {
   addBody(&body);
   _bodies.emplace_back(std::move(body));
+  return _bodies.back();
 }
 
 void Space::addBody(Body* body) {
@@ -34,7 +35,7 @@ void Body::initAsCircle(cpFloat radius, cpVect offset) {
   _body = cpBodyNew(0, 0);
   _shape = cpCircleShapeNew(_body, radius, offset);
 }
-void Space::addBoxForTile(Sprite* tile, cpShapeFilter filter) {
+Body Space::addBoxForTile(Sprite* tile, cpShapeFilter filter) {
   Body body;
   body.initAsBox(kTileResolution, kTileResolution);
   cpBodySetType(body.getBody(), cpBodyType::CP_BODY_TYPE_STATIC);
@@ -46,7 +47,7 @@ void Space::addBoxForTile(Sprite* tile, cpShapeFilter filter) {
   // 设置筛选器
   if (filter.group == 0) filter.group = _groupCount++;
   cpShapeSetFilter(body.getShape(), filter);
-  addBodyAndOwn(std::move(body));
+  addBody(&body);
 
   if (DataSet::getShowPhysicsDebugBoxes()) {
     // 这里计算大小需要变换到真实大小，使用game-config的global-zoom-scale来缩放
@@ -55,7 +56,9 @@ void Space::addBoxForTile(Sprite* tile, cpShapeFilter filter) {
     box->setDynamic(false);
     tile->addComponent(box);
   }
+  return body;
 }
+
 void initPhysicsForTile(Sprite* tile) {
   GameScene::getRunningScene()->getPhysicsSpace()->addBoxForTile(tile);
 }
@@ -109,8 +112,18 @@ Body& Body::operator=(Body&& other) noexcept {
 }
 
 Body::~Body() {
-  if (_body != nullptr) cpBodyFree(_body);
-  if (_shape != nullptr) cpShapeFree(_shape);
+  if (_shape != nullptr) {
+    //if (auto space = cpShapeGetSpace(_shape)) {
+    //  cpSpaceRemoveShape(space, _shape);
+    //}
+    cpShapeFree(_shape);
+  }
+  if (_body != nullptr) {
+    //if (auto space = cpBodyGetSpace(_body)) {
+    //  cpSpaceRemoveBody(space, _body);
+    //}
+    cpBodyFree(_body);
+  }
 }
 
 void Body::setPosition(float x, float y) {
