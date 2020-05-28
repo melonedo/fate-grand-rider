@@ -4,45 +4,8 @@
   <property name="bg-layers" value="bg invisible"/>
   <property name="fg-layers" value="fg building-fg"/>
  </properties>
- <tileset firstgid="1" name="walls" tilewidth="16" tileheight="16" tilecount="256" columns="16">
-  <image source="0x72_16x16DungeonTileset_walls.v2.png" width="256" height="256"/>
-  <tile id="49">
-   <properties>
-    <property name="type" value="wall"/>
-   </properties>
-  </tile>
-  <tile id="130">
-   <properties>
-    <property name="type" value="room"/>
-   </properties>
-  </tile>
- </tileset>
- <tileset firstgid="257" name="buildings" tilewidth="16" tileheight="16" tilecount="256" columns="16">
-  <image source="0x72_16x16DungeonTileset.v4.png" width="256" height="256"/>
-  <tile id="49">
-   <properties>
-    <property name="offset" type="int" value="69"/>
-    <property name="type" value="gate"/>
-   </properties>
-  </tile>
-  <tile id="118">
-   <properties>
-    <property name="type" value="hide"/>
-   </properties>
-  </tile>
-  <tile id="190">
-   <properties>
-    <property name="offset" type="int" value="16"/>
-    <property name="type" value="chest"/>
-   </properties>
-  </tile>
-  <tile id="191">
-   <properties>
-    <property name="offset" type="int" value="32"/>
-    <property name="type" value="chest"/>
-   </properties>
-  </tile>
- </tileset>
+ <tileset firstgid="1" source="walls.tsx"/>
+ <tileset firstgid="257" source="buildings.tsx"/>
  <objectgroup id="4" name="obj" locked="1">
   <object id="1" name="spawn" x="169.333" y="640.333">
    <point/>
