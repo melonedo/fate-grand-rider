@@ -1,0 +1,17 @@
+# CMake generation dependency list for this directory.
+C:/cmake-3.16.0-win32-x86/share/cmake-3.16/Modules/CMakeCInformation.cmake
+C:/cmake-3.16.0-win32-x86/share/cmake-3.16/Modules/CMakeCommonLanguageInclude.cmake
+C:/cmake-3.16.0-win32-x86/share/cmake-3.16/Modules/CMakeGenericSystem.cmake
+C:/cmake-3.16.0-win32-x86/share/cmake-3.16/Modules/CMakeInitializeConfigs.cmake
+C:/cmake-3.16.0-win32-x86/share/cmake-3.16/Modules/CMakeLanguageInformation.cmake
+C:/cmake-3.16.0-win32-x86/share/cmake-3.16/Modules/CMakeRCInformation.cmake
+C:/cmake-3.16.0-win32-x86/share/cmake-3.16/Modules/CMakeSystemSpecificInformation.cmake
+C:/cmake-3.16.0-win32-x86/share/cmake-3.16/Modules/CMakeSystemSpecificInitialize.cmake
+C:/cmake-3.16.0-win32-x86/share/cmake-3.16/Modules/Compiler/MSVC-C.cmake
+C:/cmake-3.16.0-win32-x86/share/cmake-3.16/Modules/Platform/Windows-MSVC-C.cmake
+C:/cmake-3.16.0-win32-x86/share/cmake-3.16/Modules/Platform/Windows-MSVC.cmake
+C:/cmake-3.16.0-win32-x86/share/cmake-3.16/Modules/Platform/Windows.cmake
+C:/cmake-3.16.0-win32-x86/share/cmake-3.16/Modules/Platform/WindowsPaths.cmake
+D:/TJ/软工/大一第二学期/大项目/fate-grand-rider/CMakeFiles/3.16.0/CMakeCCompiler.cmake
+D:/TJ/软工/大一第二学期/大项目/fate-grand-rider/CMakeFiles/3.16.0/CMakeRCCompiler.cmake
+D:/TJ/软工/大一第二学期/大项目/fate-grand-rider/CMakeFiles/3.16.0/CMakeSystem.cmake

@@ -65,6 +65,8 @@ list(APPEND GAME_SOURCE
      Classes/Mob.cpp
      Classes/Weapon.cpp
      Classes/Interaction.cpp
+	Classes/Music.cpp
+	Classes/Pause.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -78,6 +80,8 @@ list(APPEND GAME_HEADER
      Classes/Physics.h
      Classes/Weapon.h
      Classes/Interaction.h
+	Classes/Music.h
+	Classes/Pause.h
      )
 
 if(ANDROID)

@@ -25,6 +25,7 @@
 #include "AppDelegate.h"
 #include "HomeScene.h"
 #include "GameScene.h"
+#include "Music.h"
 
 // #define USE_AUDIO_ENGINE 1
 
@@ -111,8 +112,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
     } else {
       scene = HomeScene::create(
           [director] { director->replaceScene(GameScene::create()); },
-          [] { log("settings"); });
+          [director] { director->replaceScene(Pause::createScene()); });
     }
+
+    Music music;
+    music.PlayMusic();
 
     // run
     director->runWithScene(scene);
