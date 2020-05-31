@@ -10,7 +10,6 @@ class Weapon : public cocos2d::Sprite {
   virtual void pointTo(cocos2d::Vec2 offset) = 0;
   // 向指定地点开火。offset为指向的点相对英雄的位置。
   virtual void fire(cocos2d::Vec2 offset) = 0;
-  virtual void loading(Sprite* temp_arrow) = 0;
  protected:
   using Sprite::init;
   Hero* _owner;
@@ -23,14 +22,16 @@ class Bow : public Weapon {
   static Bow* create(const std::string& name);
   void pointTo(cocos2d::Vec2) override;
   void fire(cocos2d::Vec2) override;
-  void loading(Sprite* temp_arrow) override;
  protected:
   Bow() = default;
   // 弓图片的角度
 
   float _bowAngleOffset;
+
+  int _bowNumber;
   // 箭
   AutoRef<Sprite> _arrow;
+  AutoRef<Sprite> _arrow2;
   // 箭的速度
   float _arrowSpeed;
 };
@@ -41,7 +42,6 @@ class Spear : public Weapon {
   static Spear* create(const std::string& name);
   void pointTo(cocos2d::Vec2) override;
   void fire(cocos2d::Vec2) override;
-  void loading(Sprite* temp_arrow) override;
  protected:
   Spear() = default;
   // 矛图片的角度
