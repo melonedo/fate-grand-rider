@@ -42,10 +42,23 @@ class Spear : public Weapon {
   static Spear* create(const std::string& name);
   void pointTo(cocos2d::Vec2) override;
   void fire(cocos2d::Vec2) override;
+
  protected:
   Spear() = default;
   // 矛图片的角度
   float _spearAngleOffset;
   // 矛刺出的速度
   float _spearSpeed;
+};
+
+//法阵
+class Magic : public Weapon {
+ public:
+  static Magic* create(const std::string& name);
+  void pointTo(cocos2d::Vec2) override;
+  void fire(cocos2d::Vec2) override;
+
+ protected:
+  Magic() = default;
+  AutoRef<Sprite> _magicSquare;
 };

@@ -17,7 +17,6 @@ Bow* Bow::create(const std::string& name) {
   bow->setSpriteFrame(
       DataSet::load_frame(bow_data["frame"].GetString(), kWeaponResolution));
   bow->_bowNumber = bow_data["number"].GetInt();
-
   const auto& arrow_data = data["arrow"];
   bow->_arrow = Sprite::create();
   bow->_arrow->setSpriteFrame(DataSet::load_frame(arrow_data["frame"].GetString()));
@@ -153,4 +152,50 @@ void Spear::fire(Vec2 offset) {
   auto moveBy = MoveBy::create(0.3f, speed);
   auto action = Sequence::create(moveBy, flipxAction, moveBy->reverse(), NULL);
   runAction(action);
+}
+
+/***武器——法阵***/
+Magic* Magic::create(const std::string& name) {
+  Magic* magic = new Magic;
+  magic->Weapon::init();
+  magic->setName(name);
+  const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
+  const auto& magic_data = data["magicball"];
+  magic->setSpriteFrame(
+      DataSet::load_frame(magic_data["frame"].GetString(), kWeaponResolution));
+  const auto& anchor_data = magic_data["anchor"].GetArray();
+  magic->setAnchorPoint(
+      Vec2(anchor_data[0].GetFloat(), anchor_data[1].GetFloat()));
+
+  const auto& magic_data2 = data["magic"];
+  magic->_magicSquare = Sprite::create();
+  kSpriteResolution = 150;
+  magic->_magicSquare->setSpriteFrame(
+      DataSet::load_frame(magic_data2["frame"].GetString()));
+  const auto& anchor_data2 = magic_data2["anchor"].GetArray();
+  magic->_magicSquare->setAnchorPoint(
+      Vec2(anchor_data2[0].GetFloat(), anchor_data2[1].GetFloat()));
+  kSpriteResolution = 32;
+  return magic;
+}
+
+void Magic::pointTo(Vec2 offset) {
+  
+}
+
+void Magic::fire(Vec2 offset) { 
+  Sprite* magicSquare;
+  magicSquare = Sprite::create();
+  magicSquare->setSpriteFrame(_magicSquare->getSpriteFrame());
+  magicSquare->setAnchorPoint(_magicSquare->getAnchorPoint());
+  magicSquare->setPosition((_owner->getPosition()));
+  magicSquare->setVisible(true);
+ getScene()->addChild(magicSquare);
+  magicSquare->runAction(RotateBy::create(5.0f,360));
+ DelayTime* delayTime = DelayTime::create(5.0f);
+  FadeOut*fadeout = FadeOut::create(1.0f);
+  Sequence* action = Sequence::create(
+     delayTime,
+                      fadeout, NULL);
+  magicSquare->runAction(action);
 }

@@ -8,7 +8,7 @@
 	"debug-set": {
 		"map": "maps/sample_map.tmx",
 		"hero": "sample-man",
-		"weapon": "basic-spear"
+		"weapon": "magic-power"
 	},
 	"heroes": {
 		"sample-man": {
@@ -23,16 +23,38 @@
 			"hand-pos": [0.75,0.44]
 		}
 	},
-	"weapons": {
+	"weapon": {
 		"basic-bow": {
 			"type": "bow",
 			"bow": {
 				"frame": "W_Bow02.png",
 				"angle-offset": -45,
-				"anchor": [ 0.5, 0.5 ]
+				"anchor": [ 0.5, 0.5 ],
+				"number": 3
 			},
 			"arrow": {
 				"frame": "S_Bow04.png",
+				"angle-offset": -135,
+				"anchor": [ 0.5, 0.5 ],
+				"speed": 400
+			}
+		},
+		"single-bow": {
+			"type": "bow",
+			"bow": {
+				"frame": "W_Bow03.png",
+				"angle-offset": 135,
+				"anchor": [ 0.5, 0.5 ],
+				"number": 1
+			},
+			"arrow": {
+				"frame": "S_Bow01.png",
+				"angle-offset": -135,
+				"anchor": [ 0.5, 0.5 ],
+				"speed": 400
+			},
+			"arrow2": {
+				"frame": "S_Bow06.png",
 				"angle-offset": -135,
 				"anchor": [ 0.5, 0.5 ],
 				"speed": 400
@@ -45,6 +67,17 @@
 				"angle-offset": 90,
 				"anchor": [ 0.5, 0.5 ],
 				"speed": 40
+			}
+		},
+		"magic-power": {
+			"type": "magicball",
+			"magicball": {
+				"frame": "magicball.png",
+				"anchor": [ 0.3, 0.8 ]
+			},
+			"magic": {
+				"frame": "magic.png",
+				"anchor": [ 0.5,0.5 ]
 			}
 		}
 	}
