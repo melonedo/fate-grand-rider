@@ -10,37 +10,14 @@ using namespace cocos2d::ui;
 
 class SliderEx : public Slider {
  public:
-  static SliderEx* create() {
-    auto ret = new (std::nothrow) SliderEx();
-    const auto& data = DataSet::getConfig()["pause"]["volume-control"];
+   //创建一个音量控制滑块实例
+  static SliderEx* create();
 
-    if (ret && ret->init()) {
-      ret->loadBarTexture(data["slider-track"].GetString());
-      ret->loadSlidBallTextures(
-          data["silder-thumb"].GetString(),
-          data["silder-thumb"].GetString(), "");
-      ret->loadProgressBarTexture(data["slider-progress"].GetString());
-      ret->setTouchEnabled(true);
+  //设置音量比率
+  void setRatio(float ratio);
 
-      ret->autorelease();
-
-      return ret;
-    }
-    CC_SAFE_DELETE(ret);
-    return ret;
-  }
-
-  void setRatio(float ratio) {
-    ratio = cocos2d::clampf(ratio, 0.0f, 1.0f);
-
-    _ratio = ratio;
-    setPercent(100 * _ratio);
-  }
-
-  float getRatio() {
-    _ratio = 1.0f * _percent / _maxPercent;
-    return _ratio;
-  }
+  //得到音量比率
+  float getRatio();
 
  private:
   float _ratio;
@@ -48,12 +25,16 @@ class SliderEx : public Slider {
 
 class Pause : public cocos2d::Scene {
  public:
+   //创建一个暂停的场景
   static cocos2d::Scene* createScene();
 
+  //暂停场景的初始化，包括了音量的调节
   virtual bool init();
 
+  //创建Pause实例
  CREATE_FUNC(Pause);
 
+ //使得Music类可以与Pause共用private的成员（背景音乐和调节音量共用同一个音量控制键）
   friend class Music;
 
  private:

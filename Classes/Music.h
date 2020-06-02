@@ -4,6 +4,7 @@
 
 class Music {
  public:
+   //≤•∑≈±≥æ∞“Ù¿÷
   void PlayMusic();
 
 };
