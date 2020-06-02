@@ -3,7 +3,7 @@
 #include"Monster.h"
 USING_NS_CC;
 
-//¹ÖÎïÊıÁ¿
+//æ€ªç‰©æ•°é‡
 #define MAX_MONSTER_NUM 5
 
 class MonsterManager :public Node
@@ -12,15 +12,15 @@ public:
 	CREATE_FUNC(MonsterManager);
 	virtual bool init();
 	virtual void update(float dt);
-	//°ó¶¨hero
+	//ç»‘å®šhero
 	void bingHero(Hero* hero);
-	//¼òµ¥µÄAI
+	//ç®€å•çš„AI
 	void FollowRun();
 	void updateMonsters(float delta);
 private:
 	void createMonsters();
 private:
-	//´æMonsterÃÇ
+	//å­˜Monsterä»¬
 	Vector<Monster*>m_monsterArr;
 	Hero* m_hero;
 };

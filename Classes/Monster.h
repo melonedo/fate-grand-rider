@@ -1,39 +1,39 @@
 #pragma once
 #include "Mob.h"
 #include "Hero.h"
-class Weapon;//hhÑ§zfn
+class Weapon;//hhå­¦zfn
 class Monster :public Mob
 {
 public:
-	//¿ÉÊÓ·¶Î§
+	//å¯è§†èŒƒå›´
 	const int visibleRange = 100;
-	//¹¥»÷·¶Î§
+	//æ”»å‡»èŒƒå›´
 	const int attackRange = 100;
 
 	void setMoveSpeed(float vx, float vy);
-	// ³õÊ¼»¯
+	// åˆå§‹åŒ–
 	bool init() override;
 	virtual void update(float dt);
 
-	//Ê°È¡ÎäÆ÷
+	//æ‹¾å–æ­¦å™¨
 	void pickWeapon(Weapon*);
-	//ÅĞ¶ÏÊÇ·ñ¹¥»÷
+	//åˆ¤æ–­æ˜¯å¦æ”»å‡»
 	void judgeAttack(Hero* hero);
-	//Ëæ»úÒÆ¶¯
+	//éšæœºç§»åŠ¨
 	void monsterRun();
-	//¼ÓÔØ¶¯»­
+	//åŠ è½½åŠ¨ç”»
 	void loadAnimation();
-	//ÊÇ·ñ»î×Å
+	//æ˜¯å¦æ´»ç€
 	bool isAlive();
 	void hide();
 	void reset();
 	void show();
 	virtual const char* getMonsterName() const = 0;
-	//Ã¿¸ôÒ»ÃëÖØÖÃisAttack
+	//æ¯éš”ä¸€ç§’é‡ç½®isAttack
 	void updateMonster(float delta);
-	//ºÍheroÖ®¼äµÄ¾àÀë
+	//å’Œheroä¹‹é—´çš„è·ç¦»
 	float dis;
-	//ÊÇ·ñÔÚ¹¥»÷×´Ì¬
+	//æ˜¯å¦åœ¨æ”»å‡»çŠ¶æ€
 	bool isAttack;
 
 	Weapon* _weapon;
@@ -41,11 +41,11 @@ public:
 	Vec2 _handPos;
 private:
 
-	// ÒÆ¶¯ËÙ¶È
+	// ç§»åŠ¨é€Ÿåº¦
 	Vec2 _speed;
-	//»î×ÅÃ»
+	//æ´»ç€æ²¡
 	bool m_isAlive;
-	// ĞĞ×ß¶¯»­
+	// è¡Œèµ°åŠ¨ç”»
 	AutoRef<Animation> _walkAnimation;
 };
 

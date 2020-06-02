@@ -13,7 +13,7 @@ bool MonsterManager::init()
 }
 void MonsterManager::createMonsters()
 {
-	//Êý¾Ý
+	//ÐªÂ§ÐžÐ½
 	const auto& config = DataSet::getConfig();
 	const auto& debug_set = config["debug-set"].GetObject();
 	for (int i = 0; i < MAX_MONSTER_NUM; i++)

@@ -8,12 +8,12 @@ Scene* PauseScene::scene(Sprite* sqr)
 
 	Sprite* _spr = sqr;
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	_spr->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));//ÖÐÐÄÎ»ÖÃ
-	//_spr->setFlippedY(true);//·­×ª£¬ÒòÎªUI×ø±êºÍOpenGL×ø±ê²»Í¬
-	//_spr->setColor(Color3B::GRAY);//ÑÕÉ«¸ÄÎª»ÒÉ«
+	_spr->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));//ä¸­å¿ƒä½ç½®
+	//_spr->setFlippedY(true);//ç¿»è½¬ï¼Œå› ä¸ºUIåæ ‡å’ŒOpenGLåæ ‡ä¸åŒ
+	//_spr->setColor(Color3B::GRAY);//é¢œè‰²æ”¹ä¸ºç°è‰²
 	myscene->addChild(_spr);
 
-	//¼ÌÐøÓÎÏ·
+	//ç»§ç»­æ¸¸æˆ
 	auto label = Label::createWithTTF("go on", "fonts/Marker Felt.ttf", 60);
 	assert(label);
 	label->setAnchorPoint(Vec2(0.5f, 0.5f));
@@ -22,13 +22,13 @@ Scene* PauseScene::scene(Sprite* sqr)
 
 	auto listener = EventListenerMouse::create();
 	listener->onMouseMove = [](EventMouse* event) {
-		// Êó±êÒÆ¶¯µ½±êÇ©ÉÏÊ±·Å´ó±êÇ©
+		// é¼ æ ‡ç§»åŠ¨åˆ°æ ‡ç­¾ä¸Šæ—¶æ”¾å¤§æ ‡ç­¾
 		auto target = event->getCurrentTarget();
 		auto bbox = target->getBoundingBox();
 		if (bbox.containsPoint(Vec2(event->getCursorX(), event->getCursorY()))) {
 			target->setScale(1.1f);
 		}
-		else { // ÒÆ³öÊ±Éè»ØÔ­±ÈÀý
+		else { // ç§»å‡ºæ—¶è®¾å›žåŽŸæ¯”ä¾‹
 			target->setScale(1);
 		}
 	};
@@ -38,7 +38,7 @@ Scene* PauseScene::scene(Sprite* sqr)
 		auto bbox = target->getBoundingBox();
 		if (bbox.containsPoint(Vec2(event->getCursorX(), event->getCursorY()))) {
 			Director::getInstance()->resume();
-			Director::getInstance()->popScene();//·µ»ØÉÏÒ»¸ö³¡¾°£¬¼´¼ÌÐøÓÎÏ·
+			Director::getInstance()->popScene();//è¿”å›žä¸Šä¸€ä¸ªåœºæ™¯ï¼Œå³ç»§ç»­æ¸¸æˆ
 		}
 	};
 	label->getEventDispatcher()->addEventListenerWithSceneGraphPriority(

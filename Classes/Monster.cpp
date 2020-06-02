@@ -49,12 +49,12 @@ void Monster::reset()
 void Monster::loadAnimation() {
 	const auto& config = DataSet::getConfig();
 
-	// ¼ÓÔØÕ¾Á¢ºÍÐÐ×ß¶¯»­
+	// åŠ è½½ç«™ç«‹å’Œè¡Œèµ°åŠ¨ç”»
 	const auto& data = DataSet::getConfig()["monsters"][getMonsterName()];
 	_walkAnimation = DataSet::load_animation(data["walk"]);
 	_walkAnimation->setLoops(-1);
 
-	// ²»²¥·ÅµÄ»°¹ÖÎï¿´²»¼û
+	// ä¸æ’­æ”¾çš„è¯æ€ªç‰©çœ‹ä¸è§
 	auto animate = Animate::create(_walkAnimation);
 	animate->setTag(kTagStandAnimation);
 	this->runAction(animate);

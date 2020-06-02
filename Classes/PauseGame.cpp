@@ -1,6 +1,6 @@
 #include "PauseGame.h"
 USING_NS_CC;
-//ÔÝÊ±ÏÈÕâÑù°É£¬ÒÔºóÔÙ¸Ä
+//æš‚æ—¶å…ˆè¿™æ ·å§ï¼Œä»¥åŽå†æ”¹
 bool PauseGame::init()
 {
 	registeTouchEvent();
@@ -14,7 +14,7 @@ void PauseGame::registeTouchEvent()
 	keyListener->onKeyPressed = CC_CALLBACK_2(PauseGame::onKeyPressed, this);
 	dispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
 }
-//ÖØÐ´onKeyPressed·½·¨À´ÊµÏÖ¾ßÌå°´¼üµÄÅÐ¶Ï
+//é‡å†™onKeyPressedæ–¹æ³•æ¥å®žçŽ°å…·ä½“æŒ‰é”®çš„åˆ¤æ–­
 void PauseGame::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event) {
 	if (keycode == EventKeyboard::KeyCode::KEY_ESCAPE) {
 		/*Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -32,20 +32,20 @@ void PauseGame::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event) {
 	}
 }
 
-//ÆÁÄ»½ØÍ¼
+//å±å¹•æˆªå›¾
 void PauseGame::capture(Ref* sender)
 {
 	CCLOG("ScreenShot");
 	utils::captureScreen(CC_CALLBACK_2(PauseGame::afterCapture, this), "D:/fate-grand-rider/Resources/ScreenShot.png");
 }
 
-//½ØÍ¼ºóÖ´ÐÐafterCapture
+//æˆªå›¾åŽæ‰§è¡ŒafterCapture
 void PauseGame::afterCapture(bool succeed, const std::string& outputFile)
 {
 	if (succeed)
 	{
 		CCLOG("%s", outputFile.c_str());
-		//ÏÔÊ¾½ØÍ¼
+		//æ˜¾ç¤ºæˆªå›¾
 		Sprite* sp = Sprite::create(outputFile);
 		Director::getInstance()->pushScene(PauseScene::scene(sp));
 	}
