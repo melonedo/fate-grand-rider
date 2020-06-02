@@ -5,6 +5,6 @@ using namespace cocos2d;
 class PauseScene :public Layer
 {
 public:
-	static Scene* scene(RenderTexture* sqr);
+	static Scene* scene(Sprite* sqr);
 	CREATE_FUNC(PauseScene);
 };

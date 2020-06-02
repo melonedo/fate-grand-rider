@@ -67,6 +67,8 @@ list(APPEND GAME_SOURCE
      Classes/Interaction.cpp
      Classes/PauseScene.cpp
      Classes/PauseGame.cpp
+     Classes/Monster.cpp
+     Classes/MonsterManager.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -82,6 +84,8 @@ list(APPEND GAME_HEADER
      Classes/Interaction.h
      Classes/PauseScene.h
      Classes/PauseGame.h
+     Classes/Monster.h
+     Classes/MonsterManager.h
      )
 
 if(ANDROID)

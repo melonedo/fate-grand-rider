@@ -42,7 +42,10 @@ void Bow::fire(Vec2 offset) {
   new_arrow->setRotation(-offset.getAngle() * 180 / M_PI + _arrow->getRotation());
   new_arrow->setSpriteFrame(_arrow->getSpriteFrame());
   new_arrow->setAnchorPoint(_arrow->getAnchorPoint());
-  new_arrow->setPosition(_owner->getPosition());
+  if(_owner!=NULL)
+     new_arrow->setPosition(_owner->getPosition());
+  else
+      new_arrow->setPosition(_owner2->getPosition());
   new_arrow->setVisible(true);
   getScene()->addChild(new_arrow);
   Vec2 speed = _arrowSpeed * offset / offset.getLength();
@@ -50,7 +53,8 @@ void Bow::fire(Vec2 offset) {
   new_arrow->runAction(RepeatForever::create(MoveBy::create(1, speed)));
   // 碰撞检测
   auto space = GameScene::getRunningScene()->getPhysicsSpace();
-  auto filter = _owner->getBody().getFilter();
+
+  auto filter = _owner!=NULL?_owner->getBody().getFilter(): _owner2->getBody().getFilter();
   auto collision_detect = [space, new_arrow, delta, filter](float) {
     if (space->querySegmentFirst(new_arrow->getPosition(),
                                    new_arrow->getPosition() + delta, filter)) {

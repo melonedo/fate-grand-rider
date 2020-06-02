@@ -85,6 +85,16 @@ Hero* DataSet::load_hero(const std::string& hero_name) {
   return hero;
 }
 
+//各怪物的名字和对应的构造函数
+const static std::unordered_map<std::string, std::function<Monster* ()>> kMonsterSet{
+    {"sample-monster", SampleMonster::create} };
+
+Monster* DataSet::load_monster(const std::string& monster_name){
+    Monster* monster = kMonsterSet.at(monster_name)();
+    //monster->setTag(kTagMonster);
+    return monster;
+ }
+
 SpriteFrame* DataSet::load_frame(const std::string& frame_dir, int size) {
   auto frame = SpriteFrame::create(frame_dir, Rect(0, 0, size, size));
   CCASSERT(frame, "Unable to load frame");

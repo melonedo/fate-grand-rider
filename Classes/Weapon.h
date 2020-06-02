@@ -2,7 +2,7 @@
 #include "cocos2d.h"
 #include "Hero.h"
 #include "AutoRef.h"
-
+#include "Monster.h"
 // 武器
 class Weapon : public cocos2d::Sprite {
  public:
@@ -13,7 +13,9 @@ class Weapon : public cocos2d::Sprite {
  protected:
   using Sprite::init;
   Hero* _owner;
+  Monster* _owner2;
   friend Hero;
+  friend Monster;
 };
 
 // 弓

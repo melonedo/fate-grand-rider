@@ -2,14 +2,13 @@
 #include "cocos2d.h"
 #include "DataSet.h"
 #include "constants.h"
+#include "MonsterManager.h"
 using namespace cocos2d;
 
 #include "Physics.h"
 
 bool GameScene::init() {
-    //暂停
-    auto m_pause = PauseGame::create();
-    this->addChild(m_pause);
+
   bool result;
   if (DataSet::getShowPhysicsDebugBoxes()) {
     result = Scene::initWithPhysics();
@@ -21,13 +20,16 @@ bool GameScene::init() {
 
   runningGameScene = this;
 
+
+  //暂停
+  auto m_pause = PauseGame::create();
+  this->addChild(m_pause);
   const auto& config = DataSet::getConfig();
-
-
-
 
   // 缩放
   this->setScale(config["global-zoom-scale"].GetFloat());
+
+
 
   // 首先判断是不是用测试集
 
@@ -53,6 +55,9 @@ bool GameScene::init() {
     // 配上武器
     hero->pickWeapon(DataSet::load_weapon(debug_set["weapon"].GetString()));
 
+    MonsterManager* monsterMgr = MonsterManager::create();
+    monsterMgr->bingHero(hero);
+    this->addChild(monsterMgr, kMapPrioritySprite);
     return true;
   }
   else {

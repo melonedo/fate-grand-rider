@@ -1,15 +1,15 @@
 #include"PauseScene.h"
-
-Scene* PauseScene::scene(RenderTexture* sqr)
+#include"DataSet.h"
+Scene* PauseScene::scene(Sprite* sqr)
 {
 	Scene* myscene = Scene::create();
 	PauseScene* mylayer = PauseScene::create();
 	myscene->addChild(mylayer);
 
-	Sprite* _spr = Sprite::createWithTexture(sqr->getSprite()->getTexture());
+	Sprite* _spr = sqr;
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	_spr->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));//中心位置
-	_spr->setFlippedY(true);//翻转，因为UI坐标和OpenGL坐标不同
+	//_spr->setFlippedY(true);//翻转，因为UI坐标和OpenGL坐标不同
 	//_spr->setColor(Color3B::GRAY);//颜色改为灰色
 	myscene->addChild(_spr);
 
@@ -37,6 +37,7 @@ Scene* PauseScene::scene(RenderTexture* sqr)
 		auto target = event->getCurrentTarget();
 		auto bbox = target->getBoundingBox();
 		if (bbox.containsPoint(Vec2(event->getCursorX(), event->getCursorY()))) {
+			Director::getInstance()->resume();
 			Director::getInstance()->popScene();//返回上一个场景，即继续游戏
 		}
 	};
