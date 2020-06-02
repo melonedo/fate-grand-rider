@@ -180,7 +180,6 @@ Magic* Magic::create(const std::string& name) {
 }
 
 void Magic::pointTo(Vec2 offset) {
-  
 }
 
 void Magic::fire(Vec2 offset) { 
@@ -190,12 +189,65 @@ void Magic::fire(Vec2 offset) {
   magicSquare->setAnchorPoint(_magicSquare->getAnchorPoint());
   magicSquare->setPosition((_owner->getPosition()));
   magicSquare->setVisible(true);
- getScene()->addChild(magicSquare);
-  magicSquare->runAction(RotateBy::create(5.0f,360));
+  getScene()->addChild(magicSquare);
+ magicSquare->runAction(RotateBy::create(5.0f, 360));
  DelayTime* delayTime = DelayTime::create(5.0f);
   FadeOut*fadeout = FadeOut::create(1.0f);
-  Sequence* action = Sequence::create(
-     delayTime,
-                      fadeout, NULL);
+ Sequence*action = Sequence::create(delayTime, fadeout, NULL);
   magicSquare->runAction(action);
+}
+
+/***武器——飞镖***/
+Darts* Darts::create(const std::string& name) {
+  Darts* dart = new Darts;
+  dart->Weapon::init();
+  dart->setName(name);
+  const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
+  const auto& dart_data = data["darts"];
+  dart->setSpriteFrame(
+      DataSet::load_frame(dart_data["frame"].GetString(), kWeaponResolution));
+
+  const auto& dart_out_data = data["darts"];
+  dart->_dart = Sprite::create();
+  dart->_dart->setSpriteFrame(
+      DataSet::load_frame(dart_out_data["frame"].GetString()));
+  dart->_dartSpeed = dart_out_data["speed"].GetFloat();
+
+  const auto& anchor_data = dart_out_data["anchor"].GetArray();
+  dart->setAnchorPoint(
+      Vec2(anchor_data[0].GetFloat(), anchor_data[1].GetFloat()));
+  return dart;
+}
+
+void Darts::pointTo(Vec2 offset) {
+ 
+}
+
+void Darts::fire(Vec2 offset) {
+  Sprite* darts; 
+   darts = Sprite::create();
+  darts->setSpriteFrame(_dart->getSpriteFrame());
+   darts->setAnchorPoint(_dart->getAnchorPoint());
+  darts->setPosition((_owner->getPosition()));
+  Vec2 speed;
+  auto space = GameScene::getRunningScene()->getPhysicsSpace()->getSpace();
+  speed = _dartSpeed * (offset) / offset.getLength();
+  Vec2 delta = speed / _dartSpeed;
+  darts->setVisible(true);
+  getScene()->addChild(darts);
+  MoveBy* moveby = MoveBy::create(1, 2*speed);
+  RotateBy* rotateby = RotateBy::create(1.5f,1080);
+  Action* action = Spawn::create(moveby, rotateby, NULL);
+  darts->runAction(action);
+  auto& lambdaDart = darts;
+  auto collision_detect = [space, lambdaDart, delta](float) {
+    if (cpSpaceSegmentQueryFirst(
+            space, chipmunk::cpvFromVec2(lambdaDart->getPosition()),
+            chipmunk::cpvFromVec2(lambdaDart->getPosition() + delta), 1,
+            CP_SHAPE_FILTER_ALL, nullptr)) {
+      lambdaDart->stopAllActions();
+      lambdaDart->unscheduleAllCallbacks();
+    }
+  };
+  darts->schedule(collision_detect, 0, "collistion_detect");
 }

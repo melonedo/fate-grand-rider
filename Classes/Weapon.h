@@ -62,3 +62,17 @@ class Magic : public Weapon {
   Magic() = default;
   AutoRef<Sprite> _magicSquare;
 };
+
+//飞镖
+class Darts : public Weapon {
+ public:
+  static Darts* create(const std::string& name);
+  void pointTo(cocos2d::Vec2) override;
+  void fire(cocos2d::Vec2) override;
+  AutoRef<Sprite> _dart;
+
+ protected:
+  Darts() = default;
+  // 飞镖速度
+  float _dartSpeed;
+};

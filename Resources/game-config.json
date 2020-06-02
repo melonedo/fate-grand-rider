@@ -1,5 +1,5 @@
 {
-	"use-debug-mode":true, 
+	"use-debug-mode": true,
 	"global-zoom-scale": 2,
 	"show-physics-debug-boxes": false,
 	"display-cocos-stats": true,
@@ -8,19 +8,19 @@
 	"debug-set": {
 		"map": "maps/sample_map.tmx",
 		"hero": "sample-man",
-		"weapon": "magic-power"
+		"weapon": "darts"
 	},
 	"heroes": {
 		"sample-man": {
 			"stand": {
 				"interval": 1,
-				"frames": ["man1_rt2.png", "man1_rt1.png"]
+				"frames": [ "man1_rt2.png", "man1_rt1.png" ]
 			},
 			"walk": {
 				"interval": 0.2,
-				"frames": ["man1_rt2.png", "man1_rt1.png"]
+				"frames": [ "man1_rt2.png", "man1_rt1.png" ]
 			},
-			"hand-pos": [0.75,0.44]
+			"hand-pos": [ 0.75, 0.44 ]
 		}
 	},
 	"weapon": {
@@ -77,7 +77,15 @@
 			},
 			"magic": {
 				"frame": "magic.png",
-				"anchor": [ 0.5,0.5 ]
+				"anchor": [ 0.5, 0.5 ]
+			}
+		},
+		"darts": {
+			"type": "darts",
+			"darts": {
+				"frame": "W_Throw004.png",
+				"anchor": [ 0.3, 0.8 ],
+				"speed": 200
 			}
 		}
 	}

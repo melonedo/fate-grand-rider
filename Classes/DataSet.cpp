@@ -107,9 +107,13 @@ Animation* DataSet::load_animation(const rapidjson::Value& animation_obj) {
                                 std::function<Weapon*(const std::string&)>>
     kWeaponSet{{"bow", Bow::create}};*/
 
+/*const static std::unordered_map<std::string,
+                                std::function<Weapon*(const std::string&)>>
+    kWeaponSet{{"magicball", Magic::create}};*/
+
 const static std::unordered_map<std::string,
                                 std::function<Weapon*(const std::string&)>>
-    kWeaponSet{{"magicball", Magic::create}};
+    kWeaponSet{{"darts", Darts::create}};
 
 /*const static std::unordered_map<std::string,
                                 std::function<Weapon*(const std::string&)>>
