@@ -65,8 +65,6 @@ list(APPEND GAME_SOURCE
      Classes/Mob.cpp
      Classes/Weapon.cpp
      Classes/Interaction.cpp
-	Classes/Music.cpp
-	Classes/Pause.cpp
      Classes/Map.cpp
      Classes/PauseScene.cpp
      Classes/PauseGame.cpp
@@ -85,8 +83,6 @@ list(APPEND GAME_HEADER
      Classes/Physics.h
      Classes/Weapon.h
      Classes/Interaction.h
-	Classes/Music.h
-	Classes/Pause.h
      Classes/Map.h
      Classes/PauseScene.h
      Classes/PauseGame.h
