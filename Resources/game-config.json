@@ -1,9 +1,9 @@
 {
-	"use-debug-mode":true, 
+	"use-debug-mode":true,
 	"global-zoom-scale": 2,
 	"show-physics-debug-boxes": false,
 	"display-cocos-stats": true,
-	"skip-starting-scene": true,
+	"skip-starting-scene": false,
 	"hero-speed-scale": 100,
 	"debug-set": {
 		"map": "maps/sample_map.tmx",
@@ -24,6 +24,13 @@
 			"hand-pos": [0.75,0.44]
 		}
 	},
+  "pause": {
+    "volume-control": {
+      "silder-thumb": "sliderThumb.png",
+      "slider-progress": "sliderProgress.png",
+      "slider-track": "sliderTrack.png"
+    }
+  }
 	"weapons": {
 		"basic-bow": {
 			"type": "bow",
