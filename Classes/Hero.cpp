@@ -13,7 +13,6 @@ bool Hero::init() {
   // 衍生类如果不需要这些直接重写即可
   scheduleUpdate();
   loadAnimation();
-  registerUserInput();
   // 手的位置
   const auto& hand_data =
       DataSet::getConfig()["heroes"][getHeroName()]["hand-pos"];
@@ -103,7 +102,7 @@ void Hero::onKeyReleased(EventKeyboard::KeyCode code, Event*) {
     }
   } else if (code == EventKeyboard::KeyCode::KEY_SPACE &&
              _interacting != nullptr) {
-    _interacting->dialog();
+    _interacting->dialog(this);
   }
 }
 
@@ -118,40 +117,84 @@ void Hero::updateSpeed() {
 
 void Hero::update(float delta) {
   auto old_pos = this->getPosition();
-  auto new_pos = old_pos + _speed * delta;
-
+  auto disp = _speed * delta;
+  auto new_pos = old_pos + disp;
 
   // 碰撞检测
-  chipmunk::Space::PointQueryInfo info;
+  using namespace chipmunk;
+  Sprite* result = nullptr;
   auto space = GameScene::getRunningScene()->getPhysicsSpace();
-  auto result = space->queryPointNearest(new_pos, kSpriteResolution / 4,
-                                         _body.getFilter(), &info);
-  if (result != nullptr) {
-    // 贴墙
-    new_pos = info.point + info.grad * (kSpriteResolution / 4);
-    // 奇怪的NaN问题以及负距离问题会在无聊进去箱子里面的时候出现
-    if (info.distance < 0 || isnan(new_pos.x) || isnan(new_pos.y)) {
-      new_pos = old_pos;
-    }
-
-    // 尝试互动
-    switch (result->getTag()) {
-      case kTagInteractable: {
-        auto interaction =
-            dynamic_cast<Interaction*>(result->getComponent("interaction"));
-        if (interaction != _interacting) {
-          interaction->touch();
-          _interacting = interaction;
+  auto radius = kSpriteResolution / 4;
+  if (disp != Vec2(0, 0)) {
+    // 找到附近的所有物体
+    auto near_obj =
+        space->queryPointAll(new_pos, 2 * radius, _body.getFilter());
+    // 附近没别的就直接继续
+    if (near_obj.size() != 0 && disp != Vec2(0, 0)) {
+      // 找到向原方向移动的最大距离
+      int nearest_obj = -1;
+      cpSegmentQueryInfo nearest_info;
+      nearest_info.alpha = 1;
+      for (int i = 0; i < near_obj.size(); i++) {
+        cpSegmentQueryInfo info;
+        cpShapeSegmentQuery(near_obj[i].shape, cpvFromVec2(old_pos),
+                            cpvFromVec2(new_pos), radius, &info);
+        if (nearest_info.alpha > info.alpha &&
+            cpvdot(info.normal, cpvFromVec2(disp)) < 0) {
+          nearest_obj = i;
+          nearest_info = info;
         }
-        break;
       }
-      default:
-        break;
+      // 如果不能完全地移动到new_pos则进一步修正
+      if (nearest_obj != -1) {
+        //log("%f,%f", getPosition().x, getPosition().y);
+        // 先设置好互动对象
+        result = getSpriteFromShape(nearest_info.shape);
+        // 除去这个障碍
+        near_obj.erase(near_obj.begin() + nearest_obj);
+        // 移动到贴上，然后平行切面移动
+        old_pos = old_pos + disp * nearest_info.alpha;
+        disp *= 1 - nearest_info.alpha;
+        disp -= disp.dot(vec2FromCpv(nearest_info.normal)) *
+                vec2FromCpv(nearest_info.normal);
+        new_pos = old_pos + disp;
+        // 再试一次
+        nearest_info.alpha = 1;
+        for (int i = 0; i < near_obj.size(); i++) {
+          cpSegmentQueryInfo info;
+          cpShapeSegmentQuery(near_obj[i].shape, cpvFromVec2(old_pos),
+                              cpvFromVec2(new_pos), radius, &info);
+          if (nearest_info.alpha > info.alpha &&
+              !cpveql(info.normal, nearest_info.normal) &&
+              cpvdot(info.normal, cpvFromVec2(disp)) < -0.01) {
+            nearest_obj = i;
+            nearest_info = info;
+          }
+        }
+        new_pos = old_pos + disp * nearest_info.alpha;
+      }
     }
-  } else if (_speed.length() != 0) {
-    // 取消互动
-    _interacting = nullptr;
   }
+ 
+  // 保证可以碰到地上的建筑
+  cpShapeFilter filter = _body.getFilter();
+  filter.mask = CP_ALL_CATEGORIES;
+  auto stepping = space->queryPointNearest(new_pos, radius - 1, filter);
+  if (stepping != nullptr) result = stepping;
+
+  Interaction* interacting = nullptr;
+  // 尝试互动
+  if (result != nullptr) {
+    interacting = getInteraction(result);
+    if (interacting != _interacting) {
+      interacting->touch(this);
+    }
+  }
+  // 取消互动
+  if (_interacting != nullptr && _interacting != interacting) {
+    _interacting->endTouch(this);
+  }
+  _interacting = interacting;
 
   // 滚动屏幕（Size和Vec没有减法只有加法，所以倒过来）
   auto scene = this->getScene();
@@ -160,11 +203,15 @@ void Hero::update(float delta) {
   this->setPosition(new_pos);
 }
 
-void Hero::pickWeapon(Weapon* weapon) {
+Weapon* Hero::pickWeapon(Weapon* weapon) {
+  auto res = _weapon;
   _weapon = weapon;
   weapon->setVisible(true);
   weapon->setPositionNormalized(_handPos);
-  //weapon->setPosition(Vec2(100, 100));
   this->addChild(weapon, 1);
   weapon->_owner = this;
+  return res;
 }
+
+// 数值系统正在研发中，先留个无敌版的角色
+void Hero::HeroInteraction::attack(Sprite*, float) {}
