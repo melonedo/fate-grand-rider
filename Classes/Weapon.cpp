@@ -81,7 +81,7 @@ void BlinkBow::fire(Vec2 offset) {
       lambdaArrow->unscheduleAllCallbacks();
     }
   };
-  arrows->schedule(collision_detect, 0, "collistion_detect");
+  arrows2->schedule(collision_detect, 0, "collistion_detect");
 }
 
 /***武器——弓2***/ 
