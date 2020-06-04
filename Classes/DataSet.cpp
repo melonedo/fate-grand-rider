@@ -103,21 +103,13 @@ Animation* DataSet::load_animation(const rapidjson::Value& animation_obj) {
 }
 
 // 各种类的武器和对应的构造函数
-/*const static std::unordered_map<std::string,
-                                std::function<Weapon*(const std::string&)>>
-    kWeaponSet{{"bow", Bow::create}};*/
-
-/*const static std::unordered_map<std::string,
-                                std::function<Weapon*(const std::string&)>>
-    kWeaponSet{{"magicball", Magic::create}};*/
-
 const static std::unordered_map<std::string,
                                 std::function<Weapon*(const std::string&)>>
-    kWeaponSet{{"darts", Darts::create}};
-
-/*const static std::unordered_map<std::string,
-                                std::function<Weapon*(const std::string&)>>
-    kWeaponSet{{"spear", Spear::create}};*/
+    kWeaponSet{{"magicball", Magic::create},
+               {"bow", Bow::create},
+               {"darts", Darts::create},
+               {"spear", Spear::create},
+               {"blinkbow", BlinkBow::create}};
 
 Weapon* DataSet::load_weapon(const std::string& weapon_name) {
   const auto& weapon_data = getConfig()["weapon"][weapon_name.c_str()];

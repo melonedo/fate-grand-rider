@@ -27,7 +27,7 @@ class Bow : public Weapon {
   // 弓图片的角度
 
   float _bowAngleOffset;
-
+  int _angleConstant;
   int _bowNumber;
   // 箭
   AutoRef<Sprite> _arrow;
@@ -35,6 +35,25 @@ class Bow : public Weapon {
   // 箭的速度
   float _arrowSpeed;
 };
+
+class BlinkBow : public Bow {
+ public:
+  static BlinkBow* create(const std::string& name);
+  void fire(cocos2d::Vec2) override;
+
+ protected:
+  BlinkBow() = default;
+  // 弓图片的角度
+
+  float _bowAngleOffset;
+  int _angleConstant;
+  int _bowNumber;
+  // 箭
+  AutoRef<Sprite> _arrow;
+  // 箭的速度
+  float _arrowSpeed;
+};
+
 
 //矛
 class Spear : public Weapon {
@@ -61,6 +80,7 @@ class Magic : public Weapon {
  protected:
   Magic() = default;
   AutoRef<Sprite> _magicSquare;
+  friend Hero;
 };
 
 //飞镖
