@@ -35,15 +35,20 @@ bool Monster::isAlive()
 {
 	return m_isAlive;
 }
-void Monster::reset()
-{
+void Monster::reset(const Rect rect) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	static std::uniform_int_distribution<unsigned>u(0, visibleSize.width/2);
+	static std::uniform_int_distribution<unsigned>u(0, visibleSize.width);
 	static std::default_random_engine e(time(0));
-	double X = u(e);
-	static std::uniform_int_distribution<unsigned>v(0, visibleSize.height/2);
-	double Y = v(e);
-	this->setPosition(X,Y);
+
+	static std::uniform_int_distribution<unsigned>v(0, visibleSize.height);
+        while (true) {
+          double X = u(e);
+          double Y = v(e);
+          if (rect.containsPoint(Point(X, Y))) {
+            this->setPosition(X, Y);
+            break;
+          }
+        }
 }
 
 void Monster::loadAnimation() {

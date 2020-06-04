@@ -27,7 +27,7 @@ public:
 	//是否活着
 	bool isAlive();
 	void hide();
-	void reset();
+        void reset(const Rect rect);
 	void show();
 	virtual const char* getMonsterName() const = 0;
 	//每隔一秒重置isAttack

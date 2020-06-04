@@ -17,8 +17,8 @@ public:
 	//简单的AI
 	void FollowRun();
 	void updateMonsters(float delta);
-private:
-	void createMonsters();
+
+	void createMonsters(const Rect rect);
 private:
 	//存Monster们
 	Vector<Monster*>m_monsterArr;

@@ -11,7 +11,7 @@ bool MonsterManager::init()
 	this->schedule(SEL_SCHEDULE(&MonsterManager::updateMonsters), 3.0f);
 	return true;
 }
-void MonsterManager::createMonsters()
+void MonsterManager::createMonsters(const Rect rect)
 {
 	//Ъ§Он
 	const auto& config = DataSet::getConfig();
@@ -20,7 +20,7 @@ void MonsterManager::createMonsters()
 	{
 		auto monster = DataSet::load_monster(debug_set["monster"].GetString());
 		this->addChild(monster, kMapPrioritySprite);
-		monster -> reset();
+		monster -> reset(rect);
 		monster->show();
 		monster->pickWeapon(DataSet::load_weapon(debug_set["weapon"].GetString()));
 		m_monsterArr.pushBack(monster);

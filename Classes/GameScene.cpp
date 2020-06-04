@@ -50,16 +50,13 @@ bool GameScene::init() {
     auto hero = DataSet::load_hero(debug_set["hero"].GetString());
     auto spawn = map->getObjectGroup("obj")->getObject("spawn");
     hero->setPosition(spawn["x"].asFloat(), spawn["y"].asFloat());
-    this->addChild(hero, kMapPrioritySprite);
+    this->addChild(hero, kMapPrioritySprite,kTagHero);
     hero->registerUserInput();
 
     // 配上武器
     hero->pickWeapon(DataSet::load_weapon(debug_set["weapon"].GetString()));
 
-    //加载怪物
-    MonsterManager* monsterMgr = MonsterManager::create();
-    monsterMgr->bingHero(hero);
-    this->addChild(monsterMgr, kMapPrioritySprite);
+
     return true;
   }
   else {
