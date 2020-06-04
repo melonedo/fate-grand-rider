@@ -124,35 +124,39 @@ Bow* Bow::create(const std::string& name) {
 }
 
 void Bow::fire(Vec2 offset) {
-  auto v1 = Vec2((offset.y * 5 + offset.x * 12) / 15,
+  Vec2 v[3];
+  v[2] = Vec2((offset.y * 5 + offset.x * 12) / 15,
                  (offset.y * 12 - offset.x * 5) / 15);
-  auto v2 = Vec2((offset.x * 12 - offset.y * 5) / 15,
+  v[1] = Vec2(offset.x, offset.y);
+  v[0] = Vec2((offset.x * 12 - offset.y * 5) / 15,
                  (offset.y * 12 + offset.x * 5) / 15);
-  Sprite* arrows;
-
-  arrows = Sprite::create();
-  arrows->setSpriteFrame(_arrow->getSpriteFrame());
-  arrows->setAnchorPoint(_arrow->getAnchorPoint());
-  arrows->setPosition((_owner->getPosition()));
-  Vec2 speed;
-  auto space = GameScene::getRunningScene()->getPhysicsSpace()->getSpace();
-  arrows->setRotation(-offset.getAngle() * 180 / M_PI + _arrow->getRotation());
-  speed = _arrowSpeed * (offset) / offset.getLength();
-  Vec2 delta = speed / _arrowSpeed;
-  arrows->setVisible(true);
-  getScene()->addChild(arrows);
-  arrows->runAction(RepeatForever::create(MoveBy::create(1, speed)));
-  auto& lambdaArrow = arrows;
-  auto collision_detect = [space, lambdaArrow, delta](float) {
-    if (cpSpaceSegmentQueryFirst(
-            space, chipmunk::cpvFromVec2(lambdaArrow->getPosition()),
-            chipmunk::cpvFromVec2(lambdaArrow->getPosition() + delta), 1,
-            CP_SHAPE_FILTER_ALL, nullptr)) {
-      lambdaArrow->stopAllActions();
-      lambdaArrow->unscheduleAllCallbacks();
-    }
-  };
-  arrows->schedule(collision_detect, 0, "collistion_detect");
+  Sprite* arrows[3];
+  for (int i =0; i < 3; i++) {
+    arrows[i] = Sprite::create();
+    arrows[i]->setSpriteFrame(_arrow->getSpriteFrame());
+    arrows[i]->setAnchorPoint(_arrow->getAnchorPoint());
+    arrows[i]->setPosition((_owner->getPosition()));
+    Vec2 speed;
+    auto space = GameScene::getRunningScene()->getPhysicsSpace()->getSpace();
+    arrows[i]->setRotation(-offset.getAngle() * 180 / M_PI +
+                        _arrow->getRotation() + _angleConstant * (i-1));
+    speed = _arrowSpeed * (v[i]) / offset.getLength();
+    Vec2 delta = speed / _arrowSpeed;
+    arrows[i]->setVisible(true);
+    getScene()->addChild(arrows[i]);
+    arrows[i]->runAction(RepeatForever::create(MoveBy::create(1, speed)));
+    auto& lambdaArrow = arrows[i];
+    auto collision_detect = [space, lambdaArrow, delta](float) {
+      if (cpSpaceSegmentQueryFirst(
+              space, chipmunk::cpvFromVec2(lambdaArrow->getPosition()),
+              chipmunk::cpvFromVec2(lambdaArrow->getPosition() + delta), 1,
+              CP_SHAPE_FILTER_ALL, nullptr)) {
+        lambdaArrow->stopAllActions();
+        lambdaArrow->unscheduleAllCallbacks();
+      }
+    };
+    arrows[i]->schedule(collision_detect, 0, "collistion_detect");
+  }
 }
 
 
