@@ -6,7 +6,7 @@
 bool MonsterManager::init()
 {
 	srand((UINT)GetCurrentTime());
-	createMonsters();
+	//createMonsters();
 	this->scheduleUpdate();
 	this->schedule(SEL_SCHEDULE(&MonsterManager::updateMonsters), 3.0f);
 	return true;
@@ -37,8 +37,8 @@ void MonsterManager::FollowRun()
 	for (auto monster : m_monsterArr)
 	{
 		if (monster->_weapon)
-			monster->_weapon->pointTo(Vec2(m_hero->getPosition().x/2, m_hero->getPosition().y/2)
-			- designResolutionSize / 2);
+			monster->_weapon->pointTo(Vec2(m_hero->getPosition().x, m_hero->getPosition().y)
+			);
 		monster->_weapon->setPositionNormalized(Vec2(1 - monster->_handPos.x, monster->_handPos.y));
 
 		float x = m_hero->getPosition().x - monster->getPosition().x;

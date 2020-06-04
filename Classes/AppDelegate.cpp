@@ -111,8 +111,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
       scene = GameScene::create();
     } else {
       scene = HomeScene::create(
-          [director] { director->replaceScene(GameScene::create()); },
-          [director] { director->replaceScene(Pause::createScene()); });
+          [director] { director->replaceScene(GameScene::create()); },[] {
+            log("settings");
+          }
+       // ,[director] { director->replaceScene(Pause::createScene()); }
+      );
     }
 
     Music music;

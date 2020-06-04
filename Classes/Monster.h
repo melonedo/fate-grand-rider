@@ -1,6 +1,7 @@
 #pragma once
 #include "Mob.h"
 #include "Hero.h"
+using namespace cocos2d;
 class Weapon;//hh学zfn
 class Monster :public Mob
 {

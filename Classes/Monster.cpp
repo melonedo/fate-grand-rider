@@ -79,8 +79,7 @@ void Monster::judgeAttack(Hero* hero)
 	int x = rand() % 100;
 	if (x < 50)
 	{
-		this->_weapon->fire(Vec2(hero->getPosition().x, hero->getPosition().y) -
-		designResolutionSize / 2);
+		this->_weapon->fire(Vec2(hero->getPosition().x, hero->getPosition().y));
 		this->isAttack = true;
 	}
 }

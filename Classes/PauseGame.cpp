@@ -1,5 +1,6 @@
 #include "PauseGame.h"
 USING_NS_CC;
+#include"Pause.h"
 //暂时先这样吧，以后再改
 bool PauseGame::init()
 {
@@ -17,18 +18,10 @@ void PauseGame::registeTouchEvent()
 //重写onKeyPressed方法来实现具体按键的判断
 void PauseGame::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event) {
 	if (keycode == EventKeyboard::KeyCode::KEY_ESCAPE) {
-		/*Size visibleSize = Director::getInstance()->getVisibleSize();
-		RenderTexture* renderTexture = RenderTexture::create(visibleSize.width, visibleSize.height);
-		Scene* scene = Director::getInstance()->getRunningScene();
-		renderTexture->begin();
-		scene->visit();
-		renderTexture->end();
-		auto director = Director::getInstance();
-		director->pause();
-		//Director::getInstance()->pushScene(PauseScene::scene(renderTexture));
-		*/
-		Director::getInstance()->getTextureCache()->removeAllTextures();
+
+
 		PauseGame::capture(this);
+          Director::getInstance()->getTextureCache()->removeAllTextures();
 	}
 }
 
@@ -47,7 +40,7 @@ void PauseGame::afterCapture(bool succeed, const std::string& outputFile)
 		CCLOG("%s", outputFile.c_str());
 		//显示截图
 		Sprite* sp = Sprite::create(outputFile);
-		Director::getInstance()->pushScene(PauseScene::scene(sp));
+		Director::getInstance()->pushScene(Pause::createScene(sp));
 	}
 	else
 	{

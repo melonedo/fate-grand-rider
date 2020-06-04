@@ -30,7 +30,7 @@
       "slider-progress": "sliderProgress.png",
       "slider-track": "sliderTrack.png"
     }
-  }
+  },
 	"weapons": {
 		"basic-bow": {
 			"type": "bow",
@@ -51,7 +51,7 @@
 		"sample-monster": {
 			"walk": {
 				"interval": 0.2,
-				"frames": [ "monster.jpg", "monster.jpg" ]
+				"frames": [ "goust1.png", "goust2.png" ]
 			},
 			"hand-pos": [ 0.75, 0.44 ]
 		}

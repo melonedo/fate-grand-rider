@@ -5,6 +5,7 @@
 #include "Hero.h"
 #include "Interaction.h"
 #include "Map.h"
+#include "Pause.h"
 using namespace cocos2d;
 
 DataSet* DataSet::getInstance() {

@@ -2,7 +2,7 @@
 #include"cocos2d.h"
 #include"Monster.h"
 USING_NS_CC;
-
+using namespace cocos2d;
 //怪物数量
 #define MAX_MONSTER_NUM 5
 

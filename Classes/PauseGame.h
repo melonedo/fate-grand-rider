@@ -10,7 +10,7 @@ public:
 	CREATE_FUNC(PauseGame); 
 	virtual void onKeyPressed(EventKeyboard::KeyCode keycode, Event* event);
 	void capture(Ref* sender);
-    void afterCapture(bool succeed, const std::string& outputFile);
+  void afterCapture(bool succeed, const std::string& outputFile);
 private:
 	void registeTouchEvent();
 

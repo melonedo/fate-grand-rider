@@ -56,6 +56,7 @@ bool GameScene::init() {
     // 配上武器
     hero->pickWeapon(DataSet::load_weapon(debug_set["weapon"].GetString()));
 
+    //加载怪物
     MonsterManager* monsterMgr = MonsterManager::create();
     monsterMgr->bingHero(hero);
     this->addChild(monsterMgr, kMapPrioritySprite);
