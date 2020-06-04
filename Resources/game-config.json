@@ -8,7 +8,7 @@
 	"debug-set": {
 		"map": "maps/sample_map.tmx",
 		"hero": "sample-man",
-		"weapon": "single-bow"
+		"weapon": "magic-power"
 	},
 	"heroes": {
 		"sample-man": {
@@ -75,7 +75,7 @@
 			"type": "magicball",
 			"magicball": {
 				"frame": "magicball.png",
-				"anchor": [ 0.3, 0.8 ]
+				"anchor": [ 0.3, 0.6 ]
 			},
 			"magic": {
 				"frame": "magic.png",
