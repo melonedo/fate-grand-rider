@@ -4,7 +4,7 @@
 
 class Music {
  public:
-   //²¥·Å±³¾°ÒôÀÖ
+   //æ’­æ”¾èƒŒæ™¯éŸ³ä¹
   void PlayMusic();
 
 };
