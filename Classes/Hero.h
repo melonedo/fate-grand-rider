@@ -13,8 +13,6 @@ class Hero : public Mob {
 
   // 每次更新都会尝试往对应的方向行走，速度单位像素每秒
   void setMoveSpeed(float vx, float vy);
-  
-  virtual const char* getHeroName() const = 0;
 
   // 拾取武器，返回旧武器
   Weapon* pickWeapon(Weapon*);
@@ -48,11 +46,6 @@ class Hero : public Mob {
   // 行走动画
   AutoRef<cocos2d::Animation> _walkAnimation;
 
-  // wasd对应的方向
-  const static std::unordered_map<cocos2d::EventKeyboard::KeyCode,
-                                  cocos2d::Vec2>
-      kWasdDirections;
-
   // 按下的方向键
   std::unordered_set<cocos2d::EventKeyboard::KeyCode> _wasdPressed;
 
@@ -72,11 +65,19 @@ class Hero : public Mob {
   class HeroInteraction : public Interaction {
     void attack(cocos2d::Sprite* source, float) override;
   };
+
+  // 角色的名字
+  std::string _heroName;
+  const char* getHeroName() { return _heroName.c_str(); }
 };
 
 class SampleHero : public Hero {
  public:
   CREATE_FUNC(SampleHero);
   
-  const char* getHeroName() const override { return "sample-man"; }
+ protected:
+  bool init() override {
+    _heroName = "sample-man";
+    return Hero::init();
+  }
 };
