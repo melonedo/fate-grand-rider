@@ -36,7 +36,7 @@
 			"arrow": {
 				"frame": "S_Bow04.png",
 				"angle-offset": -135,
-				"anchor": [ 0.9, 0.9 ],
+				"anchor": [ 0.3, 0.3 ],
 				"speed": 400
 			}
 		},
@@ -52,13 +52,13 @@
 			"arrow": {
 				"frame": "S_Bow01.png",
 				"angle-offset": -135,
-				"anchor": [ 0.9, 0.9 ],
+				"anchor": [ 0.3, 0.3 ],
 				"speed": 400
 			},
 			"arrow2": {
 				"frame": "S_Bow06.png",
 				"angle-offset": -135,
-				"anchor": [ 0.9, 0.9 ],
+				"anchor": [ 0.3, 0.3 ],
 				"speed": 400
 			}
 		},
@@ -75,7 +75,7 @@
 			"type": "magicball",
 			"magicball": {
 				"frame": "magicball.png",
-				"anchor": [ 0.3, 0.8 ]
+				"anchor": [ 0.3, 0.6 ]
 			},
 			"magic": {
 				"frame": "magic.png",

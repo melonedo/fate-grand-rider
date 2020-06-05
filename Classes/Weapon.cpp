@@ -45,13 +45,15 @@ BlinkBow* BlinkBow::create(const std::string& name) {
 }
 
 void BlinkBow::fire(Vec2 offset) {
-  Sprite* arrows;
-  Sprite* arrows2;
+  Sprite* arrows;   // 飞行中的箭
+  Sprite* arrows2;  // 爆炸的箭
   arrows2 = Sprite::create();
   arrows2->setSpriteFrame(_arrow2->getSpriteFrame());
+  arrows2->setAnchorPoint(
+      _arrow->getAnchorPoint());  // 用另一个的，防止同步出错问题
   arrows2->setRotation(-offset.getAngle() * 180 / M_PI +
                        _arrow2->getRotation());
-  arrows2->setVisible(true);
+  arrows2->setVisible(false);
   getScene()->addChild(arrows2);
 
   arrows = Sprite::create();
@@ -74,14 +76,19 @@ void BlinkBow::fire(Vec2 offset) {
             space, chipmunk::cpvFromVec2(lambdaArrow->getPosition()),
             chipmunk::cpvFromVec2(lambdaArrow->getPosition() + delta), 1,
             CP_SHAPE_FILTER_ALL, nullptr)) {
+      // 撤销已有的动作
+      lambdaArrow->cleanup();
+      // 闪烁
       lambdaArrow2->setPosition(lambdaArrow->getPosition());
-      Blink* blink = Blink::create(1.0f, 1);
-      lambdaArrow2->runAction(blink);
-      lambdaArrow->stopAllActions();
-      lambdaArrow->unscheduleAllCallbacks();
+      lambdaArrow2->setVisible(true);
+      Vector<FiniteTimeAction*> seq{DelayTime::create(1),
+                                    CallFunc::create([lambdaArrow2] {
+                                      lambdaArrow2->removeFromParent();
+                                    })};
+      lambdaArrow2->runAction(Sequence::create(seq));
     }
   };
-  arrows2->schedule(collision_detect, 0, "collistion_detect");
+  arrows->schedule(collision_detect, 0, "collistion_detect");
 }
 
 /***武器——弓2***/ 
