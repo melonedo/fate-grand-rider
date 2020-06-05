@@ -44,6 +44,7 @@ bool GameScene::init() {
     this->addChild(hero, kMapPrioritySprite);
 
     // 配上武器
+    auto a = debug_set["weapon"].GetString();
     hero->pickWeapon(DataSet::load_weapon(debug_set["weapon"].GetString()));
 
     return true;
