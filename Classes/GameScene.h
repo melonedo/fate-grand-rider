@@ -2,6 +2,7 @@
 #include "cocos2d.h"
 #include "DataSet.h"
 #include "Physics.h"
+#include "Map.h"
 
 class GameScene : public cocos2d::Scene {
  public:
@@ -18,6 +19,8 @@ class GameScene : public cocos2d::Scene {
   bool init() override;
   
   chipmunk::Space _space;
+
+  std::vector<Room> _rooms;
 
   // 当前运行的场景，否则获取的时候要dynamic_cast一遍
   static GameScene* runningGameScene;
