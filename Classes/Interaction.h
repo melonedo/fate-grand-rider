@@ -107,3 +107,14 @@ class Gate : public Interaction {
   // 对应房间
   Room** _room;
 };
+
+class Target : public Interaction {
+ public:
+  static Target* load(const cocos2d::Vec2& position,
+                          const cocos2d::ValueMap& property, chipmunk::Body&&);
+  void attack(cocos2d::Sprite*, float) override;
+
+ private:
+  CREATE_FUNC(Target);
+  chipmunk::Body _body;
+};

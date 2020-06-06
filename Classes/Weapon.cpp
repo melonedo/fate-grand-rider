@@ -2,6 +2,7 @@
 #include "cocos2d.h"
 #include "DataSet.h"
 #include "GameScene.h"
+#include "Interaction.h"
 using namespace cocos2d;
 
 Bow* Bow::create(const std::string& name) {
@@ -52,10 +53,11 @@ void Bow::fire(Vec2 offset) {
   auto space = GameScene::getRunningScene()->getPhysicsSpace();
   auto filter = _owner->getBody().getFilter();
   auto collision_detect = [space, new_arrow, delta, filter](float) {
-    if (space->querySegmentFirst(new_arrow->getPosition(),
+    if (auto target = space->querySegmentFirst(new_arrow->getPosition(),
                                    new_arrow->getPosition() + delta, filter)) {
       new_arrow->stopAllActions();
       new_arrow->unscheduleAllCallbacks();
+      getInteraction(target)->attack(new_arrow, 1);
     }
   };
   new_arrow->schedule(collision_detect, 0, "collision_detect");

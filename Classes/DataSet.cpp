@@ -33,7 +33,8 @@ const static std::unordered_map<
     kInteractionSet{{"wall", NoInteraction::load},
                     {"hide", HideSpot::load},
                     {"chest", Chest::load},
-                    {"gate", Gate::load}};
+                    {"gate", Gate::load},
+                    {"target", Target::load}};
 
 Interaction* DataSet::load_interaction(const std::string& interaction_name,
                                        const Vec2& position,
