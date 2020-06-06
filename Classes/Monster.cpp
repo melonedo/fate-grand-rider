@@ -36,19 +36,44 @@ bool Monster::isAlive()
 	return m_isAlive;
 }
 void Monster::reset(const Rect rect) {
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	static std::uniform_int_distribution<unsigned>u(0, visibleSize.width);
-	static std::default_random_engine e(time(0));
+  Size visibleSize = Director::getInstance()->getVisibleSize();
+  static std::uniform_int_distribution<unsigned> u(0, visibleSize.width);
+  static std::default_random_engine e(time(0));
 
-	static std::uniform_int_distribution<unsigned>v(0, visibleSize.height);
+  static std::uniform_int_distribution<unsigned> v(0, visibleSize.height);
+  while (true) {
+    double X = u(e);
+    double Y = v(e);
+    if (rect.containsPoint(Point(X, Y))) {
+      this->setPosition(X, Y);
+      break;
+    }
+  }
+
+	//碰撞
+  auto space = GameScene::getRunningScene()->getPhysicsSpace();
+  auto filter = this->getBody().getFilter();
+  auto collision_detect = [space,filter,this](float) {
+    if (space->querySegmentFirst(this->getPosition(),
+                                 this->getPosition() + _speed, filter)) {
+
+			this->setVisible(false);
+      
+     /* if (dis > visibleRange) {
         while (true) {
-          double X = u(e);
-          double Y = v(e);
-          if (rect.containsPoint(Point(X, Y))) {
-            this->setPosition(X, Y);
+          this->monsterRun();
+          if (!space->querySegmentFirst(this->getPosition(),
+                                        this->getPosition() + _speed,
+                                        filter))
             break;
-          }
         }
+      } else {
+        _speed.x = -_speed.x;
+        _speed.y = -_speed.y;
+      }*/
+    }
+  };
+  this->schedule(collision_detect, 0, "collision_detect");
 }
 
 void Monster::loadAnimation() {
@@ -63,18 +88,16 @@ void Monster::loadAnimation() {
 	auto animate = Animate::create(_walkAnimation);
 	animate->setTag(kTagStandAnimation);
 	this->runAction(animate);
+
 }
 
 
+
 void Monster::setMoveSpeed(float vx, float vy) { _speed = Vec2(vx, vy); }
-void Monster::update(float dt)
-{
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	if (this->getPosition().x + _speed.x >= visibleSize.width/2|| this->getPosition().x + _speed.x<=0)
-		_speed.x = -_speed.x;
-	if (this->getPosition().y + _speed.y >= visibleSize.height/2 || this->getPosition().y + _speed.y <= 0)
-		_speed.y = -_speed.y;
-	this->setPosition(this->getPosition().x + _speed.x, this->getPosition().y + _speed.y);
+void Monster::update(float dt) {
+
+  this->setPosition(this->getPosition().x + _speed.x,
+                    this->getPosition().y + _speed.y);
 }
 
 void Monster::judgeAttack(Hero* hero)

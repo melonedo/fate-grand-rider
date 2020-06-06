@@ -24,6 +24,7 @@ public:
 	void monsterRun();
 	//加载动画
 	void loadAnimation();
+
 	//是否活着
 	bool isAlive();
 	void hide();
