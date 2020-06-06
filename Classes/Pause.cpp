@@ -3,7 +3,7 @@
 #include "Pause.h"
 using namespace cocos2d;
 
-// Pause场景实现
+// Pause鍦烘櫙瀹炵幇
 Scene* Pause::createScene() { return Pause::create(); }
 
 int Pause::_audioID = AudioEngine::INVALID_AUDIO_ID;
@@ -42,10 +42,10 @@ bool Pause::init() {
 }
 
 /*
-用pushScene实现场景暂停
+鐢╬ushScene瀹炵幇鍦烘櫙鏆傚仠
 */
 
-//暂停背景音量控制滑块实现
+//鏆傚仠鑳屾櫙闊抽噺鎺у埗婊戝潡瀹炵幇
 SliderEx* SliderEx::create() {
   auto ret = new (std::nothrow) SliderEx();
   const auto& data = DataSet::getConfig()["pause"]["volume-control"];
