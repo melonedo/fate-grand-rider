@@ -25,20 +25,20 @@ class Space {
 
   //// 管理空间中的刚体
 
-  // 添加一个body，并获得所有权，管理对应内存。
-  void addBodyAndOwn(Body&& body);
+  // 添加一个body，并获得所有权，管理对应内存。返回一个引用，注意在之后这个引用对应的指针可能会失效。
+  Body& addBodyAndOwn(Body&& body);
   // 添加一个body，但不管理对应内存。
   void addBody(Body* body);
   // 删除一个body，不管理对应内存。
   void removeBody(Body* body);
   // 将精灵对应为空间中静态的方形，并把指针写入cpShape中，若filter的第一个参数是0,则分配一个独立的组。
-  void addBoxForTile(cocos2d::Sprite* tile,
+  Body addBoxForTile(cocos2d::Sprite* tile,
                      cpShapeFilter filter = {0, kShapeMaskTile,
                                              CP_ALL_CATEGORIES});
   // 将精灵下部对应的圆形加入空间，并把指针写入cpShape中，若filter的第一个参数是0,则分配一个独立的组。
   // 注意为了保证位置对应关系，应将锚点设定为(0.5,0.25)。
   void addCircleForMob(Mob* mob, cpShapeFilter filter = {0, kShapeMaskMob,
-                                                         CP_ALL_CATEGORIES});
+                                                         kShapeMaskForMob});
   // 如果以其他的形状添加，请自行使用chipmunk的接口。
 
   //// 查询

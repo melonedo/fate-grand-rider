@@ -20,9 +20,13 @@ enum AnimationTag{
 
 enum SpriteTag { kTagHero = 2000, kTagWeapon, kTagWall, kTagInteractable};
 
-enum PhysicsShapeMask {
-  //kShapeMaskPlayer = 1 << 1,
-  kShapeMaskMob = 1 << 2,
-  kShapeMaskTile = 1 << 3,
-  kShapeMaskBullet = 1 << 4
+// 用cpBitMask会报错C3064: must be a simple type or resolve to one，只得直接写下unsigned int
+enum PhysicsShapeMask : unsigned int {
+  // kShapeMaskPlayer = 1 << 1,
+  kShapeMaskMob = 1 << 2,   // 生物
+  kShapeMaskTile = 1 << 3,  // 建筑
+  // kShapeMaskBullet = 1 << 4, // 子弹
+  kShapeMaskItem = 1 << 5,  // 同样是建筑，但是可以通过，通常是地上的物品或者门
+
+  kShapeMaskForMob = ~kShapeMaskItem // 生物不会被物品阻挡
 };
