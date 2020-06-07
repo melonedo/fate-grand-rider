@@ -60,6 +60,7 @@ class Hero : public Mob {
 
   // 正在互动的建筑
   Interaction* _interacting;
+  friend Interaction; // 有些互动需要修改_interacting以防止endTouch再次访问
 
   // 角色的互动
   class HeroInteraction : public Interaction {

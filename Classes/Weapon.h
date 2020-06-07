@@ -12,6 +12,8 @@ class Weapon : public cocos2d::Sprite {
   virtual void fire(cocos2d::Vec2 offset) = 0;
   // 设置所有者，用于同步位置
   void setOwner(Mob* owner) { _owner = owner; }
+  // 设置为掉落物
+  void drop();
  protected:
   using Sprite::init;
   Mob* _owner;

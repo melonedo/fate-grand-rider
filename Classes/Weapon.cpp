@@ -5,11 +5,20 @@
 #include "Interaction.h"
 using namespace cocos2d;
 
+void Weapon::drop() {
+  if (_owner) {
+    this->removeFromParent();
+    this->setPosition(_owner->getPosition());
+  }
+  GameScene::getRunningScene()->addChild(this, kMapPriorityBackground);
+  this->addComponent(DroppedWeapon::create(this));
+}
+
 Bow* Bow::create(const std::string& name) {
   Bow* bow = new Bow;
   bow->Weapon::init();
   bow->setName(name);
-  const auto& data = DataSet::getConfig()["weapons"][name.c_str()];
+  const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
   const auto& bow_data = data["bow"];
   bow->_bowAngleOffset = bow_data["angle-offset"].GetFloat();
   bow->setSpriteFrame(

@@ -180,7 +180,8 @@ void Hero::update(float delta) {
   // 保证可以碰到已经碰上的的建筑
   cpShapeFilter filter = _body.getFilter();
   filter.mask = CP_ALL_CATEGORIES;
-  auto stepping = space->queryPointNearest(new_pos, radius - 1, filter);
+  // 加个0.1不然碰不到
+  auto stepping = space->queryPointNearest(new_pos, radius + 0.1, filter);
   if (stepping != nullptr) result = stepping;
 
   Interaction* interacting = nullptr;
@@ -205,10 +206,15 @@ void Hero::update(float delta) {
 }
 
 Weapon* Hero::pickWeapon(Weapon* weapon) {
+  // 扔掉原有的武器
+  if (_weapon) {
+    _weapon->drop();
+  }
   auto res = _weapon;
   _weapon = weapon;
   weapon->setVisible(true);
   weapon->setPositionNormalized(_handPos);
+  weapon->removeFromParent();
   this->addChild(weapon, 1);
   weapon->setOwner(this);
   return res;

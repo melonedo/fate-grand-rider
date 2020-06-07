@@ -23,7 +23,7 @@
 			"hand-pos": [0.75,0.44]
 		}
 	},
-	"weapons": {
+	"weapon": {
 		"basic-bow": {
 			"type": "bow",
 			"bow": {
