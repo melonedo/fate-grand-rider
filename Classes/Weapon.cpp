@@ -61,7 +61,7 @@ void BlinkBow::fire(Vec2 offset) {
   arrows->setAnchorPoint(_arrow->getAnchorPoint());
   arrows->setPosition((_owner->getPosition()));
   Vec2 speed;
-  auto space = GameScene::getRunningScene()->getPhysicsSpace()->getSpace();
+  auto space = GameScene::getRunningScene()->getPhysicsSpace();
   arrows->setRotation(-offset.getAngle() * 180 / M_PI + _arrow->getRotation());
   speed = _arrowSpeed * (offset) / offset.getLength();
   Vec2 delta = speed / _arrowSpeed;
@@ -70,12 +70,12 @@ void BlinkBow::fire(Vec2 offset) {
   arrows->runAction(RepeatForever::create(MoveBy::create(1, speed)));
   auto& lambdaArrow = arrows;
   auto& lambdaArrow2 = arrows2;
-  auto collision_detect = [space, lambdaArrow, delta, lambdaArrow2,
-                           offset](float) {
-    if (cpSpaceSegmentQueryFirst(
-            space, chipmunk::cpvFromVec2(lambdaArrow->getPosition()),
-            chipmunk::cpvFromVec2(lambdaArrow->getPosition() + delta), 1,
-            CP_SHAPE_FILTER_ALL, nullptr)) {
+  auto filter = _owner->getBody().getFilter();
+  auto collision_detect = [space, lambdaArrow, lambdaArrow2, delta,
+                           filter](float) {
+    if (auto target = space->querySegmentFirst(
+            lambdaArrow->getPosition(), lambdaArrow->getPosition() + delta,
+            filter)) {
       // 撤销已有的动作
       lambdaArrow->cleanup();
       // 闪烁
@@ -86,9 +86,10 @@ void BlinkBow::fire(Vec2 offset) {
                                       lambdaArrow2->removeFromParent();
                                     })};
       lambdaArrow2->runAction(Sequence::create(seq));
+      getInteraction(target)->attack(lambdaArrow, 1);
     }
   };
-  arrows->schedule(collision_detect, 0, "collistion_detect");
+  lambdaArrow->schedule(collision_detect, 0, "collistion_detect");
 }
 
 /***武器——弓2***/ 
@@ -144,7 +145,7 @@ void Bow::fire(Vec2 offset) {
     arrows[i]->setAnchorPoint(_arrow->getAnchorPoint());
     arrows[i]->setPosition((_owner->getPosition()));
     Vec2 speed;
-    auto space = GameScene::getRunningScene()->getPhysicsSpace()->getSpace();
+    auto space = GameScene::getRunningScene()->getPhysicsSpace();
     arrows[i]->setRotation(-offset.getAngle() * 180 / M_PI +
                         _arrow->getRotation() + _angleConstant * (i-1));
     speed = _arrowSpeed * (v[i]) / offset.getLength();
@@ -152,17 +153,19 @@ void Bow::fire(Vec2 offset) {
     arrows[i]->setVisible(true);
     getScene()->addChild(arrows[i]);
     arrows[i]->runAction(RepeatForever::create(MoveBy::create(1, speed)));
-    auto& lambdaArrow = arrows[i];
-    auto collision_detect = [space, lambdaArrow, delta](float) {
-      if (cpSpaceSegmentQueryFirst(
-              space, chipmunk::cpvFromVec2(lambdaArrow->getPosition()),
-              chipmunk::cpvFromVec2(lambdaArrow->getPosition() + delta), 1,
-              CP_SHAPE_FILTER_ALL, nullptr)) {
+    auto lambdaArrow = arrows[i];
+    auto filter = _owner->getBody().getFilter();
+    auto collision_detect = [space, lambdaArrow, delta,filter](float) {
+      if (auto target = space->querySegmentFirst(
+              lambdaArrow->getPosition(), lambdaArrow->getPosition() + delta,
+              filter)) {
         lambdaArrow->stopAllActions();
         lambdaArrow->unscheduleAllCallbacks();
+        getInteraction(target)->attack(lambdaArrow, 1);
       }
+      
     };
-    arrows[i]->schedule(collision_detect, 0, "collistion_detect");
+    lambdaArrow->schedule(collision_detect, 0, "collistion_detect");
   }
 }
 
@@ -177,11 +180,16 @@ Spear* Spear::create(const std::string& name) {
   spear->_spearAngleOffset = spear_data["angle-offset"].GetFloat();
   spear->setSpriteFrame(
       DataSet::load_frame(spear_data["frame"].GetString(), kWeaponResolution));
+  
+  spear->_spear = Sprite::create();
+  spear->_spear->setSpriteFrame(
+      DataSet::load_frame(spear_data["frame"].GetString()));
+  spear->_spear->setRotation(spear_data["angle-offset"].GetFloat());
+
   const auto& anchor_data = spear_data["anchor"].GetArray();
   spear->_spearSpeed = spear_data["speed"].GetFloat();
-  spear->setAnchorPoint(
-      Vec2(anchor_data[0].GetFloat(), anchor_data[1].GetFloat()));
-
+  spear->_spear->setAnchorPoint(
+      Vec2(0.75, 0.44));
   return spear;
 }
 
@@ -193,12 +201,34 @@ void Spear::pointTo(Vec2 offset) {
 }
 
 void Spear::fire(Vec2 offset) {
+  Sprite* spears = Sprite::create();
+  spears->setSpriteFrame(_spear->getSpriteFrame());
+  spears->setAnchorPoint(_spear->getAnchorPoint());
+  spears->setPosition((_owner->getPosition()));
+  spears->setRotation(-offset.getAngle() * 180 / M_PI + _spear->getRotation());
   Vec2 speed = _spearSpeed * offset / offset.getLength();
   Vec2 delta = speed / _spearSpeed;
+  spears->setVisible(true);
+  getScene()->addChild(spears);
+  auto space = GameScene::getRunningScene()->getPhysicsSpace();
   auto flipxAction = FlipX::create(true);
   auto moveBy = MoveBy::create(0.3f, speed);
+  auto _moveBy = MoveBy::create(0.3f, speed);
+  FadeOut* disappear = FadeOut::create(0.1f);
   auto action = Sequence::create(moveBy, flipxAction, moveBy->reverse(), NULL);
-  runAction(action);
+  auto action2 = Sequence::create(_moveBy,disappear, NULL);
+  this->runAction(action);
+  spears->runAction(action2);
+  auto filter = _owner->getBody().getFilter();
+  auto collision_detect = [space, spears, filter,offset,speed](float) {
+    if (auto target =
+            space->querySegmentFirst(offset, offset + speed, filter)) {
+      spears->stopAllActions();
+      spears->unscheduleAllCallbacks();
+      getInteraction(target)->attack(spears, 1);
+    }
+  };
+  spears->schedule(collision_detect, 0, "collistion_detect");
 }
 
 /***武器——法阵***/
@@ -275,7 +305,7 @@ void Darts::fire(Vec2 offset) {
    darts->setAnchorPoint(_dart->getAnchorPoint());
   darts->setPosition((_owner->getPosition()));
   Vec2 speed;
-  auto space = GameScene::getRunningScene()->getPhysicsSpace()->getSpace();
+  auto space = GameScene::getRunningScene()->getPhysicsSpace();
   speed = _dartSpeed * (offset) / offset.getLength();
   Vec2 delta = speed / _dartSpeed;
   darts->setVisible(true);
@@ -284,14 +314,14 @@ void Darts::fire(Vec2 offset) {
   RotateBy* rotateby = RotateBy::create(1.5f,1080);
   Action* action = Spawn::create(moveby, rotateby, NULL);
   darts->runAction(action);
-  auto& lambdaDart = darts;
-  auto collision_detect = [space, lambdaDart, delta](float) {
-    if (cpSpaceSegmentQueryFirst(
-            space, chipmunk::cpvFromVec2(lambdaDart->getPosition()),
-            chipmunk::cpvFromVec2(lambdaDart->getPosition() + delta), 1,
-            CP_SHAPE_FILTER_ALL, nullptr)) {
-      lambdaDart->stopAllActions();
-      lambdaDart->unscheduleAllCallbacks();
+  auto filter = _owner->getBody().getFilter();
+  auto collision_detect = [space, darts, delta, filter](float) {
+    if (auto target = space->querySegmentFirst(
+            darts->getPosition(), darts->getPosition() + delta,
+            filter)) {
+      darts->stopAllActions();
+      darts->unscheduleAllCallbacks();
+      getInteraction(target)->attack(darts, 1);
     }
   };
   darts->schedule(collision_detect, 0, "collistion_detect");

@@ -8,7 +8,7 @@
 	"debug-set": {
 		"map": "maps/sample_map.tmx",
 		"hero": "sample-man",
-		"weapon": "magic-power"
+		"weapon": "basic-spear"
 	},
 	"heroes": {
 		"sample-man": {
