@@ -29,7 +29,8 @@ bool GameScene::init() {
   // 缩放
   this->setScale(config["global-zoom-scale"].GetFloat());
 
-
+  // 物理空间
+  _space = std::make_shared<chipmunk::Space>();
 
   // 首先判断是不是用测试集
 

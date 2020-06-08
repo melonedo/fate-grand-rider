@@ -31,6 +31,8 @@ class Interaction : public cocos2d::Component {
   // 攻击时触发，适用于会被破坏的建筑和生物。
   virtual void attack(cocos2d::Sprite* source, float damage) {}
 
+  // 强制结束互动，防止出现dangling pointer
+  void endInteracting(Hero*);
  protected:
   bool init() override;
 };
@@ -74,8 +76,8 @@ class Chest : public Interaction {
 
   void touch(Hero*) override;
   void endTouch(Hero*) override;
-  void dialog(Hero*) override {}
-  // TODO: 建一个Item类把东西放在地上
+  // 放一个武器在地上
+  void dialog(Hero*) override;
 
  private:
   CREATE_FUNC(Chest);
@@ -106,4 +108,33 @@ class Gate : public Interaction {
   bool _isClosed;
   // 对应房间
   Room** _room;
+};
+
+// 靶子
+class Target : public Interaction {
+ public:
+  static Target* load(const cocos2d::Vec2& position,
+                          const cocos2d::ValueMap& property, chipmunk::Body&&);
+  void attack(cocos2d::Sprite*, float) override;
+
+ private:
+  CREATE_FUNC(Target);
+  chipmunk::Body _body;
+};
+
+class Weapon;
+// 地上的武器，可穿越，碰到时显示名字，对话时给予。
+class DroppedWeapon : public Interaction {
+ public:
+  // 展示武器名
+  void touch(Hero*) override;
+  // 捡起武器
+  void dialog(Hero*) override;
+  // 生成对应于地上的武器所需的交互。
+  static DroppedWeapon* create(Weapon* weapon);
+
+ private:
+  CREATE_FUNC(DroppedWeapon);
+
+  chipmunk::Body _body;
 };

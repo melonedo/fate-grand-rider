@@ -54,6 +54,15 @@ if(APPLE OR WINDOWS)
     cocos_mark_multi_resources(common_res_files RES_TO "Resources" FOLDERS ${GAME_RES_FOLDER})
 endif()
 
+if(WINDOWS)
+    # use utf-8 encoding
+    add_compile_options(/wo4244 /wo4996 /utf-8)
+    # set startup project
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT APP_NAME)
+    # suppress warnings in cocos2d
+    target_compile_options(cocos2d PRIVATE /w)
+endif()
+
 # add cross-platforms source files and header files
 list(APPEND GAME_SOURCE
      Classes/AppDelegate.cpp

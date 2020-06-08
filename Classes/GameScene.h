@@ -15,13 +15,11 @@ class GameScene : public cocos2d::Scene {
   static GameScene* getRunningScene() { return runningGameScene; }
 
   // 获取物理空间
-  chipmunk::Space* getPhysicsSpace() { return &_space; }
-
-
+  chipmunk::Space* getPhysicsSpace() { return _space.get(); }
  private:
   bool init() override;
 
-  chipmunk::Space _space;
+  std::shared_ptr<chipmunk::Space> _space;
 
   std::vector<Room> _rooms;
 

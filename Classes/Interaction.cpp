@@ -4,6 +4,9 @@
 #include "Physics.h"
 #include "constants.h"
 #include "Map.h"
+#include "Weapon.h"
+#include "GameScene.h"
+#include "constants.h"
 using namespace cocos2d;
 
 // 获取对应的图层用来动态调整GID
@@ -25,6 +28,8 @@ bool Interaction::init() {
     return false;
   }
 }
+
+void Interaction::endInteracting(Hero* hero) { hero->_interacting = nullptr; }
 
 HideSpot* HideSpot::load(const cocos2d::Vec2&, const cocos2d::ValueMap&,
                          chipmunk::Body&& body) {
@@ -108,4 +113,46 @@ NoInteraction* NoInteraction::load(const cocos2d::Vec2&,
   auto res = create();
   res->_body = std::move(body);
   return res;
+}
+
+void Target::attack(cocos2d::Sprite*, float) {
+  getOwner()->setScale(1.5);
+  getOwner()->runAction(ScaleTo::create(0.1, 1));
+}
+
+Target* Target::load(const cocos2d::Vec2& position,
+                     const cocos2d::ValueMap& property, chipmunk::Body&& body) {
+  auto res = create();
+  res->_body = std::move(body);
+  return res;
+}
+
+DroppedWeapon* DroppedWeapon::create(Weapon* weapon) {
+  DroppedWeapon* dropped = create();
+  dropped->_body =
+      GameScene::getRunningScene()->getPhysicsSpace()->addBoxForTile(weapon);
+  setBodyTypeToItem(dropped->_body);
+  return dropped;
+}
+
+void DroppedWeapon::touch(Hero*) { log("%s", getOwner()->getName().c_str()); }
+
+void DroppedWeapon::dialog(Hero* hero) {
+  Weapon* weapon = dynamic_cast<Weapon*>(getOwner());
+  hero->pickWeapon(weapon);
+  weapon->removeComponent(this);
+  endInteracting(hero);
+}
+
+void Chest::dialog(Hero*) {
+  // 首先随便找一个武器
+  const auto& names = DataSet::getConfig()["weapon"].GetObject();
+  std::string name;
+  name = names.MemberBegin()[rand() % names.MemberCount()].name.GetString();
+  // 加载
+  Weapon* weapon = DataSet::load_weapon(name);
+  // 放到地上
+  weapon->setPosition(getOwner()->getPosition() + Vec2(0, -kTileResolution));
+  weapon->addComponent(DroppedWeapon::create(weapon));
+  GameScene::getRunningScene()->addChild(weapon, kMapPriorityBackground);
 }

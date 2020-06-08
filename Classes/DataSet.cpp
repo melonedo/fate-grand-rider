@@ -34,7 +34,8 @@ const static std::unordered_map<
     kInteractionSet{{"wall", NoInteraction::load},
                     {"hide", HideSpot::load},
                     {"chest", Chest::load},
-                    {"gate", Gate::load}};
+                    {"gate", Gate::load},
+                    {"target", Target::load}};
 
 Interaction* DataSet::load_interaction(const std::string& interaction_name,
                                        const Vec2& position,
@@ -93,6 +94,8 @@ const static std::unordered_map<std::string,
     kWeaponSet{{"bow", Bow::create}};
 
 Weapon* DataSet::load_weapon(const std::string& weapon_name) {
-  const auto& weapon_data = getConfig()["weapons"][weapon_name.c_str()];
-  return kWeaponSet.at(weapon_data["type"].GetString())(weapon_name);
+  const auto& weapon_data = getConfig()["weapon"][weapon_name.c_str()];
+  auto res = kWeaponSet.at(weapon_data["type"].GetString())(weapon_name);
+  res->setName(weapon_name);
+  return res;
 }

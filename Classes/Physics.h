@@ -15,7 +15,7 @@ namespace chipmunk {
 using cocos2d::Vec2;
 class Body;
 // 整个空间，包含所有要查询的物体。
-class Space {
+class Space : public std::enable_shared_from_this<Space> {
  public:
   Space() : _space(cpSpaceNew()), _bodies(), _groupCount(0) {}
   Space(const Space&) = delete;
@@ -122,9 +122,15 @@ class Body {
     cpShapeSetFilter(_shape, filter);
   }
 
+  // 设置物理空间
+  void setSpace(const std::shared_ptr<Space>& space) { _space = space; }
+  // 获取物理空间
+  const std::shared_ptr<Space>& getSpace() const { return _space; }
+
  private:
   cpBody* _body;
   cpShape* _shape;
+  std::shared_ptr<Space> _space;
 };
 
 // 为地图中的瓦片生成对应碰撞箱。

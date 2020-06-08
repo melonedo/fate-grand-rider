@@ -24,17 +24,17 @@ HomeScene* HomeScene::create(callback_t on_start_pressed,
   scene->addChild(title_label, 0, "title_label");
 
   // 开始键
-  auto start_label =
-      Label::createWithTTF(ttfconfig, "Start", TextHAlignment::CENTER);
+  auto start_label = Label::createWithSystemFont(
+      "开始", "Microsoft YaHei", 60, Size::ZERO, TextHAlignment::CENTER);
   assert(start_label);
   start_label->setAnchorPoint(Vec2(0.5f, 0.5f));
   start_label->setPosition(designResolutionSize.width / 2,
                            designResolutionSize.height * 0.6f);
-  scene->addChild(start_label, 0, "start_label");
+  scene->addChild(start_label, 0, "start_label"); 
 
   // 设置键
-  auto settings_label =
-      Label::createWithTTF(ttfconfig, "Settings", TextHAlignment::CENTER);
+  auto settings_label = Label::createWithSystemFont(
+      "设置", "Microsoft YaHei", 60, Size::ZERO, TextHAlignment::CENTER);
   assert(settings_label);
   settings_label->setAnchorPoint(Vec2(0.5f, 0.5f));
   settings_label->setPosition(designResolutionSize.width / 2,

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="2020.05.07" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="2">
+<map version="1.2" tiledversion="2020.05.27" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="2">
  <properties>
   <property name="bg-layers" value="bg invisible"/>
   <property name="fg-layers" value="fg building-fg"/>
@@ -26,9 +26,9 @@
    eJzt1EEKgzAQhlHP0KMEejIv4NGbjZBFZUZKJEnfBz+4mArPRbdNkiRJkqRce7AZeiV2toI3Muw3bs/qNzqi9XZd1cNbn49ovV1X8fJmb5u7qb2l7p24a945tTe7+k2OkrCu4s04eZ+Nl/fG7V95mzte3uHj/e5dpdW8JVjkjX5fnqOkyvx3/bqR4uXl5eXlHSFeXl5eXt4R4uXl5Z3FK2mOPoMcAd0=
   </data>
  </layer>
- <layer id="6" name="building-fg" width="60" height="60" locked="1">
+ <layer id="6" name="building-fg" width="60" height="60">
   <data encoding="base64" compression="zlib">
-   eJzt1bkRgDAMRUHTEk1RgsuD0kzi3MNw/91YgZ4SlQIAAAAAwBvN09Mb3Guk90830Xts5ivSekek9QJwjSXsn9Sw3m7du7fQdgAAAACAszVrQgRg
+   eJzt1bERgCAQRUFsyaYswfK0IIvQxJxhBhX/bnwB74KjFAAAAAAAvmie3n7Bs2p6/7QTvW0zo0jrrZHWC0AfS9h/sob13rare29sP0J3BozP/QIAAAB6OQFRPQY6
   </data>
  </layer>
  <layer id="2" name="fg" width="60" height="60" locked="1">

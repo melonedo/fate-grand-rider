@@ -2,13 +2,23 @@
 #include "cocos2d.h"
 #include "DataSet.h"
 #include "GameScene.h"
+#include "Interaction.h"
 using namespace cocos2d;
+
+void Weapon::drop() {
+  if (_owner) {
+    this->removeFromParent();
+    this->setPosition(_owner->getPosition());
+  }
+  GameScene::getRunningScene()->addChild(this, kMapPriorityBackground);
+  this->addComponent(DroppedWeapon::create(this));
+}
 
 Bow* Bow::create(const std::string& name) {
   Bow* bow = new Bow;
   bow->Weapon::init();
   bow->setName(name);
-  const auto& data = DataSet::getConfig()["weapons"][name.c_str()];
+  const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
   const auto& bow_data = data["bow"];
   bow->_bowAngleOffset = bow_data["angle-offset"].GetFloat();
   bow->setSpriteFrame(
@@ -56,10 +66,11 @@ void Bow::fire(Vec2 offset) {
 
   auto filter = _owner!=NULL?_owner->getBody().getFilter(): _owner2->getBody().getFilter();
   auto collision_detect = [space, new_arrow, delta, filter](float) {
-    if (space->querySegmentFirst(new_arrow->getPosition(),
+    if (auto target = space->querySegmentFirst(new_arrow->getPosition(),
                                    new_arrow->getPosition() + delta, filter)) {
       new_arrow->stopAllActions();
       new_arrow->unscheduleAllCallbacks();
+      getInteraction(target)->attack(new_arrow, 1);
     }
   };
   new_arrow->schedule(collision_detect, 0, "collision_detect");

@@ -62,11 +62,12 @@ void Hero::registerUserInput() {
       mouse_listener, this);
 }
 
-const std::unordered_map<EventKeyboard::KeyCode, Vec2>
-    Hero::kWasdDirections{{EventKeyboard::KeyCode::KEY_W, {0, 1}},
-                          {EventKeyboard::KeyCode::KEY_A, {-1, 0}},
-                          {EventKeyboard::KeyCode::KEY_S, {0, -1}},
-                          {EventKeyboard::KeyCode::KEY_D, {1, 0}}};
+// wasd对应的方向
+const static std::unordered_map<EventKeyboard::KeyCode, Vec2> kWasdDirections{
+    {EventKeyboard::KeyCode::KEY_W, {0, 1}},
+    {EventKeyboard::KeyCode::KEY_A, {-1, 0}},
+    {EventKeyboard::KeyCode::KEY_S, {0, -1}},
+    {EventKeyboard::KeyCode::KEY_D, {1, 0}}};
 
 void Hero::onKeyPressed(EventKeyboard::KeyCode code, Event*) {
   if (kWasdDirections.count(code) != 0) {
@@ -176,10 +177,11 @@ void Hero::update(float delta) {
     }
   }
  
-  // 保证可以碰到地上的建筑
+  // 保证可以碰到已经碰上的的建筑
   cpShapeFilter filter = _body.getFilter();
   filter.mask = CP_ALL_CATEGORIES;
-  auto stepping = space->queryPointNearest(new_pos, radius - 1, filter);
+  // 加个0.1不然碰不到
+  auto stepping = space->queryPointNearest(new_pos, radius + 0.1, filter);
   if (stepping != nullptr) result = stepping;
 
   Interaction* interacting = nullptr;
@@ -204,12 +206,17 @@ void Hero::update(float delta) {
 }
 
 Weapon* Hero::pickWeapon(Weapon* weapon) {
+  // 扔掉原有的武器
+  if (_weapon) {
+    _weapon->drop();
+  }
   auto res = _weapon;
   _weapon = weapon;
   weapon->setVisible(true);
   weapon->setPositionNormalized(_handPos);
+  weapon->removeFromParent();
   this->addChild(weapon, 1);
-  weapon->_owner = this;
+  weapon->setOwner(this);
   return res;
 }
 
