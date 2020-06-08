@@ -41,10 +41,12 @@ public:
 	Weapon* _weapon;
 
 	Vec2 _handPos;
-private:
 
-	// 移动速度
-	Vec2 _speed;
+        // 移动速度
+        Vec2 _speed;
+
+       private:
+
 	//活着没
 	bool m_isAlive;
 	// 行走动画

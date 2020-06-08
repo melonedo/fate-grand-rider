@@ -130,8 +130,7 @@ void Monster::pickWeapon(Weapon* weapon)
 	weapon->setPositionNormalized(_handPos);
 
 	this->addChild(weapon, 1);
-	weapon->_owner2 = this;
-	weapon->_owner = NULL;
+        weapon->setOwner(this);
 }
 
 void Monster::updateMonster(float delta)

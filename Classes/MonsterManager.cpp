@@ -3,6 +3,7 @@
 #include "Monster.h"
 #include "DataSet.h"
 #include "constants.h"
+#include"GameScene.h"
 bool MonsterManager::init()
 {
 	srand((UINT)GetCurrentTime());
@@ -24,6 +25,34 @@ void MonsterManager::createMonsters(const Rect rect)
 		monster->show();
 		monster->pickWeapon(DataSet::load_weapon(debug_set["weapon"].GetString()));
 		m_monsterArr.pushBack(monster);
+                //碰撞
+                auto space = GameScene::getRunningScene()->getPhysicsSpace();
+                auto filter = monster->getBody().getFilter();
+                auto collision_detect = [space, filter, monster](float) {
+                  if (space->querySegmentFirst(monster->getPosition(),
+                                               monster->getPosition() +monster->_speed,
+                                               filter)) {
+                    monster->setVisible(false);
+
+                    /* if (dis > visibleRange) {
+                       while (true) {
+                         double X = u(e);
+                         double Y = v(e);
+                         if (rect.containsPoint(Point(X, Y))) {
+                           this->setPosition(X, Y);
+                         this->monsterRun();
+                         if (!space->querySegmentFirst(this->getPosition(),
+                                                       this->getPosition() +
+                     _speed, filter)) break;
+                         }
+                       }
+                     } else {
+                       _speed.x = -_speed.x;
+                       _speed.y = -_speed.y;
+                     }*/
+                  }
+                };
+                monster->schedule(collision_detect, 0, "monster-collision_detect");
 	}
 }
 
