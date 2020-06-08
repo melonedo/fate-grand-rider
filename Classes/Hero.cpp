@@ -17,6 +17,9 @@ bool Hero::init() {
   const auto& hand_data =
       DataSet::getConfig()["heroes"][getHeroName()]["hand-pos"];
   _handPos = Vec2(hand_data[0].GetFloat(), hand_data[1].GetFloat());
+  // 加入互动
+  addComponent(HeroInteraction::create());
+
   return true;
 }
 
