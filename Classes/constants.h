@@ -11,7 +11,8 @@ const static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1536);
 
 enum MapPriority{ kMapPriorityBackground = -100, kMapPrioritySprite = 0, kMapPriorityForeground = 100 };
 
-const static int kSpriteResolution = 32, kTileResolution = 16, kWeaponResolution = 34;
+const static int kTileResolution = 16, kWeaponResolution = 34;
+static int kSpriteResolution = 32;
 
 enum AnimationTag{ 
   kTagStandAnimation = 1000, 

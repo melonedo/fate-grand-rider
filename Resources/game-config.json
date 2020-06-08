@@ -1,5 +1,5 @@
 {
-	"use-debug-mode":true,
+	"use-debug-mode": true,
 	"global-zoom-scale": 2,
 	"show-physics-debug-boxes": false,
 	"display-cocos-stats": true,
@@ -15,13 +15,13 @@
 		"sample-man": {
 			"stand": {
 				"interval": 1,
-				"frames": ["man1_rt2.png", "man1_rt1.png"]
+				"frames": [ "man1_rt2.png", "man1_rt1.png" ]
 			},
 			"walk": {
 				"interval": 0.2,
-				"frames": ["man1_rt2.png", "man1_rt1.png"]
+				"frames": [ "man1_rt2.png", "man1_rt1.png" ]
 			},
-			"hand-pos": [0.75,0.44]
+			"hand-pos": [ 0.75, 0.44 ]
 		}
 	},
   "pause": {
@@ -37,13 +37,65 @@
 			"bow": {
 				"frame": "W_Bow02.png",
 				"angle-offset": -45,
-				"anchor": [ 0.5, 0.5 ]
+				"anchor": [ 0.5, 0.5 ],
+				"number": 3,
+				"angleconstant": 22
 			},
 			"arrow": {
 				"frame": "S_Bow04.png",
 				"angle-offset": -135,
-				"anchor": [ 0.5, 0.5 ],
+				"anchor": [ 0.3, 0.3 ],
 				"speed": 400
+			}
+		},
+		"single-bow": {
+			"type": "blinkbow",
+			"bow": {
+				"frame": "W_Bow03.png",
+				"angle-offset": 135,
+				"anchor": [ 0.5, 0.5 ],
+				"number": 1,
+				"angleconstant": 22
+			},
+			"arrow": {
+				"frame": "S_Bow01.png",
+				"angle-offset": -135,
+				"anchor": [ 0.3, 0.3 ],
+				"speed": 400
+			},
+			"arrow2": {
+				"frame": "S_Bow06.png",
+				"angle-offset": -135,
+				"anchor": [ 0.3, 0.3 ],
+				"speed": 400
+			}
+		},
+		"basic-spear": {
+			"type": "spear",
+			"spear": {
+				"frame": "long.png",
+				"angle-offset": 90,
+				"anchor": [ 0.5, 0.5 ],
+				"speed": 40
+			}
+		},
+		"magic-power": {
+			"type": "magicball",
+			"magicball": {
+				"frame": "magicball.png",
+				"anchor": [ 0.3, 0.6 ]
+			},
+			"magic": {
+				"frame": "magic.png",
+				"anchor": [ 0.5, 0.5 ]
+			}
+		},
+		"darts": {
+			"type": "darts",
+			"darts": {
+				"frame": "W_Throw004.png",
+				"anchor": [ 0.5, 0.5 ],
+				"speed": 300
 			}
 		}
 	},

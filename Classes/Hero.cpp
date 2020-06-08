@@ -26,6 +26,7 @@ void Hero::loadAnimation() {
   assert(config["heroes"].HasMember(getHeroName()));
   // 加载站立和行走动画
   const auto& data = DataSet::getConfig()["heroes"][getHeroName()];
+  
   _walkAnimation = DataSet::load_animation(data["walk"]);
   _walkAnimation->setLoops(-1);
   _standAnimation = DataSet::load_animation(data["stand"]);

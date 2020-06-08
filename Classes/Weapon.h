@@ -28,9 +28,76 @@ class Bow : public Weapon {
  protected:
   Bow() = default;
   // 弓图片的角度
+
   float _bowAngleOffset;
+  int _angleConstant;
+  int _bowNumber;
+  // 箭
+  AutoRef<Sprite> _arrow;
+  AutoRef<Sprite> _arrow2;
+  // 箭的速度
+  float _arrowSpeed;
+};
+
+class BlinkBow : public Bow {
+ public:
+  static BlinkBow* create(const std::string& name);
+  void fire(cocos2d::Vec2) override;
+
+ protected:
+  BlinkBow() = default;
+  // 弓图片的角度
+
+  float _bowAngleOffset;
+  int _angleConstant;
+  int _bowNumber;
   // 箭
   AutoRef<Sprite> _arrow;
   // 箭的速度
   float _arrowSpeed;
+};
+
+
+//矛
+class Spear : public Weapon {
+ public:
+  static Spear* create(const std::string& name);
+  void pointTo(cocos2d::Vec2) override;
+  void fire(cocos2d::Vec2) override;
+  AutoRef<Sprite> _spear;
+
+ protected:
+  Spear() = default;
+
+  // 矛图片的角度
+  float _spearAngleOffset;
+  // 矛刺出的速度
+  float _spearSpeed;
+};
+
+//法阵
+class Magic : public Weapon {
+ public:
+  static Magic* create(const std::string& name);
+  void pointTo(cocos2d::Vec2) override;
+  void fire(cocos2d::Vec2) override;
+
+ protected:
+  Magic() = default;
+  AutoRef<Sprite> _magicSquare;
+  friend Hero;
+};
+
+//飞镖
+class Darts : public Weapon {
+ public:
+  static Darts* create(const std::string& name);
+  void pointTo(cocos2d::Vec2) override;
+  void fire(cocos2d::Vec2) override;
+  AutoRef<Sprite> _dart;
+
+ protected:
+  Darts() = default;
+  // 飞镖速度
+  float _dartSpeed;
 };
