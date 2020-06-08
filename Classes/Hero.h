@@ -64,6 +64,8 @@ class Hero : public Mob {
 
   // 角色的互动
   class HeroInteraction : public Interaction {
+   public:
+    CREATE_FUNC(HeroInteraction);
     void attack(cocos2d::Sprite* source, float) override;
   };
 

@@ -104,6 +104,7 @@ void Weapon::drop() {
   if (_owner) {
     this->removeFromParent();
     this->setPosition(_owner->getPosition());
+    _owner = nullptr;
   }
   GameScene::getRunningScene()->addChild(this, kMapPriorityBackground);
   this->addComponent(DroppedWeapon::create(this));
