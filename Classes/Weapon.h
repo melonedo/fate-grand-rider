@@ -10,10 +10,11 @@ class Weapon : public cocos2d::Sprite {
   virtual void pointTo(cocos2d::Vec2 offset) = 0;
   // 向指定地点开火。offset为指向的点相对英雄的位置。
   virtual void fire(cocos2d::Vec2 offset) = 0;
+  // 设置所有者，用于同步位置
+  void setOwner(Mob* owner) { _owner = owner; }
  protected:
   using Sprite::init;
-  Hero* _owner;
-  friend Hero;
+  Mob* _owner;
 };
 
 // 弓
@@ -25,7 +26,6 @@ class Bow : public Weapon {
  protected:
   Bow() = default;
   // 弓图片的角度
-
   float _bowAngleOffset;
   int _angleConstant;
   int _bowNumber;
@@ -34,6 +34,7 @@ class Bow : public Weapon {
   AutoRef<Sprite> _arrow2;
   // 箭的速度
   float _arrowSpeed;
+
 };
 
 class BlinkBow : public Bow {
@@ -44,7 +45,6 @@ class BlinkBow : public Bow {
  protected:
   BlinkBow() = default;
   // 弓图片的角度
-
   float _bowAngleOffset;
   int _angleConstant;
   int _bowNumber;
