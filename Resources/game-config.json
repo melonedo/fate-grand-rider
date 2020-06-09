@@ -37,7 +37,8 @@
 				"frame": "S_Bow04.png",
 				"angle-offset": -135,
 				"anchor": [ 0.3, 0.3 ],
-				"speed": 400
+				"speed": 400,
+					"hurt": 1
 			}
 		},
 		"single-bow": {
@@ -53,7 +54,8 @@
 				"frame": "S_Bow01.png",
 				"angle-offset": -135,
 				"anchor": [ 0.3, 0.3 ],
-				"speed": 400
+				"speed": 400,
+					"hurt": 2
 			},
 			"arrow2": {
 				"frame": "S_Bow06.png",
@@ -68,14 +70,16 @@
 				"frame": "long.png",
 				"angle-offset": 90,
 				"anchor": [ 0.5, 0.5 ],
-				"speed": 40
+				"speed": 40,
+				"hurt": 1
 			}
 		},
 		"magic-power": {
 			"type": "magicball",
 			"magicball": {
 				"frame": "magicball.png",
-				"anchor": [ 0.3, 0.6 ]
+				"anchor": [ 0.3, 0.6 ],
+				"hurt": 2
 			},
 			"magic": {
 				"frame": "magic.png",

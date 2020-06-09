@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "Hero.h"
 #include "Interaction.h"
+#include "Map.h"
 using namespace cocos2d;
 
 DataSet* DataSet::getInstance() {
@@ -26,51 +27,26 @@ void DataSet::init() {
   _showPhysicsDebugBoxes = _config["show-physics-debug-boxes"].GetBool();
 }
 
-const static std::unordered_map<std::string, int> kTagSet{
-    {"wall", kTagWall}, {"interactable", kTagInteractable}};
+const static std::unordered_map<
+    std::string,
+    std::function<Interaction*(const Vec2&, const ValueMap&, chipmunk::Body&&)>>
+    kInteractionSet{{"wall", NoInteraction::load},
+                    {"hide", HideSpot::load},
+                    {"chest", Chest::load},
+                    {"gate", Gate::load},
+                    {"target", Target::load}};
 
-const static std::unordered_map<std::string, std::function<Interaction*()>>
-    kInteractionSet{{"hide", HideSpot::create}};
+Interaction* DataSet::load_interaction(const std::string& interaction_name,
+                                       const Vec2& position,
+                                       const ValueMap& property,
+                                       chipmunk::Body&& body) {
+  auto create_func = kInteractionSet.at(interaction_name);
+  return create_func(position, property, std::move(body));
+}
 
-TMXTiledMap* DataSet::load_map(const std::string& map_dir) {
+TMXTiledMap* DataSet::load_map(const std::string& map_dir, std::vector<Room>& rooms) {
   auto map = TMXTiledMap::create(map_dir);
-
-  // 断言
-  CCASSERT(map, "Failed to load tiled map");
-  CCASSERT(map->getLayer("fg") && map->getLayer("bg") && map->getLayer("meta"),
-           "The map does not have layers fg, bg, obj and meta");
-
-  map->getLayer("bg")->setGlobalZOrder(kMapPriorityBackground);
-  map->getLayer("fg")->setGlobalZOrder(kMapPriorityForeground);
-  auto meta_layer = map->getLayer("meta");
-  meta_layer->setVisible(false);
-  
-  // 加入标签
-  auto layer_size = meta_layer->getLayerSize();
-  auto map_size = map->getMapSize();
-  CCASSERT(map_size.width == layer_size.width &&
-               map_size.height == layer_size.height,
-           "Size of map and meta layer must be the same.");
-  for (int x = 0; x < map_size.width; x++) {
-    for (int y = 0; y < map_size.height; y++) {
-      Vec2 pos(x, y);
-      auto prop = map->getPropertiesForGID(meta_layer->getTileGIDAt(pos));
-      if (!prop.isNull()) {
-        auto value_map = prop.asValueMap();
-        auto tile = meta_layer->getTileAt(pos);
-        chipmunk::initPhysicsForTile(tile);
-        auto type = value_map.at("type").asString();
-        tile->setTag(kTagSet.at(type));
-        if (type == "interactable") {
-          auto intraction =
-              kInteractionSet.at(value_map.at("interaction").asString())();
-          intraction->setName("interaction");
-          tile->addComponent(intraction);
-        }
-      }
-    }
-  }
-
+  rooms = std::move(processMap(map));
   return map;
 }
 

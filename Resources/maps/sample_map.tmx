@@ -1,30 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="2020.04.10" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="2">
- <tileset firstgid="1" name="walls" tilewidth="16" tileheight="16" tilecount="256" columns="16">
-  <image source="0x72_16x16DungeonTileset_walls.v2.png" width="256" height="256"/>
-  <tile id="49">
-   <properties>
-    <property name="type" value="wall"/>
-   </properties>
-  </tile>
-  <tile id="89">
-   <properties>
-    <property name="interaction" value="hide"/>
-    <property name="type" value="interactable"/>
-   </properties>
-  </tile>
- </tileset>
- <tileset firstgid="257" name="buildings" tilewidth="16" tileheight="16" tilecount="256" columns="16">
-  <image source="0x72_16x16DungeonTileset.v4.png" width="256" height="256"/>
- </tileset>
+<map version="1.2" tiledversion="2020.05.27" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="2">
+ <properties>
+  <property name="bg-layers" value="bg invisible"/>
+  <property name="fg-layers" value="fg building-fg"/>
+ </properties>
+ <tileset firstgid="1" source="walls.tsx"/>
+ <tileset firstgid="257" source="buildings.tsx"/>
  <objectgroup id="4" name="obj" locked="1">
-  <object id="1" name="spawn" x="434" y="635">
+  <object id="1" name="spawn" x="169.333" y="640.333">
    <point/>
   </object>
  </objectgroup>
- <layer id="5" name="meta" width="60" height="60" locked="1">
+ <layer id="5" name="invisible" width="60" height="60" locked="1">
   <data encoding="base64" compression="zlib">
-   eJzt0NENQEAYBGE1XTn6L0RUsLIuxzBf4m3jN7ZNkiRJkqRsTNpQ2NttKOztNhT2dhsKe7sNhb3dhsLebkNhb7ehsLfbUNjbbSi+1jsuPDPe8ZZ/cn7HvujOG6z6DnufYS/7TmIv+05iL/tOYi/7TmIv+05iL/tOYi/7TmIv+07yx95Vj6R7Dq8uGPc=
+   eJztmEEOgzAMBHlTn9PXROILfXDFjQPUa3CdOMxIuVmezAUEywIAAAAAAABP5eU8yr6RUe/n6G2ec/3m1/hXr7hTmouE3vM5eg/n6P0xK+rDoPf2vnK9a567Jan2zhTWg7aZe0/crYOzGyP3qs9np7sFr1Sc8pzjfaTubOJoGLx/z+dm6Q3+3h+618MM3/seZvifsyfq/1XEngy2e7wD9nwEzwhk3YPePtBb22NBb22PBb21PRb01vZY0FvbY0FvbY8FvbU9FvTW9lg8sTfrAMA9vl5aSsE=
   </data>
  </layer>
  <layer id="7" name="building-bg" width="60" height="60" locked="1">
@@ -34,17 +23,17 @@
  </layer>
  <layer id="3" name="bg" width="60" height="60" locked="1">
   <data encoding="base64" compression="zlib">
-   eJztz7EJwDAUQ0HP5NWyP2QEuQjhW9wDlSpuLUmSJEmSznrC2uLlbYqXtyle3qZ4eZvi5W2Kl7epNu8OS9703/9RjkqeLzYpXl5eXl7eCfHy8vLy8k6Il5eX9xavpDt6AeTgL3Y=
+   eJzt1EEKgzAQhlHP0KMEejIv4NGbjZBFZUZKJEnfBz+4mArPRbdNkiRJkqRce7AZeiV2toI3Muw3bs/qNzqi9XZd1cNbn49ovV1X8fJmb5u7qb2l7p24a945tTe7+k2OkrCu4s04eZ+Nl/fG7V95mzte3uHj/e5dpdW8JVjkjX5fnqOkyvx3/bqR4uXl5eXlHSFeXl5eXt4R4uXl5Z3FK2mOPoMcAd0=
   </data>
  </layer>
- <layer id="6" name="building-fg" width="60" height="60" locked="1">
+ <layer id="6" name="building-fg" width="60" height="60">
   <data encoding="base64" compression="zlib">
-   eJztzwENADAIwDCuFgnYx8QDT94q2CIAAAAAAAAAAN6XZ7tgVn32CwAAAADAfQ05agDh
+   eJzt1bERgCAQRUFsyaYswfK0IIvQxJxhBhX/bnwB74KjFAAAAAAAvmie3n7Bs2p6/7QTvW0zo0jrrZHWC0AfS9h/sob13rare29sP0J3BozP/QIAAAB6OQFRPQY6
   </data>
  </layer>
  <layer id="2" name="fg" width="60" height="60" locked="1">
   <data encoding="base64" compression="zlib">
-   eJzt0VsKwjAQhtGqKxB34GUB6v73Zvs8YIN0Mo2cA/9bSfORaQIAAIB154ZvLum36EdvpHdceiO949Ib6R2X3kjvuPRGeselN9K7X4d51y97NJxxXzlj2Wnri/+o5f22cOv0nzV6c+itoTeH3hp6c+itoTeH3hp6c+itoTeH3hpL77HD9tL7nPfqsHevIOBvfAANiQ6A
+   eJztmksOgzAMRFOgB6igB+DTAwAX9NHr7KsyQIyjME+aXRT7GYECIgRCCCGEEEIIIXfloamA1JoXsF9r02YyenBd9EB8dY3obKQCorOW450fw8K3BT16+ppD39/czXfSfIB1pfii6ExkupHvztriUNMN+l5S042cfRvNM31tSbwlUhOi07yBdToTaQp4Po8BO2/oTKTL3HcAgvrG88aYse+sWYCsYZ/vAMTDdw+or85GFiBzIb7WfaQiftv5dw8j7wvTxh4xderGD4JcvxSMF9XZgr420NcH+tpAXx/oawN9faCvDfT1gb420NcH+tpAXx+iL/Jv0tnk4ot+iz6b9SohQkgxfAF0ojzG
   </data>
  </layer>
 </map>
