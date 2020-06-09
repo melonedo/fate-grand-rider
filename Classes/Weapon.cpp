@@ -26,6 +26,7 @@ BlinkBow* BlinkBow::create(const std::string& name) {
       DataSet::load_frame(arrow_data["frame"].GetString()));
   blinkbow->_arrow->setRotation(arrow_data["angle-offset"].GetFloat());
   blinkbow->_arrowSpeed = arrow_data["speed"].GetFloat();
+  blinkbow->_hurt = arrow_data["hurt"].GetInt();
 
     const auto& arrow_data2 = data["arrow2"];
   blinkbow->_arrow2 = Sprite::create();
@@ -47,6 +48,7 @@ BlinkBow* BlinkBow::create(const std::string& name) {
 void BlinkBow::fire(Vec2 offset) {
   Sprite* arrows;   // 飞行中的箭
   Sprite* arrows2;  // 爆炸的箭
+  int hurt = _hurt;
   arrows2 = Sprite::create();
   arrows2->setSpriteFrame(_arrow2->getSpriteFrame());
   arrows2->setAnchorPoint(
@@ -61,7 +63,7 @@ void BlinkBow::fire(Vec2 offset) {
   arrows->setAnchorPoint(_arrow->getAnchorPoint());
   arrows->setPosition((_owner->getPosition()));
   Vec2 speed;
-  auto space = GameScene::getRunningScene()->getPhysicsSpace()->getSpace();
+  auto space = GameScene::getRunningScene()->getPhysicsSpace();
   arrows->setRotation(-offset.getAngle() * 180 / M_PI + _arrow->getRotation());
   speed = _arrowSpeed * (offset) / offset.getLength();
   Vec2 delta = speed / _arrowSpeed;
@@ -70,12 +72,12 @@ void BlinkBow::fire(Vec2 offset) {
   arrows->runAction(RepeatForever::create(MoveBy::create(1, speed)));
   auto& lambdaArrow = arrows;
   auto& lambdaArrow2 = arrows2;
-  auto collision_detect = [space, lambdaArrow, delta, lambdaArrow2,
-                           offset](float) {
-    if (cpSpaceSegmentQueryFirst(
-            space, chipmunk::cpvFromVec2(lambdaArrow->getPosition()),
-            chipmunk::cpvFromVec2(lambdaArrow->getPosition() + delta), 1,
-            CP_SHAPE_FILTER_ALL, nullptr)) {
+  auto filter = _owner->getBody().getFilter();
+  auto collision_detect = [space, lambdaArrow, lambdaArrow2, delta,
+                           filter,hurt](float) {
+    if (auto target = space->querySegmentFirst(
+            lambdaArrow->getPosition(), lambdaArrow->getPosition() + delta,
+            filter)) {
       // 撤销已有的动作
       lambdaArrow->cleanup();
       // 闪烁
@@ -86,9 +88,10 @@ void BlinkBow::fire(Vec2 offset) {
                                       lambdaArrow2->removeFromParent();
                                     })};
       lambdaArrow2->runAction(Sequence::create(seq));
+      getInteraction(target)->attack(lambdaArrow, hurt);
     }
   };
-  arrows->schedule(collision_detect, 0, "collistion_detect");
+  lambdaArrow->schedule(collision_detect, 0, "collistion_detect");
 }
 
 /***武器——弓2***/ 
@@ -112,12 +115,15 @@ Bow* Bow::create(const std::string& name) {
   bow->_bowNumber = bow_data["number"].GetInt();
   bow->_angleConstant = bow_data["angleconstant"].GetInt();
 
+ // bow->_hurt = bow_data["hurt"].GetInt();
+
   const auto& arrow_data = data["arrow"];
   bow->_arrow = Sprite::create();
   bow->_arrow->setSpriteFrame(
       DataSet::load_frame(arrow_data["frame"].GetString()));
   bow->_arrow->setRotation(arrow_data["angle-offset"].GetFloat());
   bow->_arrowSpeed = arrow_data["speed"].GetFloat();
+  //bow->_hurt = arrow_data["hurt"].GetInt();
 
   const auto& anchor_data = bow_data["anchor"].GetArray();
   bow->setAnchorPoint(
@@ -138,13 +144,14 @@ void Bow::fire(Vec2 offset) {
   v[0] = Vec2((offset.x * 12 - offset.y * 5) / 15,
                  (offset.y * 12 + offset.x * 5) / 15);
   Sprite* arrows[3];
+  int hurt = 1;
   for (int i =0; i < 3; i++) {
     arrows[i] = Sprite::create();
     arrows[i]->setSpriteFrame(_arrow->getSpriteFrame());
     arrows[i]->setAnchorPoint(_arrow->getAnchorPoint());
     arrows[i]->setPosition((_owner->getPosition()));
     Vec2 speed;
-    auto space = GameScene::getRunningScene()->getPhysicsSpace()->getSpace();
+    auto space = GameScene::getRunningScene()->getPhysicsSpace();
     arrows[i]->setRotation(-offset.getAngle() * 180 / M_PI +
                         _arrow->getRotation() + _angleConstant * (i-1));
     speed = _arrowSpeed * (v[i]) / offset.getLength();
@@ -152,17 +159,19 @@ void Bow::fire(Vec2 offset) {
     arrows[i]->setVisible(true);
     getScene()->addChild(arrows[i]);
     arrows[i]->runAction(RepeatForever::create(MoveBy::create(1, speed)));
-    auto& lambdaArrow = arrows[i];
-    auto collision_detect = [space, lambdaArrow, delta](float) {
-      if (cpSpaceSegmentQueryFirst(
-              space, chipmunk::cpvFromVec2(lambdaArrow->getPosition()),
-              chipmunk::cpvFromVec2(lambdaArrow->getPosition() + delta), 1,
-              CP_SHAPE_FILTER_ALL, nullptr)) {
+    auto lambdaArrow = arrows[i];
+    auto filter = _owner->getBody().getFilter();
+    auto collision_detect = [space, lambdaArrow, delta,filter,hurt](float) {
+      if (auto target = space->querySegmentFirst(
+              lambdaArrow->getPosition(), lambdaArrow->getPosition() + delta,
+              filter)) {
         lambdaArrow->stopAllActions();
         lambdaArrow->unscheduleAllCallbacks();
+        getInteraction(target)->attack(lambdaArrow, hurt);
       }
+      
     };
-    arrows[i]->schedule(collision_detect, 0, "collistion_detect");
+    lambdaArrow->schedule(collision_detect, 0, "collistion_detect");
   }
 }
 
@@ -177,11 +186,13 @@ Spear* Spear::create(const std::string& name) {
   spear->_spearAngleOffset = spear_data["angle-offset"].GetFloat();
   spear->setSpriteFrame(
       DataSet::load_frame(spear_data["frame"].GetString(), kWeaponResolution));
+
+  spear->_hurt = spear_data["hurt"].GetInt();
+  
   const auto& anchor_data = spear_data["anchor"].GetArray();
   spear->_spearSpeed = spear_data["speed"].GetFloat();
   spear->setAnchorPoint(
       Vec2(anchor_data[0].GetFloat(), anchor_data[1].GetFloat()));
-
   return spear;
 }
 
@@ -193,12 +204,23 @@ void Spear::pointTo(Vec2 offset) {
 }
 
 void Spear::fire(Vec2 offset) {
+  int hurt = _hurt;
   Vec2 speed = _spearSpeed * offset / offset.getLength();
   Vec2 delta = speed / _spearSpeed;
+  auto space = GameScene::getRunningScene()->getPhysicsSpace();
   auto flipxAction = FlipX::create(true);
   auto moveBy = MoveBy::create(0.3f, speed);
+  FadeOut* disappear = FadeOut::create(0.1f);
   auto action = Sequence::create(moveBy, flipxAction, moveBy->reverse(), NULL);
-  runAction(action);
+  this->runAction(action);
+  auto filter = _owner->getBody().getFilter();
+  auto collision_detect = [space, this, filter, speed,hurt](float) {    
+    if (auto target = space->querySegmentFirst(_owner->getPosition(), _owner->getPosition() + speed, filter)) {
+      this->unscheduleAllCallbacks();
+      getInteraction(target)->attack(this, hurt);
+    }
+  };
+  this->schedule(collision_detect, 0, "collistion_detect");
 }
 
 /***武器——法阵***/
@@ -213,6 +235,8 @@ Magic* Magic::create(const std::string& name) {
   const auto& anchor_data = magic_data["anchor"].GetArray();
   magic->setAnchorPoint(
       Vec2(anchor_data[0].GetFloat(), anchor_data[1].GetFloat()));
+
+  magic->_hurt = magic_data["hurt"].GetInt();
 
   const auto& magic_data2 = data["magic"];
   magic->_magicSquare = Sprite::create();
@@ -229,17 +253,32 @@ void Magic::pointTo(Vec2 offset) {
 
 void Magic::fire(Vec2 offset) { 
   Sprite* magicSquare;
+ int hurt = _hurt;
   magicSquare = Sprite::create();
   magicSquare->setSpriteFrame(_magicSquare->getSpriteFrame());
   magicSquare->setAnchorPoint(_magicSquare->getAnchorPoint());
   magicSquare->setPosition((_owner->getPosition()));
   magicSquare->setVisible(true);
   getScene()->addChild(magicSquare);
+  auto space = GameScene::getRunningScene()->getPhysicsSpace();
  magicSquare->runAction(RotateBy::create(5.0f, 360));
  DelayTime* delayTime = DelayTime::create(5.0f);
   FadeOut*fadeout = FadeOut::create(1.0f);
  Sequence*action = Sequence::create(delayTime, fadeout, NULL);
   magicSquare->runAction(action);
+ auto filter = _owner->getBody().getFilter();
+ auto pos = _owner->getPosition();
+ auto collision_detect = [space, magicSquare,filter,  pos,hurt](float) {
+   auto target = space->queryPointAll(pos, 80, filter);
+   auto num = target.size();
+   magicSquare->unscheduleAllCallbacks();
+   for(int i = 0;i < num;i++) {
+     getInteraction(target[i].sprite)->attack(magicSquare, hurt);  
+   }
+
+ };
+ this->schedule(collision_detect, 0, "collistion_detect");
+
 }
 
 /***武器——飞镖***/
@@ -251,6 +290,8 @@ Darts* Darts::create(const std::string& name) {
   const auto& dart_data = data["darts"];
   dart->setSpriteFrame(
       DataSet::load_frame(dart_data["frame"].GetString(), kWeaponResolution));
+
+   dart->_hurt = dart_data["hurt"].GetInt();
 
   const auto& dart_out_data = data["darts"];
   dart->_dart = Sprite::create();
@@ -270,12 +311,13 @@ void Darts::pointTo(Vec2 offset) {
 
 void Darts::fire(Vec2 offset) {
   Sprite* darts; 
+  int hurt = _hurt;
    darts = Sprite::create();
   darts->setSpriteFrame(_dart->getSpriteFrame());
    darts->setAnchorPoint(_dart->getAnchorPoint());
   darts->setPosition((_owner->getPosition()));
   Vec2 speed;
-  auto space = GameScene::getRunningScene()->getPhysicsSpace()->getSpace();
+  auto space = GameScene::getRunningScene()->getPhysicsSpace();
   speed = _dartSpeed * (offset) / offset.getLength();
   Vec2 delta = speed / _dartSpeed;
   darts->setVisible(true);
@@ -284,14 +326,14 @@ void Darts::fire(Vec2 offset) {
   RotateBy* rotateby = RotateBy::create(1.5f,1080);
   Action* action = Spawn::create(moveby, rotateby, NULL);
   darts->runAction(action);
-  auto& lambdaDart = darts;
-  auto collision_detect = [space, lambdaDart, delta](float) {
-    if (cpSpaceSegmentQueryFirst(
-            space, chipmunk::cpvFromVec2(lambdaDart->getPosition()),
-            chipmunk::cpvFromVec2(lambdaDart->getPosition() + delta), 1,
-            CP_SHAPE_FILTER_ALL, nullptr)) {
-      lambdaDart->stopAllActions();
-      lambdaDart->unscheduleAllCallbacks();
+  auto filter = _owner->getBody().getFilter();
+  auto collision_detect = [space, darts, delta, filter,hurt](float) {
+    if (auto target = space->querySegmentFirst(
+            darts->getPosition(), darts->getPosition() + delta,
+            filter)) {
+      darts->stopAllActions();
+      darts->unscheduleAllCallbacks();
+      getInteraction(target)->attack(darts, hurt);
     }
   };
   darts->schedule(collision_detect, 0, "collistion_detect");

@@ -109,3 +109,15 @@ NoInteraction* NoInteraction::load(const cocos2d::Vec2&,
   res->_body = std::move(body);
   return res;
 }
+
+void Target::attack(cocos2d::Sprite*, float) {
+  getOwner()->setScale(1.5);
+  getOwner()->runAction(ScaleTo::create(0.1, 1));
+}
+
+Target* Target::load(const cocos2d::Vec2& position,
+                     const cocos2d::ValueMap& property, chipmunk::Body&& body) {
+  auto res = create();
+  res->_body = std::move(body);
+  return res;
+}
