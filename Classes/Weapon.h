@@ -35,7 +35,7 @@ class Bow : public Weapon {
   AutoRef<Sprite> _arrow2;
   // 箭的速度
   float _arrowSpeed;
- 
+
 };
 
 class BlinkBow : public Bow {
@@ -63,7 +63,6 @@ class Spear : public Weapon {
   static Spear* create(const std::string& name);
   void pointTo(cocos2d::Vec2) override;
   void fire(cocos2d::Vec2) override;
-  AutoRef<Sprite> _spear;
 
  protected:
   Spear() = default;
@@ -98,7 +97,7 @@ class Darts : public Weapon {
 
  protected:
   Darts() = default;
-  int _hurt;
   // 飞镖速度
   float _dartSpeed;
+  int _hurt;
 };
