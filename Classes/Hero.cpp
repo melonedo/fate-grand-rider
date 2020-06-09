@@ -13,6 +13,7 @@ bool Hero::init() {
   // 衍生类如果不需要这些直接重写即可
   scheduleUpdate();
   loadAnimation();
+  registerUserInput();
   // 手的位置
   const auto& hand_data =
       DataSet::getConfig()["heroes"][getHeroName()]["hand-pos"];
@@ -63,12 +64,11 @@ void Hero::registerUserInput() {
       mouse_listener, this);
 }
 
-// wasd对应的方向
-const static std::unordered_map<EventKeyboard::KeyCode, Vec2> kWasdDirections{
-    {EventKeyboard::KeyCode::KEY_W, {0, 1}},
-    {EventKeyboard::KeyCode::KEY_A, {-1, 0}},
-    {EventKeyboard::KeyCode::KEY_S, {0, -1}},
-    {EventKeyboard::KeyCode::KEY_D, {1, 0}}};
+const std::unordered_map<EventKeyboard::KeyCode, Vec2>
+    Hero::kWasdDirections{{EventKeyboard::KeyCode::KEY_W, {0, 1}},
+                          {EventKeyboard::KeyCode::KEY_A, {-1, 0}},
+                          {EventKeyboard::KeyCode::KEY_S, {0, -1}},
+                          {EventKeyboard::KeyCode::KEY_D, {1, 0}}};
 
 void Hero::onKeyPressed(EventKeyboard::KeyCode code, Event*) {
   if (kWasdDirections.count(code) != 0) {
@@ -104,7 +104,7 @@ void Hero::onKeyReleased(EventKeyboard::KeyCode code, Event*) {
     }
   } else if (code == EventKeyboard::KeyCode::KEY_SPACE &&
              _interacting != nullptr) {
-    _interacting->dialog(this);
+    _interacting->dialog();
   }
 }
 
@@ -119,84 +119,33 @@ void Hero::updateSpeed() {
 
 void Hero::update(float delta) {
   auto old_pos = this->getPosition();
-  auto disp = _speed * delta;
-  auto new_pos = old_pos + disp;
+  auto new_pos = old_pos + _speed * delta;
+
 
   // 碰撞检测
-  using namespace chipmunk;
-  Sprite* result = nullptr;
-  auto space = GameScene::getRunningScene()->getPhysicsSpace();
-  auto radius = kSpriteResolution / 4;
-  if (disp != Vec2(0, 0)) {
-    // 找到附近的所有物体
-    auto near_obj =
-        space->queryPointAll(new_pos, 2 * radius, _body.getFilter());
-    // 附近没别的就直接继续
-    if (near_obj.size() != 0 && disp != Vec2(0, 0)) {
-      // 找到向原方向移动的最大距离
-      int nearest_obj = -1;
-      cpSegmentQueryInfo nearest_info;
-      nearest_info.alpha = 1;
-      for (int i = 0; i < near_obj.size(); i++) {
-        cpSegmentQueryInfo info;
-        cpShapeSegmentQuery(near_obj[i].shape, cpvFromVec2(old_pos),
-                            cpvFromVec2(new_pos), radius, &info);
-        if (nearest_info.alpha > info.alpha &&
-            cpvdot(info.normal, cpvFromVec2(disp)) < 0) {
-          nearest_obj = i;
-          nearest_info = info;
-        }
-      }
-      // 如果不能完全地移动到new_pos则进一步修正
-      if (nearest_obj != -1) {
-        //log("%f,%f", getPosition().x, getPosition().y);
-        // 先设置好互动对象
-        result = getSpriteFromShape(nearest_info.shape);
-        // 除去这个障碍
-        near_obj.erase(near_obj.begin() + nearest_obj);
-        // 移动到贴上，然后平行切面移动
-        old_pos = old_pos + disp * nearest_info.alpha;
-        disp *= 1 - nearest_info.alpha;
-        disp -= disp.dot(vec2FromCpv(nearest_info.normal)) *
-                vec2FromCpv(nearest_info.normal);
-        new_pos = old_pos + disp;
-        // 再试一次
-        nearest_info.alpha = 1;
-        for (int i = 0; i < near_obj.size(); i++) {
-          cpSegmentQueryInfo info;
-          cpShapeSegmentQuery(near_obj[i].shape, cpvFromVec2(old_pos),
-                              cpvFromVec2(new_pos), radius, &info);
-          if (nearest_info.alpha > info.alpha &&
-              !cpveql(info.normal, nearest_info.normal) &&
-              cpvdot(info.normal, cpvFromVec2(disp)) < -0.01) {
-            nearest_obj = i;
-            nearest_info = info;
-          }
-        }
-        new_pos = old_pos + disp * nearest_info.alpha;
-      }
-    }
-  }
- 
-  // 保证可以碰到已经碰上的的建筑
-  cpShapeFilter filter = _body.getFilter();
-  filter.mask = CP_ALL_CATEGORIES;
-  auto stepping = space->queryPointNearest(new_pos, radius - 1, filter);
-  if (stepping != nullptr) result = stepping;
+  cpSegmentQueryInfo info;
+  auto space = GameScene::getRunningScene()->getPhysicsSpace()->getSpace();
+  cpSpaceSegmentQueryFirst(space, cpv(old_pos.x, old_pos.y),
+                           cpv(new_pos.x, new_pos.y), 1, CP_SHAPE_FILTER_ALL,
+                           &info);
+  if (info.shape != nullptr) {
+    this->setPosition(new_pos);
+    Sprite* spr = chipmunk::getSpriteFromShape(info.shape);
+    new_pos = old_pos + info.alpha * (new_pos - old_pos);
 
-  Interaction* interacting = nullptr;
-  // 尝试互动
-  if (result != nullptr) {
-    interacting = getInteraction(result);
-    if (interacting != _interacting) {
-      interacting->touch(this);
+    // 尝试互动
+    switch (spr->getTag()) {
+      case kTagInteractable: {
+        auto interaction =
+            dynamic_cast<Interaction*>(spr->getComponent("interaction"));
+        interaction->touch();
+        _interacting = interaction;
+        break;
+      }
+      default:
+        break;
     }
   }
-  // 取消互动
-  if (_interacting != nullptr && _interacting != interacting) {
-    _interacting->endTouch(this);
-  }
-  _interacting = interacting;
 
   // 滚动屏幕（Size和Vec没有减法只有加法，所以倒过来）
   auto scene = this->getScene();
@@ -205,15 +154,11 @@ void Hero::update(float delta) {
   this->setPosition(new_pos);
 }
 
-Weapon* Hero::pickWeapon(Weapon* weapon) {
-  auto res = _weapon;
+void Hero::pickWeapon(Weapon* weapon) {
   _weapon = weapon;
   weapon->setVisible(true);
   weapon->setPositionNormalized(_handPos);
+  //weapon->setPosition(Vec2(100, 100));
   this->addChild(weapon, 1);
-  weapon->setOwner(this);
-  return res;
+  weapon->_owner = this;
 }
-
-// 数值系统正在研发中，先留个无敌版的角色
-void Hero::HeroInteraction::attack(Sprite*, float) {}

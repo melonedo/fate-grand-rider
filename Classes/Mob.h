@@ -16,8 +16,6 @@ class Mob : public cocos2d::Sprite {
   // 改变节点和碰撞箱的位置
   void setPosition(float x, float y) override;
 
-  const chipmunk::Body& getBody() const { return _body; }
-
  protected:
   Mob() = default;
   // 设置锚点，并加入碰撞箱（圆形）
@@ -26,5 +24,4 @@ class Mob : public cocos2d::Sprite {
   // 碰撞箱
   chipmunk::Body _body;
   friend void chipmunk::initPhysicsForMob(Mob*);
-  friend chipmunk::Space;
 };

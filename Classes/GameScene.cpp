@@ -29,7 +29,7 @@ bool GameScene::init() {
 
     // 加载地图
     auto map_dir = debug_set["map"].GetString();
-    auto map = DataSet::load_map(map_dir, _rooms);
+    auto map = DataSet::load_map(map_dir);
 
     if (config["show-physics-debug-boxes"].GetBool()) {
       this->getPhysicsWorld()->setDebugDrawMask(~0);
@@ -42,7 +42,6 @@ bool GameScene::init() {
     auto spawn = map->getObjectGroup("obj")->getObject("spawn");
     hero->setPosition(spawn["x"].asFloat(), spawn["y"].asFloat());
     this->addChild(hero, kMapPrioritySprite);
-    hero->registerUserInput();
 
     // 配上武器
     auto a = debug_set["weapon"].GetString();
