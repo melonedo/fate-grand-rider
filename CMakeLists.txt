@@ -81,6 +81,7 @@ list(APPEND GAME_SOURCE
      Classes/PauseGame.cpp
      Classes/Monster.cpp
      Classes/MonsterManager.cpp
+     Classes/FlowWord.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -101,6 +102,7 @@ list(APPEND GAME_HEADER
      Classes/PauseGame.h
      Classes/Monster.h
      Classes/MonsterManager.h
+     Classes/FlowWord.h
      )
 
 if(ANDROID)

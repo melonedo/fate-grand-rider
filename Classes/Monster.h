@@ -51,6 +51,12 @@ public:
 	bool m_isAlive;
 	// 行走动画
 	AutoRef<Animation> _walkAnimation;
+
+	  class MonsterInteraction : public Interaction {
+         public:
+          CREATE_FUNC(MonsterInteraction);
+          void attack(cocos2d::Sprite* source, float) override;
+        };
 };
 
 class SampleMonster : public Monster {

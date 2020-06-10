@@ -126,9 +126,10 @@ Bow* Bow::create(const std::string& name) {
   bow->_bowNumber = bow_data["number"].GetInt();
   bow->_angleConstant = bow_data["angleconstant"].GetInt();
 
-  bow->_hurt = bow_data["hurt"].GetInt();
+ // bow->_hurt = bow_data["hurt"].GetInt();
 
   const auto& arrow_data = data["arrow"];
+  bow->_hurt = arrow_data["hurt"].GetInt();
   bow->_arrow = Sprite::create();
   bow->_arrow->setSpriteFrame(
       DataSet::load_frame(arrow_data["frame"].GetString()));
@@ -175,6 +176,7 @@ void Bow::fire(Vec2 offset) {
       if (auto target = space->querySegmentFirst(
               lambdaArrow->getPosition(), lambdaArrow->getPosition() + delta,
               filter)) {
+        lambdaArrow->setVisible(false);
         lambdaArrow->stopAllActions();
         lambdaArrow->unscheduleAllCallbacks();
         getInteraction(target)->attack(lambdaArrow, hurt);

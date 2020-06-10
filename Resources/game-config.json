@@ -103,11 +103,11 @@
 			}
 		}
 	},
-	"monsters": {
+	"monster": {
 		"sample-monster": {
 			"walk": {
 				"interval": 0.2,
-				"frames": [ "goust1.png", "goust2.png" ]
+				"frames": [ "goust2.png", "goust1.png" ]
 			},
 			"hand-pos": [ 0.75, 0.44 ]
 		}

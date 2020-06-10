@@ -2,6 +2,7 @@
 #include"Monster.h"
 #include "GameScene.h"
 #include"random"
+#include"FlowWord.h"
 USING_NS_CC;
 using namespace cocos2d;
 
@@ -18,6 +19,7 @@ bool Monster::init()
 	_handPos = Vec2(hand_data[0].GetFloat(), hand_data[1].GetFloat());
 	this->scheduleUpdate();
 	this->schedule(SEL_SCHEDULE(&Monster::updateMonster), 1.0f);
+        addComponent(MonsterInteraction::create());
 	return true;
 }
 
@@ -49,31 +51,6 @@ void Monster::reset(const Rect rect) {
       break;
     }
   }
-
-	//碰撞
-  auto space = GameScene::getRunningScene()->getPhysicsSpace();
-  auto filter = this->getBody().getFilter();
-  auto collision_detect = [space,filter,this](float) {
-    if (space->querySegmentFirst(this->getPosition(),
-                                 this->getPosition() + _speed, filter)) {
-
-			this->setVisible(false);
-      
-     /* if (dis > visibleRange) {
-        while (true) {
-          this->monsterRun();
-          if (!space->querySegmentFirst(this->getPosition(),
-                                        this->getPosition() + _speed,
-                                        filter))
-            break;
-        }
-      } else {
-        _speed.x = -_speed.x;
-        _speed.y = -_speed.y;
-      }*/
-    }
-  };
-  this->schedule(collision_detect, 0, "collision_detect");
 }
 
 void Monster::loadAnimation() {
@@ -105,7 +82,7 @@ void Monster::judgeAttack(Hero* hero)
 	if (this->isAttack)
 		return;
 	int x = rand() % 100;
-	if (x < 50)
+	if (x < 30)
 	{
 		this->_weapon->fire(Vec2(hero->getPosition().x, hero->getPosition().y));
 		this->isAttack = true;
@@ -136,4 +113,10 @@ void Monster::pickWeapon(Weapon* weapon)
 void Monster::updateMonster(float delta)
 {
 	this->isAttack = false;
+}
+
+void Monster::MonsterInteraction::attack(Sprite*, float hit) {
+  FlowWord* flowWord = FlowWord::create();
+  GameScene::getRunningScene()->addChild(flowWord);
+  flowWord->showWord(hit, getOwner()->getPosition());
 }

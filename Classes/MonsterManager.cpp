@@ -12,48 +12,41 @@ bool MonsterManager::init()
 	this->schedule(SEL_SCHEDULE(&MonsterManager::updateMonsters), 3.0f);
 	return true;
 }
-void MonsterManager::createMonsters(const Rect rect)
-{
-	//Ъ§Он
-	const auto& config = DataSet::getConfig();
-	const auto& debug_set = config["debug-set"].GetObject();
-	for (int i = 0; i < MAX_MONSTER_NUM; i++)
-	{
-		auto monster = DataSet::load_monster(debug_set["monster"].GetString());
-		this->addChild(monster, kMapPrioritySprite);
-		monster -> reset(rect);
-		monster->show();
-		monster->pickWeapon(DataSet::load_weapon(debug_set["weapon"].GetString()));
-		m_monsterArr.pushBack(monster);
-                //碰撞
-                auto space = GameScene::getRunningScene()->getPhysicsSpace();
-                auto filter = monster->getBody().getFilter();
-                auto collision_detect = [space, filter, monster](float) {
-                  if (space->querySegmentFirst(monster->getPosition(),
-                                               monster->getPosition() +monster->_speed,
-                                               filter)) {
-                    monster->setVisible(false);
+void MonsterManager::createMonsters(const Rect rect) {
+  //Ъ§Он
+  const auto& config = DataSet::getConfig();
+  const auto& debug_set = config["debug-set"].GetObject();
+  for (int i = 0; i < MAX_MONSTER_NUM; i++) {
+    auto monster = DataSet::load_monster(debug_set["monster"].GetString());
+    this->addChild(monster, kMapPrioritySprite);
+    monster->reset(rect);
+    monster->show();
+    monster->pickWeapon(DataSet::load_weapon(debug_set["weapon"].GetString()));
+    m_monsterArr.pushBack(monster);
+    //碰撞
+    auto space = GameScene::getRunningScene()->getPhysicsSpace();
+    auto filter = monster->getBody().getFilter();
 
-                    /* if (dis > visibleRange) {
-                       while (true) {
-                         double X = u(e);
-                         double Y = v(e);
-                         if (rect.containsPoint(Point(X, Y))) {
-                           this->setPosition(X, Y);
-                         this->monsterRun();
-                         if (!space->querySegmentFirst(this->getPosition(),
-                                                       this->getPosition() +
-                     _speed, filter)) break;
-                         }
-                       }
-                     } else {
-                       _speed.x = -_speed.x;
-                       _speed.y = -_speed.y;
-                     }*/
-                  }
-                };
-                monster->schedule(collision_detect, 0, "monster-collision_detect");
-	}
+    auto collision_detect = [space, filter, monster](float) {
+      if (space->querySegmentFirst(monster->getPosition(),
+                                   monster->getPosition() + monster->_speed,
+                                   filter)) {
+        Size visibleSize = Director::getInstance()->getVisibleSize();
+        static std::uniform_int_distribution<unsigned> u(0, 10);
+        static std::default_random_engine e(time(0));
+        static std::uniform_int_distribution<unsigned> v(0, 4);
+        int Z = v(e);
+        if (Z == 2) {
+          monster->_speed.x = 0;
+          monster->_speed.y = 0;
+          return;
+        }
+        monster->_speed.x = -monster->_speed.x;
+        monster->_speed.y = -monster->_speed.y;
+      }
+    };
+    monster->schedule(collision_detect, 0, "monster-collision_detect");
+  }
 }
 
 void MonsterManager::update(float dt)
