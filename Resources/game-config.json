@@ -10,6 +10,13 @@
 		"hero": "sample-man",
 		"weapon": "magic-power"
 	},
+	"pause": {
+		"volume-control": {
+			"silder-thumb": "sliderThumb.png",
+			"slider-progress": "sliderProgress.png",
+			"slider-track": "sliderTrack.png"
+		}
+	},
 	"heroes": {
 		"sample-man": {
 			"stand": {
