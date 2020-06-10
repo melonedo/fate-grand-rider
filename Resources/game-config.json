@@ -45,5 +45,18 @@
       "slider-progress": "sliderProgress.png",
       "slider-track": "sliderTrack.png"
     }
+  },
+  "UI": {
+    "bars": {
+      "bg-bars": "bgBars.jpg",
+      "health": "health.jpg",
+      "health-progress": "healthProgress.jpg",
+      "shield": "shield.jpg",
+      "shield-progress": "shieldProgress.jpg",
+      "magic": "magic.jpg",
+      "magic-progress": "magicProgress.jpg",
+      "bar-thumb": "barThumb.jpg",
+      "bar": "bar.jpg"
+    }
   }
 }

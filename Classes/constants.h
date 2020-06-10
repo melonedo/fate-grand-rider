@@ -25,3 +25,5 @@ enum PhysicsShapeMask {
   kShapeMaskTile = 1 << 3,
   kShapeMaskBullet = 1 << 4
 };
+
+enum UITag { kUserInterfaceBackground = 2000, kBars, kProgress,kHealthPoint };

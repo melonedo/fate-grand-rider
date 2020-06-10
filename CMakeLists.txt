@@ -67,6 +67,7 @@ list(APPEND GAME_SOURCE
      Classes/Interaction.cpp
 	Classes/Music.cpp
 	Classes/Pause.cpp
+	Classes/UI.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -82,6 +83,7 @@ list(APPEND GAME_HEADER
      Classes/Interaction.h
 	Classes/Music.h
 	Classes/Pause.h
+	Classes/UI.h
      )
 
 if(ANDROID)
