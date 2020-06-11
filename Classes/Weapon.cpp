@@ -212,11 +212,11 @@ void Spear::fire(Vec2 offset) {
     if (auto target = space->querySegmentFirst(
             _owner->getPosition(), _owner->getPosition() + speed,
             filter)) {
-      this->unscheduleAllCallbacks();
       getInteraction(target)->attack(this, hurt);
     }
+    this->unscheduleAllCallbacks();
   };
-   this->schedule(collision_detect, 0, "collistion_detect");
+   this->schedule(collision_detect, 0.2f, "collistion_detect");
 }
 
 /***武器——法阵***/
@@ -263,22 +263,19 @@ void Magic::fire(Vec2 offset) {
   magicSquare->runAction(action);
  auto filter = _owner->getBody().getFilter();
  //一个阵在那里转转转转转，要是一个敌人进去只能被伤害一次太假了，所以就改成转动期间一秒钟都检测一次
-   auto collision_detect = [space, magicSquare, filter, hurt, this](float) {
-     auto target = space->queryPointAll(_owner->getPosition(), 75, filter);
-     auto num = target.size();
-     for (int i = 0; i < num; i++) {
-       if (target[i].sprite) {
-         magicSquare->unscheduleAllCallbacks();
-         getInteraction(target[i].sprite)->attack(magicSquare, hurt);
-       }
+ auto collision_detect = [space, magicSquare, filter, hurt, this](float) {
+   static int j = 0;
+   auto target = space->queryPointAll(_owner->getPosition(), 75, filter);
+   auto num = target.size();
+   for (int i = 0; i < num; i++) {
+     if (target[i].sprite) {
+       getInteraction(target[i].sprite)->attack(magicSquare, hurt);
      }
-   };
- for (int i = 0; i < 6; i++) {
-   magicSquare->schedule(collision_detect, 0, "collistion_detect");
-   DelayTime* delayTime = DelayTime::create(1.0f);
-   runAction(delayTime);
- }
- 
+   }
+   magicSquare->unscheduleAllCallbacks();
+   j++;
+ };
+ magicSquare->schedule(collision_detect, "collision_detect");
 }
 
 /***武器——飞镖***/
