@@ -208,15 +208,11 @@ void Spear::fire(Vec2 offset) {
   auto action = Sequence::create(moveBy, flipxAction, moveBy->reverse(), NULL);
   runAction(action);
   auto filter = _owner->getBody().getFilter();
-  auto collision_detect = [space, filter,speed,hurt,this](float) {
     if (auto target = space->querySegmentFirst(
             _owner->getPosition(), _owner->getPosition() + speed,
             filter)) {
       getInteraction(target)->attack(this, hurt);
     }
-    this->unscheduleAllCallbacks();
-  };
-   this->schedule(collision_detect, 0.2f, "collistion_detect");
 }
 
 /***武器——法阵***/
@@ -265,7 +261,7 @@ void Magic::fire(Vec2 offset) {
  //一个阵在那里转转转转转，要是一个敌人进去只能被伤害一次太假了，所以就改成转动期间一秒钟都检测一次
  auto collision_detect = [space, magicSquare, filter, hurt, this](float) {
    static int j = 0;
-   auto target = space->queryPointAll(_owner->getPosition(), 75, filter);
+   auto target = space->queryPointAll(_owner->getPosition(), 70, filter);
    auto num = target.size();
    for (int i = 0; i < num; i++) {
      if (target[i].sprite) {
@@ -274,7 +270,7 @@ void Magic::fire(Vec2 offset) {
    }
    j++;
  };
- this->schedule(collision_detect, 0.2f, 24, 0, "collistion_detect");
+ magicSquare->schedule(collision_detect, 0.2f, 24, 0, "collistion_detect");
 
 }
 
