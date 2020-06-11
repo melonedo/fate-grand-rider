@@ -79,7 +79,7 @@
 			"magicball": {
 				"frame": "magicball.png",
 				"anchor": [ 0.3, 0.6 ],
-				"hurt": 2
+				"hurt": 0.5
 			},
 			"magic": {
 				"frame": "magic.png",

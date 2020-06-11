@@ -26,7 +26,7 @@ class Bow : public Weapon {
  protected:
   Bow() = default;
   // 弓图片的角度
-  int _hurt;
+  float _hurt;
   float _bowAngleOffset;
   int _angleConstant;
   int _bowNumber;
@@ -45,7 +45,7 @@ class BlinkBow : public Bow {
  protected:
   BlinkBow() = default;
   // 弓图片的角度
-  int _hurt;
+  float _hurt;
   float _bowAngleOffset;
   int _angleConstant;
   int _bowNumber;
@@ -65,7 +65,7 @@ class Spear : public Weapon {
 
  protected:
   Spear() = default;
-  int _hurt;
+  float _hurt;
   // 矛图片的角度
   float _spearAngleOffset;
   // 矛刺出的速度
@@ -81,7 +81,7 @@ class Magic : public Weapon {
 
  protected:
   Magic() = default;
-  int _hurt;
+  float _hurt;
   AutoRef<Sprite> _magicSquare;
   friend Hero;
 };
@@ -96,7 +96,7 @@ class Darts : public Weapon {
 
  protected:
   Darts() = default;
-  int _hurt;
+  float _hurt;
   // 飞镖速度
   float _dartSpeed;
 };

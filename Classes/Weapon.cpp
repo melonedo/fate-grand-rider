@@ -19,7 +19,7 @@ BlinkBow* BlinkBow::create(const std::string& name) {
       blinkbow_data["frame"].GetString(), kWeaponResolution));
   blinkbow->_bowNumber = blinkbow_data["number"].GetInt();
   blinkbow->_angleConstant = blinkbow_data["angleconstant"].GetInt();
-  blinkbow->_hurt = blinkbow_data["hurt"].GetInt();
+  blinkbow->_hurt = blinkbow_data["hurt"].GetFloat();
 
   const auto& arrow_data = data["arrow"];
   blinkbow->_arrow = Sprite::create();
@@ -48,7 +48,7 @@ BlinkBow* BlinkBow::create(const std::string& name) {
 void BlinkBow::fire(Vec2 offset) {
   Sprite* arrows;   // 飞行中的箭
   Sprite* arrows2;  // 爆炸的箭
-  int hurt = _hurt;
+  float hurt = _hurt;
   arrows2 = Sprite::create();
   arrows2->setSpriteFrame(_arrow2->getSpriteFrame());
   arrows2->setAnchorPoint(
@@ -114,7 +114,7 @@ Bow* Bow::create(const std::string& name) {
       bow_data["frame"].GetString(), kWeaponResolution));
   bow->_bowNumber = bow_data["number"].GetInt();
   bow->_angleConstant = bow_data["angleconstant"].GetInt();
-  bow->_hurt = bow_data["hurt"].GetInt();
+  bow->_hurt = bow_data["hurt"].GetFloat();
 
   const auto& arrow_data = data["arrow"];
   bow->_arrow = Sprite::create();
@@ -142,7 +142,7 @@ void Bow::fire(Vec2 offset) {
   v[0] = Vec2((offset.x * 12 - offset.y * 5) / 15,
                  (offset.y * 12 + offset.x * 5) / 15);
   Sprite* arrows[3];
-  int hurt = _hurt;
+  float hurt = _hurt;
   for (int i =0; i < 3; i++) {
     arrows[i] = Sprite::create();
     arrows[i]->setSpriteFrame(_arrow->getSpriteFrame());
@@ -184,7 +184,7 @@ Spear* Spear::create(const std::string& name) {
   spear->_spearAngleOffset = spear_data["angle-offset"].GetFloat();
   spear->setSpriteFrame(
       DataSet::load_frame(spear_data["frame"].GetString(), kWeaponResolution));
-  spear->_hurt = spear_data["hurt"].GetInt();
+  spear->_hurt = spear_data["hurt"].GetFloat();
 
   const auto& anchor_data = spear_data["anchor"].GetArray();
   spear->_spearSpeed = spear_data["speed"].GetFloat();
@@ -199,7 +199,7 @@ void Spear::pointTo(Vec2 offset) {
 }
 
 void Spear::fire(Vec2 offset) {
-  int hurt = _hurt;
+  float hurt = _hurt;
   Vec2 speed = _spearSpeed * offset / offset.getLength();
   Vec2 delta = speed / _spearSpeed;
   auto space = GameScene::getRunningScene()->getPhysicsSpace();
@@ -231,7 +231,7 @@ Magic* Magic::create(const std::string& name) {
   const auto& anchor_data = magic_data["anchor"].GetArray();
   magic->setAnchorPoint(
       Vec2(anchor_data[0].GetFloat(), anchor_data[1].GetFloat()));
-  magic->_hurt = magic_data["hurt"].GetInt();
+  magic->_hurt = magic_data["hurt"].GetFloat();
 
   const auto& magic_data2 = data["magic"];
   magic->_magicSquare = Sprite::create();
@@ -248,7 +248,7 @@ void Magic::pointTo(Vec2 offset) {
 
 void Magic::fire(Vec2 offset) { 
   Sprite* magicSquare;
-  int hurt = _hurt;
+  float hurt = _hurt;
   magicSquare = Sprite::create();
   auto space = GameScene::getRunningScene()->getPhysicsSpace();
   magicSquare->setSpriteFrame(_magicSquare->getSpriteFrame());
@@ -272,10 +272,10 @@ void Magic::fire(Vec2 offset) {
        getInteraction(target[i].sprite)->attack(magicSquare, hurt);
      }
    }
-   magicSquare->unscheduleAllCallbacks();
    j++;
  };
- magicSquare->schedule(collision_detect, "collision_detect");
+ this->schedule(collision_detect, 0.2f, 24, 0, "collistion_detect");
+
 }
 
 /***武器——飞镖***/
@@ -287,7 +287,7 @@ Darts* Darts::create(const std::string& name) {
   const auto& dart_data = data["darts"];
   dart->setSpriteFrame(
       DataSet::load_frame(dart_data["frame"].GetString(), kWeaponResolution));
-  dart->_hurt = dart_data["hurt"].GetInt();
+  dart->_hurt = dart_data["hurt"].GetFloat();
 
   const auto& dart_out_data = data["darts"];
   dart->_dart = Sprite::create();
@@ -307,7 +307,7 @@ void Darts::pointTo(Vec2 offset) {
 
 void Darts::fire(Vec2 offset) {
   Sprite* darts; 
-    int hurt = _hurt;
+    float hurt = _hurt;
    darts = Sprite::create();
   darts->setSpriteFrame(_dart->getSpriteFrame());
    darts->setAnchorPoint(_dart->getAnchorPoint());
