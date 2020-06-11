@@ -38,8 +38,11 @@ class UISprite : public cocos2d::Sprite{
 
 };*/
 
-class UIBar:public Node {
+class UIBar:public cocos2d::Sprite {
  public:
+  bool init();
+  static UIBar* create();
+
   void setBackgroundTexture(const char* type);
   void setForegroundTexture(const char* type);
   void setTotalProgress(float total);
@@ -48,9 +51,8 @@ class UIBar:public Node {
   float getTotalProgress() const;
 
  private:
-  void setForegroundTextureRect(const Rect& rect);
-  Sprite* _bar;
-  Sprite* _progress;
+  cocos2d::Sprite* _bar;
+  cocos2d::Sprite* _progress;
   float _totalProgress;
   float _currentProgress;
   float _scale;
