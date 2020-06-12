@@ -13,11 +13,13 @@ bool Hero::init() {
   // 衍生类如果不需要这些直接重写即可
   scheduleUpdate();
   loadAnimation();
-  registerUserInput();
   // 手的位置
   const auto& hand_data =
       DataSet::getConfig()["heroes"][getHeroName()]["hand-pos"];
   _handPos = Vec2(hand_data[0].GetFloat(), hand_data[1].GetFloat());
+  // 加入互动
+  addComponent(HeroInteraction::create());
+
   return true;
 }
 
@@ -63,11 +65,12 @@ void Hero::registerUserInput() {
       mouse_listener, this);
 }
 
-const std::unordered_map<EventKeyboard::KeyCode, Vec2>
-    Hero::kWasdDirections{{EventKeyboard::KeyCode::KEY_W, {0, 1}},
-                          {EventKeyboard::KeyCode::KEY_A, {-1, 0}},
-                          {EventKeyboard::KeyCode::KEY_S, {0, -1}},
-                          {EventKeyboard::KeyCode::KEY_D, {1, 0}}};
+// wasd对应的方向
+const static std::unordered_map<EventKeyboard::KeyCode, Vec2> kWasdDirections{
+    {EventKeyboard::KeyCode::KEY_W, {0, 1}},
+    {EventKeyboard::KeyCode::KEY_A, {-1, 0}},
+    {EventKeyboard::KeyCode::KEY_S, {0, -1}},
+    {EventKeyboard::KeyCode::KEY_D, {1, 0}}};
 
 void Hero::onKeyPressed(EventKeyboard::KeyCode code, Event*) {
   if (kWasdDirections.count(code) != 0) {
@@ -103,7 +106,7 @@ void Hero::onKeyReleased(EventKeyboard::KeyCode code, Event*) {
     }
   } else if (code == EventKeyboard::KeyCode::KEY_SPACE &&
              _interacting != nullptr) {
-    _interacting->dialog();
+    _interacting->dialog(this);
   }
 }
 
@@ -124,10 +127,10 @@ void Hero::update(float delta) {
   // 碰撞检测
   using namespace chipmunk;
   Sprite* result = nullptr;
+  auto space = GameScene::getRunningScene()->getPhysicsSpace();
+  auto radius = kSpriteResolution / 4;
   if (disp != Vec2(0, 0)) {
     // 找到附近的所有物体
-    auto space = GameScene::getRunningScene()->getPhysicsSpace();
-    auto radius = kSpriteResolution / 4;
     auto near_obj =
         space->queryPointAll(new_pos, 2 * radius, _body.getFilter());
     // 附近没别的就直接继续
@@ -148,7 +151,7 @@ void Hero::update(float delta) {
       }
       // 如果不能完全地移动到new_pos则进一步修正
       if (nearest_obj != -1) {
-        log("%f,%f", getPosition().x, getPosition().y);
+        //log("%f,%f", getPosition().x, getPosition().y);
         // 先设置好互动对象
         result = getSpriteFromShape(nearest_info.shape);
         // 除去这个障碍
@@ -177,38 +180,50 @@ void Hero::update(float delta) {
     }
   }
  
+  // 保证可以碰到已经碰上的的建筑
+  cpShapeFilter filter = _body.getFilter();
+  filter.mask = CP_ALL_CATEGORIES;
+  // 加个0.1不然碰不到
+  auto stepping = space->queryPointNearest(new_pos, radius + 0.1, filter);
+  if (stepping != nullptr) result = stepping;
+
+  Interaction* interacting = nullptr;
+  // 尝试互动
   if (result != nullptr) {
-    // 尝试互动
-    switch (result->getTag()) {
-      case kTagInteractable: {
-        auto interaction =
-            dynamic_cast<Interaction*>(result->getComponent("interaction"));
-        if (interaction != _interacting) {
-          interaction->touch();
-          _interacting = interaction;
-        }
-        break;
-      }
-      default:
-        break;
+    interacting = getInteraction(result);
+    if (interacting != _interacting) {
+      interacting->touch(this);
     }
-  } else if (_speed.length() != 0) {
-    // 取消互动
-    _interacting = nullptr;
   }
+  // 取消互动
+  if (_interacting != nullptr && _interacting != interacting) {
+    _interacting->endTouch(this);
+  }
+  _interacting = interacting;
 
   // 滚动屏幕（Size和Vec没有减法只有加法，所以倒过来）
   auto scene = this->getScene();
   float scale = DataSet::getGlobaZoomScale();
-  scene->setPosition(-new_pos * scale + designResolutionSize / 2 * scale);
   this->setPosition(new_pos);
+  scene->setPosition((-new_pos + designResolutionSize / 2) * scale);
+  scene->getChildByName("static")->setPosition(
+    new_pos - designResolutionSize / 2 / scale);
 }
 
-void Hero::pickWeapon(Weapon* weapon) {
+Weapon* Hero::pickWeapon(Weapon* weapon) {
+  // 扔掉原有的武器
+  if (_weapon) {
+    _weapon->drop();
+  }
+  auto res = _weapon;
   _weapon = weapon;
   weapon->setVisible(true);
   weapon->setPositionNormalized(_handPos);
-  //weapon->setPosition(Vec2(100, 100));
+  weapon->removeFromParent();
   this->addChild(weapon, 1);
-  weapon->_owner = this;
+  weapon->setOwner(this);
+  return res;
 }
+
+// 数值系统正在研发中，先留个无敌版的角色
+void Hero::HeroInteraction::attack(Sprite*, float) {}
