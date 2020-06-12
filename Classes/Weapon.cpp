@@ -48,7 +48,6 @@ BlinkBow* BlinkBow::create(const std::string& name) {
 void BlinkBow::fire(Vec2 offset) {
   Sprite* arrows;   // 飞行中的箭
   Sprite* arrows2;  // 爆炸的箭
-  float hurt = _hurt;
   arrows2 = Sprite::create();
   arrows2->setSpriteFrame(_arrow2->getSpriteFrame());
   arrows2->setAnchorPoint(
@@ -74,7 +73,7 @@ void BlinkBow::fire(Vec2 offset) {
   auto& lambdaArrow2 = arrows2;
   auto filter = _owner->getBody().getFilter();
   auto collision_detect = [space, lambdaArrow, lambdaArrow2, delta,
-                           filter, hurt](float) {
+                           filter, hurt = _hurt](float) {
     if (auto target = space->querySegmentFirst(
             lambdaArrow->getPosition(), lambdaArrow->getPosition() + delta,
             filter)) {
@@ -142,7 +141,6 @@ void Bow::fire(Vec2 offset) {
   v[0] = Vec2((offset.x * 12 - offset.y * 5) / 15,
                  (offset.y * 12 + offset.x * 5) / 15);
   Sprite* arrows[3];
-  float hurt = _hurt;
   for (int i =0; i < 3; i++) {
     arrows[i] = Sprite::create();
     arrows[i]->setSpriteFrame(_arrow->getSpriteFrame());
@@ -159,7 +157,7 @@ void Bow::fire(Vec2 offset) {
     arrows[i]->runAction(RepeatForever::create(MoveBy::create(1, speed)));
     auto lambdaArrow = arrows[i];
     auto filter = _owner->getBody().getFilter();
-    auto collision_detect = [space, lambdaArrow, delta,filter,hurt](float) {
+    auto collision_detect = [space, lambdaArrow, delta,filter,hurt=_hurt](float) {
       if (auto target = space->querySegmentFirst(
               lambdaArrow->getPosition(), lambdaArrow->getPosition() + delta,
               filter)) {
@@ -199,8 +197,7 @@ void Spear::pointTo(Vec2 offset) {
 }
 
 void Spear::fire(Vec2 offset) {
-  float hurt = _hurt;
-  Vec2 speed = _spearSpeed * offset / offset.getLength();
+  Vec2 speed = _spearSpeed * offset / offset.getLength();//速度同时兼任矛的长度和矛刺出的距离
   Vec2 delta = speed / _spearSpeed;
   auto space = GameScene::getRunningScene()->getPhysicsSpace();
   auto flipxAction = FlipX::create(true);
@@ -211,7 +208,7 @@ void Spear::fire(Vec2 offset) {
     if (auto target = space->querySegmentFirst(
             _owner->getPosition(), _owner->getPosition() + speed,
             filter)) {
-      getInteraction(target)->attack(this, hurt);
+      getInteraction(target)->attack(this, _hurt);
     }
 }
 
@@ -244,7 +241,6 @@ void Magic::pointTo(Vec2 offset) {
 
 void Magic::fire(Vec2 offset) { 
   Sprite* magicSquare;
-  float hurt = _hurt;
   magicSquare = Sprite::create();
   auto space = GameScene::getRunningScene()->getPhysicsSpace();
   magicSquare->setSpriteFrame(_magicSquare->getSpriteFrame());
@@ -259,7 +255,7 @@ void Magic::fire(Vec2 offset) {
   magicSquare->runAction(action);
  auto filter = _owner->getBody().getFilter();
  //一个阵在那里转转转转转，要是一个敌人进去只能被伤害一次太假了，所以就改成转动期间一秒钟都检测一次
- auto collision_detect = [space, magicSquare, filter, hurt, this](float) {
+ auto collision_detect = [space, magicSquare, filter, hurt=_hurt, this](float) {
    static int j = 0;
    auto target = space->queryPointAll(_owner->getPosition(), 70, filter);
    auto num = target.size();
@@ -303,7 +299,6 @@ void Darts::pointTo(Vec2 offset) {
 
 void Darts::fire(Vec2 offset) {
   Sprite* darts; 
-    float hurt = _hurt;
    darts = Sprite::create();
   darts->setSpriteFrame(_dart->getSpriteFrame());
    darts->setAnchorPoint(_dart->getAnchorPoint());
@@ -319,7 +314,7 @@ void Darts::fire(Vec2 offset) {
   Action* action = Spawn::create(moveby, rotateby, NULL);
   darts->runAction(action);
   auto filter = _owner->getBody().getFilter();
-  auto collision_detect = [space, darts, delta, filter,hurt](float) {
+  auto collision_detect = [space, darts, delta, filter,hurt=_hurt](float) {
     if (auto target = space->querySegmentFirst(
             darts->getPosition(), darts->getPosition() + delta,
             filter)) {
