@@ -177,9 +177,11 @@ void Room::enterRoom() {
   for (auto i : _buildings) i->enterRoom(this);
   //加载怪物
   MonsterManager* monsterMgr = MonsterManager::create();
-  monsterMgr->bingHero(static_cast<Hero*>(GameScene::getRunningScene()->getChildByTag(kTagHero)));
+  monsterMgr->bingHero(static_cast<Hero*>(
+  GameScene::getRunningScene()->getChildByTag(kTagHero)));
   monsterMgr->createMonsters(this->getBoundingBox());
   GameScene::getRunningScene()->addChild(monsterMgr, kMapPrioritySprite);
+  leaveRoom();
 }
 
 void Room::leaveRoom() {

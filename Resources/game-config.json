@@ -9,7 +9,7 @@
 		"map": "maps/sample_map.tmx",
 		"hero": "sample-man",
 		"weapon": "basic-bow",
-		"monster":"sample-monster"
+		"monster": "sample-monster"
 	},
 	"heroes": {
 		"sample-man": {
@@ -24,13 +24,13 @@
 			"hand-pos": [ 0.75, 0.44 ]
 		}
 	},
-  "pause": {
-    "volume-control": {
-      "silder-thumb": "sliderThumb.png",
-      "slider-progress": "sliderProgress.png",
-      "slider-track": "sliderTrack.png"
-    }
-  },
+	"pause": {
+		"volume-control": {
+			"silder-thumb": "sliderThumb.png",
+			"slider-progress": "sliderProgress.png",
+			"slider-track": "sliderTrack.png"
+		}
+	},
 	"weapon": {
 		"basic-bow": {
 			"type": "bow",
@@ -46,7 +46,7 @@
 				"angle-offset": -135,
 				"anchor": [ 0.3, 0.3 ],
 				"speed": 400,
-					"hurt": 1
+				"hurt": 1
 			}
 		},
 		"single-bow": {
@@ -63,7 +63,7 @@
 				"angle-offset": -135,
 				"anchor": [ 0.3, 0.3 ],
 				"speed": 400,
-					"hurt": 2
+				"hurt": 2
 			},
 			"arrow2": {
 				"frame": "S_Bow06.png",
@@ -103,13 +103,16 @@
 			}
 		}
 	},
-	"monster": {
+	"monsters": {
 		"sample-monster": {
 			"walk": {
 				"interval": 0.2,
-				"frames": [ "goust2.png", "goust1.png" ]
+				"frames": [ "monster1.png", "monster2.png" ]
 			},
-			"hand-pos": [ 0.75, 0.44 ]
+			"hand-pos": [ 0.75, 0.44 ],
+			"hp": 5,
+			"visible-size": 100,
+			"attack-size": 100
 		}
 	}
 }
