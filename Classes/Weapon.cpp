@@ -19,6 +19,7 @@ BlinkBow* BlinkBow::create(const std::string& name) {
       blinkbow_data["frame"].GetString(), kWeaponResolution));
   blinkbow->_bowNumber = blinkbow_data["number"].GetInt();
   blinkbow->_angleConstant = blinkbow_data["angleconstant"].GetInt();
+  blinkbow->_hurt = blinkbow_data["hurt"].GetFloat();
 
   blinkbow->_hurt = blinkbow_data["hurt"].GetInt();
 
@@ -75,7 +76,7 @@ void BlinkBow::fire(Vec2 offset) {
   auto& lambdaArrow2 = arrows2;
   auto filter = _owner->getBody().getFilter();
   auto collision_detect = [space, lambdaArrow, lambdaArrow2, delta,
-                           filter,hurt](float) {
+                           filter, hurt = _hurt](float) {
     if (auto target = space->querySegmentFirst(
             lambdaArrow->getPosition(), lambdaArrow->getPosition() + delta,
             filter)) {
@@ -125,6 +126,7 @@ Bow* Bow::create(const std::string& name) {
       bow_data["frame"].GetString(), kWeaponResolution));
   bow->_bowNumber = bow_data["number"].GetInt();
   bow->_angleConstant = bow_data["angleconstant"].GetInt();
+  bow->_hurt = bow_data["hurt"].GetFloat();
 
  // bow->_hurt = bow_data["hurt"].GetInt();
 
@@ -172,7 +174,7 @@ void Bow::fire(Vec2 offset) {
     arrows[i]->runAction(RepeatForever::create(MoveBy::create(1, speed)));
     auto lambdaArrow = arrows[i];
     auto filter = _owner->getBody().getFilter();
-    auto collision_detect = [space, lambdaArrow, delta,filter,hurt](float) {
+    auto collision_detect = [space, lambdaArrow, delta,filter,hurt=_hurt](float) {
       if (auto target = space->querySegmentFirst(
               lambdaArrow->getPosition(), lambdaArrow->getPosition() + delta,
               filter)) {
@@ -198,13 +200,10 @@ Spear* Spear::create(const std::string& name) {
   spear->_spearAngleOffset = spear_data["angle-offset"].GetFloat();
   spear->setSpriteFrame(
       DataSet::load_frame(spear_data["frame"].GetString(), kWeaponResolution));
-
-  spear->_hurt = spear_data["hurt"].GetInt();
+  spear->_hurt = spear_data["hurt"].GetFloat();
 
   const auto& anchor_data = spear_data["anchor"].GetArray();
   spear->_spearSpeed = spear_data["speed"].GetFloat();
-  spear->setAnchorPoint(
-      Vec2(anchor_data[0].GetFloat(), anchor_data[1].GetFloat()));
   return spear;
 }
 
@@ -216,24 +215,19 @@ void Spear::pointTo(Vec2 offset) {
 }
 
 void Spear::fire(Vec2 offset) {
-  int hurt = _hurt;
-  Vec2 speed = _spearSpeed * offset / offset.getLength();
+  Vec2 speed = _spearSpeed * offset / offset.getLength();//速度同时兼任矛的长度和矛刺出的距离
   Vec2 delta = speed / _spearSpeed;
   auto space = GameScene::getRunningScene()->getPhysicsSpace();
   auto flipxAction = FlipX::create(true);
   auto moveBy = MoveBy::create(0.3f, speed);
-  FadeOut* disappear = FadeOut::create(0.1f);
   auto action = Sequence::create(moveBy, flipxAction, moveBy->reverse(), NULL);
-  this->runAction(action);
+  runAction(action);
   auto filter = _owner->getBody().getFilter();
-  auto pos = _owner->getPosition();
-  auto collision_detect = [space, this, filter, delta, speed,pos,hurt](float) {
-    if (auto target = space->querySegmentFirst(pos, pos + speed, filter)) {
-      unscheduleAllCallbacks();
-      getInteraction(target)->attack(this, hurt);
+    if (auto target = space->querySegmentFirst(
+            _owner->getPosition(), _owner->getPosition() + speed,
+            filter)) {
+      getInteraction(target)->attack(this, _hurt);
     }
-  };
-  this->schedule(collision_detect, 0, "collistion_detect");
 }
 
 /***武器——法阵***/
@@ -248,6 +242,7 @@ Magic* Magic::create(const std::string& name) {
   const auto& anchor_data = magic_data["anchor"].GetArray();
   magic->setAnchorPoint(
       Vec2(anchor_data[0].GetFloat(), anchor_data[1].GetFloat()));
+  magic->_hurt = magic_data["hurt"].GetFloat();
 
   magic->_hurt = magic_data["hurt"].GetInt();
 
@@ -268,6 +263,7 @@ void Magic::fire(Vec2 offset) {
   Sprite* magicSquare;
  int hurt = _hurt;
   magicSquare = Sprite::create();
+  auto space = GameScene::getRunningScene()->getPhysicsSpace();
   magicSquare->setSpriteFrame(_magicSquare->getSpriteFrame());
   magicSquare->setAnchorPoint(_magicSquare->getAnchorPoint());
   magicSquare->setPosition((_owner->getPosition()));
@@ -280,16 +276,19 @@ void Magic::fire(Vec2 offset) {
  Sequence*action = Sequence::create(delayTime, fadeout, NULL);
   magicSquare->runAction(action);
  auto filter = _owner->getBody().getFilter();
- auto pos = _owner->getPosition();
- auto collision_detect = [space, magicSquare,filter,  pos,hurt](float) {
-   auto target = space->queryPointAll(pos, 80, filter);
+ //一个阵在那里转转转转转，要是一个敌人进去只能被伤害一次太假了，所以就改成转动期间一秒钟都检测一次
+ auto collision_detect = [space, magicSquare, filter, hurt=_hurt, this](float) {
+   static int j = 0;
+   auto target = space->queryPointAll(_owner->getPosition(), 70, filter);
    auto num = target.size();
-   for(int i = 0;i < num;i++) {
-     //magicSquare->unscheduleAllCallbacks();
-     getInteraction(target[i].sprite)->attack(magicSquare, hurt);
+   for (int i = 0; i < num; i++) {
+     if (target[i].sprite) {
+       getInteraction(target[i].sprite)->attack(magicSquare, hurt);
+     }
    }
+   j++;
  };
- this->schedule(collision_detect, 0, "collistion_detect");
+ magicSquare->schedule(collision_detect, 0.2f, 24, 0, "collistion_detect");
 
 }
 
@@ -302,6 +301,7 @@ Darts* Darts::create(const std::string& name) {
   const auto& dart_data = data["darts"];
   dart->setSpriteFrame(
       DataSet::load_frame(dart_data["frame"].GetString(), kWeaponResolution));
+  dart->_hurt = dart_data["hurt"].GetFloat();
 
   const auto& dart_out_data = data["darts"];
   dart->_dart = Sprite::create();
@@ -337,7 +337,7 @@ void Darts::fire(Vec2 offset) {
   Action* action = Spawn::create(moveby, rotateby, NULL);
   darts->runAction(action);
   auto filter = _owner->getBody().getFilter();
-  auto collision_detect = [space, darts, delta, filter,hurt](float) {
+  auto collision_detect = [space, darts, delta, filter,hurt=_hurt](float) {
     if (auto target = space->querySegmentFirst(
             darts->getPosition(), darts->getPosition() + delta,
             filter)) {
