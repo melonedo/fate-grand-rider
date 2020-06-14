@@ -1,14 +1,15 @@
 #pragma once
 
 #include "Pause.h"
-using namespace cocos2d;
+#include "DataSet.h"
 
 // Pause场景实现
 Scene* Pause::createScene() { return Pause::create(); }
 
 int Pause::_audioID = AudioEngine::INVALID_AUDIO_ID;
-bool Pause::_loopEnabled = true;
-float Pause::_volume = 0.1f;
+bool Pause::_loopEnabled =
+    DataSet::getConfig()["music"]["loop-enabled"].GetBool();
+float Pause::_volume = DataSet::getConfig()["music"]["init-volume"].GetFloat();
 
 bool Pause::init() {
   if (!Scene::init()) {

@@ -29,7 +29,7 @@ class Pause : public cocos2d::Scene {
   static cocos2d::Scene* createScene();
 
   //暂停场景的初始化，包括了音量的调节
-  virtual bool init();
+  bool init()override;
 
   //创建Pause实例
  CREATE_FUNC(Pause);
