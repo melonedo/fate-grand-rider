@@ -27,7 +27,7 @@ void MonsterManager::createMonsters(const Rect rect) {
     //碰撞
     auto space = GameScene::getRunningScene()->getPhysicsSpace();
     auto filter = monster->getBody().getFilter();
-    auto collision_detect = [space, filter, monster](float) {
+    auto collision_detect = [rect,space, filter, monster](float) {
       if (space->querySegmentFirst(monster->getPosition(),
                                    monster->getPosition() + monster->_speed,
                                    filter)) {
@@ -39,8 +39,19 @@ void MonsterManager::createMonsters(const Rect rect) {
           monster->_speed.x = 0;
           monster->_speed.y = 0;
         } else {
-          monster->_speed.x = -monster->_speed.x;
-          monster->_speed.y = -monster->_speed.y;
+          auto position = monster->getPosition();
+          if (!rect.containsPoint(Vec2(position.x+15,position.y))) {
+            monster->_speed.x = -monster->_speed.x;
+          } else if (!rect.containsPoint(Vec2(position.x - 15, position.y))) {
+            monster->_speed.x = -monster->_speed.x;
+          }
+          if (!rect.containsPoint(Vec2(position.x, position.y+15))) {
+            monster->_speed.y = -monster->_speed.y;
+          } else if (!rect.containsPoint(Vec2(position.x, position.y - 15))) {
+            monster->_speed.y = -monster->_speed.y;
+          }
+         /* monster->_speed.x = -monster->_speed.x;
+          monster->_speed.y = -monster->_speed.y;*/
         }
       }
     };
