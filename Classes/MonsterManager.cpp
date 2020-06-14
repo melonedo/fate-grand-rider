@@ -22,7 +22,7 @@ void MonsterManager::createMonsters(const Rect rect) {
     this->addChild(monster, kMapPrioritySprite);
     monster->reset(rect);
     monster->show();
-    monster->pickWeapon(DataSet::load_weapon(debug_set["monster-weapon"].GetString()));
+   // monster->pickWeapon(DataSet::load_weapon(debug_set["monster-weapon"].GetString()));
     _monsterArr.pushBack(monster);
     //碰撞
     auto space = GameScene::getRunningScene()->getPhysicsSpace();
@@ -55,10 +55,6 @@ void MonsterManager::update(float dt) {
 }
 
 void MonsterManager::FollowRun() {
-  if (isAllDead()) {
-    EventCustom event("allDead");
-    _eventDispatcher->dispatchEvent(&event);
-  }
   for (auto monster : _monsterArr) {
     if (!monster->isAlive()) {
       if (!monster->_isCounted) {
@@ -67,19 +63,21 @@ void MonsterManager::FollowRun() {
       }
       continue;
     }
-    if (monster->_weapon)
+    if (monster->_weapon!=NULL) {
       monster->_weapon->pointTo(
           Vec2(_hero->getPosition().x, _hero->getPosition().y));
-    monster->_weapon->setPositionNormalized(
-        Vec2(1 - monster->_handPos.x, monster->_handPos.y));
-
+      monster->_weapon->setPositionNormalized(
+          Vec2(1 - monster->_handPos.x, monster->_handPos.y));
+    }
     float x = _hero->getPosition().x - monster->getPosition().x;
     float y = _hero->getPosition().y - monster->getPosition().y;
     if (x < 0) {
       monster->setFlippedX(true);
+      if (monster->_weapon!=NULL )
       monster->_weapon->setFlippedX(false);
     } else {
       monster->setFlippedX(false);
+      if (monster->_weapon != NULL)
       monster->_weapon->setFlippedX(true);
     }
   }

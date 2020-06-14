@@ -102,4 +102,5 @@ class Darts : public Weapon {
   float _hurt;
   // 飞镖速度
   float _dartSpeed;
+  int _hurt;
 };

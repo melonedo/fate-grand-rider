@@ -76,7 +76,7 @@ void Monster::judgeAttack(Hero* hero) {
   if (this->_isAttack) return;
   int x = rand() % 100;
   if (x < 30) {
-    this->_weapon->fire(Vec2(hero->getPosition().x, hero->getPosition().y));
+    this->fire(Vec2(hero->getPosition().x, hero->getPosition().y));
     this->_isAttack = true;
   }
 }
@@ -124,9 +124,11 @@ void Monster::die() {
   this->stopAllActions();
   this->unscheduleAllCallbacks();
   this->unscheduleUpdate();
-  this->_weapon->stopAllActions();
-  this->_weapon->unscheduleAllCallbacks();
-  this->_weapon->unscheduleUpdate();
+  if (this->_weapon != NULL) {
+    this->_weapon->stopAllActions();
+    this->_weapon->unscheduleAllCallbacks();
+    this->_weapon->unscheduleUpdate();
+  }
   this->scheduleOnce(SEL_SCHEDULE(&Monster::dieUpdate), 0.5f);
 }
 
@@ -138,5 +140,33 @@ bool SampleMonster::init() {
   _visibleRange = data["visible-size"].GetInt();
   _attackRange = data["attack-size"].GetInt();
   _hp = data["hp"].GetInt();
+  _weapon = NULL;
   return true;
+}
+void SampleMonster::fire(cocos2d::Vec2 vec) {
+  const auto& data = DataSet::getConfig()["monsters"][getMonsterName()];
+  Sprite* ball = Sprite::create(data["ball"].GetString());
+  ball->setPosition(this->getPosition());
+  getScene()->addChild(ball);
+  ball->setVisible(true);
+  auto speed = data["speed"].GetInt();
+  Vec2 _speed;
+  auto X = vec.x - this->getPosition().x;
+  auto Y = vec.y - this->getPosition().y;
+  _speed.x = speed * X / sqrt(X * X + Y * Y);
+  _speed.y = speed * Y / sqrt(X * X + Y * Y);
+  ball->runAction(RepeatForever::create(MoveBy::create(1.0f, _speed)));
+  auto hurt = data["hurt"].GetInt();
+  auto space = GameScene::getRunningScene()->getPhysicsSpace();
+  auto filter = this->getBody().getFilter();
+  auto collision_detect = [ball, space, filter, hurt, _speed](float) {
+    if (auto target = space->querySegmentFirst(
+            ball->getPosition(), ball->getPosition() + _speed, filter)) {
+      ball->setVisible(false);
+      ball->stopAllActions();
+      ball->unscheduleAllCallbacks();
+      getInteraction(target)->attack(ball, hurt);
+    }
+  };
+  ball->schedule(collision_detect, 0,  "collistion_detect");
 }

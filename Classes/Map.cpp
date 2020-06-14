@@ -179,6 +179,7 @@ void Room::enterRoom() {
   MonsterManager* monsterMgr = MonsterManager::create();
   monsterMgr->bindHero(static_cast<Hero*>(
   GameScene::getRunningScene()->getChildByTag(kTagHero)));
+  monsterMgr->bindRoom(this);
   monsterMgr->createMonsters(this->getBoundingBox());
   GameScene::getRunningScene()->addChild(monsterMgr, kMapPrioritySprite);
 }

@@ -115,7 +115,10 @@
 			"hand-pos": [ 0.75, 0.44 ],
 			"hp": 5,
 			"visible-size": 100,
-			"attack-size": 100
+			"attack-size": 100,
+			"speed": 40,
+			"ball": "ball.jpg",
+			"hurt": 1
 		}
 	}
 }

@@ -269,6 +269,7 @@ void Magic::fire(Vec2 offset) {
   magicSquare->setPosition((_owner->getPosition()));
   magicSquare->setVisible(true);
   getScene()->addChild(magicSquare);
+  auto space = GameScene::getRunningScene()->getPhysicsSpace();
  magicSquare->runAction(RotateBy::create(5.0f, 360));
  DelayTime* delayTime = DelayTime::create(5.0f);
   FadeOut*fadeout = FadeOut::create(1.0f);
