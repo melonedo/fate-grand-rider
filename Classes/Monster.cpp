@@ -127,7 +127,7 @@ void Monster::die() {
   this->_weapon->stopAllActions();
   this->_weapon->unscheduleAllCallbacks();
   this->_weapon->unscheduleUpdate();
-  this->scheduleOnce(SEL_SCHEDULE(&Monster::dieUpdate), 2.0f);
+  this->scheduleOnce(SEL_SCHEDULE(&Monster::dieUpdate), 0.5f);
 }
 
 int Monster::getHp() { return this->_hp; }

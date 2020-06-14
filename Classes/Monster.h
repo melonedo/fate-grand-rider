@@ -31,6 +31,8 @@ class Monster : public Mob {
   virtual const char* getMonsterName() const = 0;
   //每隔一秒重置isAttack
   void updateMonster(float delta);
+    //拾取武器
+  void pickWeapon(Weapon*);
 
   Weapon* _weapon;
 
@@ -40,8 +42,6 @@ class Monster : public Mob {
   int _hp;
 
  private:
-  //拾取武器
-  void pickWeapon(Weapon*);
   //死亡之后该做的事
   void die();
   //死亡一秒后消失

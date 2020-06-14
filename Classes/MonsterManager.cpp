@@ -11,9 +11,7 @@ bool MonsterManager::init() {
   this->_aliveNum = MAX_MONSTER_NUM;
   this->scheduleUpdate();
   this->schedule(SEL_SCHEDULE(&MonsterManager::updateMonsters), 1.0f);
-  if (isAllDead()) {
-		//
-  }
+  _monsterManager = this;
   return true;
 }
 void MonsterManager::createMonsters(const Rect rect) {
@@ -24,7 +22,7 @@ void MonsterManager::createMonsters(const Rect rect) {
     this->addChild(monster, kMapPrioritySprite);
     monster->reset(rect);
     monster->show();
-    monster->pickWeapon(DataSet::load_weapon(debug_set["weapon"].GetString()));
+    monster->pickWeapon(DataSet::load_weapon(debug_set["monster-weapon"].GetString()));
     _monsterArr.pushBack(monster);
     //碰撞
     auto space = GameScene::getRunningScene()->getPhysicsSpace();
@@ -50,7 +48,11 @@ void MonsterManager::createMonsters(const Rect rect) {
   }
 }
 
-void MonsterManager::update(float dt) { FollowRun(); }
+void MonsterManager::update(float dt) {
+  if (isAllDead()) 
+    this->decreaseMonsterCount();
+  FollowRun();
+}
 
 void MonsterManager::FollowRun() {
   if (isAllDead()) {
@@ -125,7 +127,9 @@ void MonsterManager::updateMonsters(float delta) {
   }
 }
 
-void MonsterManager ::bingHero(Hero* hero) { _hero = hero; }
+void MonsterManager ::bindHero(Hero* hero) {this-> _hero = hero; }
+
+void MonsterManager::bindRoom(Room* room) { this->_room = room; }
 
 bool MonsterManager::isAllDead() {
   if (!this->_aliveNum)
@@ -133,3 +137,5 @@ bool MonsterManager::isAllDead() {
   else
     return false;
 }
+
+void MonsterManager::decreaseMonsterCount() { this->_room->leaveRoom(); }

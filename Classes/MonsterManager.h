@@ -1,6 +1,7 @@
 #pragma once
 #include"cocos2d.h"
 #include"Monster.h"
+#include"Map.h"
 USING_NS_CC;
 using namespace cocos2d;
 //怪物数量
@@ -11,8 +12,10 @@ class MonsterManager : public Node {
   CREATE_FUNC(MonsterManager);
   bool isAllDead();
   //绑定hero
-  void bingHero(Hero* hero);
+  void bindHero(Hero* hero);
+  void bindRoom(Room* room);
   void createMonsters(const Rect rect);
+  void decreaseMonsterCount();
  private:
   virtual bool init();
   virtual void update(float dt);
@@ -23,4 +26,6 @@ class MonsterManager : public Node {
   Vector<Monster*> _monsterArr;
   int _aliveNum;
   Hero* _hero;
+  Room* _room;
+  MonsterManager* _monsterManager;
 };
