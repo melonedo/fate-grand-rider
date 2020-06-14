@@ -9,53 +9,9 @@ using namespace cocos2d;
 
 bool UISprite::init() {
   if (!Sprite::init()) return false;
+  
 
-  Vec2 position =
-      static_cast<Hero*>(GameScene::getRunningScene()->getChildByTag(kTagHero))
-          ->getPosition();
-  auto visibleSize = Director::getInstance()->getVisibleSize();
-  Vec2 origin = Director::getInstance()->getVisibleOrigin();
-  float scale = DataSet::getGlobaZoomScale();
-
-  const auto& data = DataSet::getConfig()["UI"]["bars"];
-
-  auto bgBars = cocos2d::Sprite::create(data["bg-bars"].GetString());
-  auto bgSize = bgBars->getContentSize();
-  bgBars->setPosition(
-      Vec2(position.x - visibleSize.width / 2 + bgSize.width / 2 + 20,
-           position.y + visibleSize.height / 2 - 20));
-  this->addChild(bgBars, kUserInterfaceBackground);
-
-  auto health = cocos2d::Sprite::create(data["health"].GetString());
-  auto healthSize = health->getContentSize();
-  health->setPosition(
-      Vec2(position.x - visibleSize.width / 2 + bgSize.width / 2 + 3,
-           position.y + visibleSize.height / 2 - 10));
-  this->addChild(health, kBars);
-
-  auto shield = cocos2d::Sprite::create(data["shield"].GetString());
-  auto shieldSize = shield->getContentSize();
-  shield->setPosition(
-      Vec2(position.x - visibleSize.width / 2 + bgSize.width / 2 + 3,
-           position.y + visibleSize.height / 2 - 20));
-  this->addChild(shield, kBars);
-
-  auto magic = cocos2d::Sprite::create(data["magic"].GetString());
-  auto magicSize = magic->getContentSize();
-  magic->setPosition(
-      Vec2(position.x - visibleSize.width / 2 + bgSize.width / 2 + 3,
-           position.y + visibleSize.height / 2 - 30));
-  this->addChild(magic, kBars);
-
-  auto healthbar = UIBar::create();
-  healthbar->setPosition(
-      Vec2(position.x - visibleSize.width / 2 + bgSize.width / 2 + 25,
-           position.y + visibleSize.height / 2 - 10));
-  healthbar->setBackgroundTexture(data["bar"].GetString());
-  healthbar->setForegroundTexture(data["health-progress"].GetString());
-  healthbar->setTotalProgress(120.0f);
-  healthbar->setCurrentProgress(22.0f);
-  this->addChild(healthbar, kBars);
+  /*
 
   auto shieldbar = UIBar::create();
   shieldbar->setPosition(
@@ -78,12 +34,46 @@ bool UISprite::init() {
   this->addChild(magicbar, kBars);
 
   scheduleUpdate();
-  return true;
+  return true;*/
 }
 
-void UISprite::setOffset(Vec2 offset) { _offSet = offset; }
+void UISprite::addUI(StaticNode* node) {
+  const auto& data = DataSet::getConfig()["UI"]["bars"];
 
-void UISprite::update(float delta) {}
+  auto bgBars = cocos2d::Sprite::create(data["bg-bars"].GetString());
+  bgBars->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+  bgBars->setPosition(0, node->getVisibleSize().height);
+  bgBars->setGlobalZOrder(kUserInterfaceBackground);
+  node->addChild(bgBars);
+
+  auto health = cocos2d::Sprite::create(data["health"].GetString());
+  health->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+  health->setPosition(3, node->getVisibleSize().height - 1);
+  health->setGlobalZOrder(kBars);
+  node->addChild(health);
+
+  auto shield = cocos2d::Sprite::create(data["shield"].GetString());
+  shield->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+  shield->setPosition(3, node->getVisibleSize().height - 11);
+  shield->setGlobalZOrder(kBars);
+  node->addChild(shield);
+
+  auto magic = cocos2d::Sprite::create(data["magic"].GetString());
+  magic->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+  magic->setPosition(3, node->getVisibleSize().height - 21);
+  magic->setGlobalZOrder(kBars);
+  node->addChild(magic);
+
+  auto healthbar = UIBar::create();
+  healthbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+  healthbar->setPosition(15, node->getVisibleSize().height - 1);
+  healthbar->setBackgroundTexture(data["bar"].GetString());
+  healthbar->setForegroundTexture(data["health-progress"].GetString());
+  healthbar->setTotalProgress(120.0f);
+  healthbar->setCurrentProgress(22.0f);
+  node->addChild(healthbar, kBars);
+}
+
 
 bool UIBar::init() {
   _bar = NULL;
@@ -113,7 +103,7 @@ void UIBar::setForegroundTexture(const char* type) {
   _progress = Sprite::create(type);
   _progress->setAnchorPoint(Vec2(0.0f, 0.5f));
   _progress->setPosition(Vec2(-_progress->getContentSize().width * 0.5f, 0));
-  this->addChild(_progress,kProgress);
+  this->addChild(_progress, kProgress);
 }
 
 void UIBar::setTotalProgress(float total) {
@@ -136,80 +126,3 @@ void UIBar::setCurrentProgress(float progress) {
 float UIBar::getCurrentProgress() const { return _currentProgress; }
 
 float UIBar::getTotalProgress() const { return _totalProgress; }
-
-/*bool UIBars::init() {
-  if (!Slider::init()) return false;
-
-  Vec2 position =
-      static_cast<Hero*>(GameScene::getRunningScene()->getChildByTag(kTagHero))
-          ->getPosition();
-  auto visibleSize = Director::getInstance()->getVisibleSize();
-  Vec2 origin = Director::getInstance()->getVisibleOrigin();
-  float scale = DataSet::getGlobaZoomScale();
-
-  auto health = UIBars::create();
-  auto healthSize = health->getContentSize();
-  health->setPercent(_health * 100);
-  health->setPosition(
-      Vec2(position.x - visibleSize.width / 2 + healthSize.width / 2 + 25,
-           position.y + visibleSize.height / 2 - 10));
-  addChild(health);
-  return true;
-}*/
-
-/*UIBars* UIBars::create() {
-  auto ret = new (std::nothrow) UIBars();
-  const auto& data = DataSet::getConfig()["UI"]["bars"];
-
-  if (ret && ret->init()) {
-    ret->loadBarTexture(data["bar"].GetString());
-    ret->loadSlidBallTextures(data["bar-thumb"].GetString(),
-                              data["bar-thumb"].GetString(), "");
-    ret->loadProgressBarTexture(data["health-progress"].GetString());
-    ret->setTouchEnabled(false);
-
-    ret->autorelease();
-
-    return ret;
-  }
-  CC_SAFE_DELETE(ret);
-  return ret;
-}*/
-
-/*UIBars* UIBars::load_shield_bar() {
-  auto ret = new (std::nothrow) UIBars();
-  const auto& data = DataSet::getConfig()["UI"]["bars"];
-
-  if (ret && ret->init()) {
-    ret->loadBarTexture(data["bar"].GetString());
-    ret->loadSlidBallTextures(data["bar-thumb"].GetString(),
-                              data["bar-thumb"].GetString(), "");
-    ret->loadProgressBarTexture(data["shield-progress"].GetString());
-    ret->setTouchEnabled(false);
-
-    ret->autorelease();
-
-    return ret;
-  }
-  CC_SAFE_DELETE(ret);
-  return ret;
-}
-
-UIBars* UIBars::load_magic_bar() {
-  auto ret = new (std::nothrow) UIBars();
-  const auto& data = DataSet::getConfig()["UI"]["bars"];
-
-  if (ret && ret->init()) {
-    ret->loadBarTexture(data["bar"].GetString());
-    ret->loadSlidBallTextures(data["bar-thumb"].GetString(),
-                              data["bar-thumb"].GetString(), "");
-    ret->loadProgressBarTexture(data["magic-progress"].GetString());
-    ret->setTouchEnabled(false);
-
-    ret->autorelease();
-
-    return ret;
-  }
-  CC_SAFE_DELETE(ret);
-  return ret;
-}*/

@@ -2,14 +2,13 @@
 
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
+#include "GameScene.h"
 
 class UISprite : public cocos2d::Sprite{
  public:
   bool init();
-
-  void update(float) override;
-
-  void setOffset(cocos2d::Vec2 offset);
+  
+  static void addUI(StaticNode*);
 
   CREATE_FUNC(UISprite);
 
@@ -17,26 +16,6 @@ class UISprite : public cocos2d::Sprite{
   cocos2d::Vec2 _offSet;
 
 };
-
-/*class UIBars :public cocos2d::ui::Slider {
-  public:
-  bool init();
-
-  UIBars* create();
-
-  void setOffset(cocos2d::Vec2 offset);
-
-  void setPoints(int type);
-
-  CREATE_FUNC(UIBars);
-
-  private:
-  cocos2d::Vec2 _offSet;
-   float _health;
-   float _shield;
-   float _magic;
-
-};*/
 
 class UIBar:public cocos2d::Sprite {
  public:
