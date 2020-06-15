@@ -61,7 +61,8 @@
         "magic": "magic.jpg",
         "magic-progress": "magicProgress.jpg",
         "bar-thumb": "barThumb.jpg",
-        "bar": "bar.jpg"
+        "bar": "bar.jpg",
+        "bg-weapon": "weaponBg.png"
       }
     }
   }

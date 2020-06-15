@@ -161,4 +161,10 @@ void addSampleUI(StaticNode* node) {
   magicbar->setTotalProgress(120.0f);
   magicbar->setCurrentProgress(22.0f);
   node->addChild(magicbar, kBars);
+
+  auto weaponbg = Sprite::create(data["bg-weapon"].GetString());
+  weaponbg->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+  weaponbg->setPosition(node->getVisibleSize().width-50, 50);
+  weaponbg->setGlobalZOrder(kUserInterfaceBackground);
+  node->addChild(weaponbg);
 }
