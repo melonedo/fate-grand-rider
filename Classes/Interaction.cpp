@@ -109,7 +109,7 @@ void Gate::enterRoom(Room*) {
 
 void Gate::leaveRoom(Room*) {
   // 删掉原有的刚体
-  _body.~Body();
+  _body.clear();
   // 设置此图块不可见
   getOwner()->setVisible(false);
 }
