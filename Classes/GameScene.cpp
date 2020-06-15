@@ -89,6 +89,9 @@ bool StaticNode::init() {
 
 const Size& StaticNode::getVisibleSize() const { return _visibleSize; }
 
+// UIBar下属有两个Sprite，用这个方法设置一下
+void setChildrenGlobalZOrder(Node*, float);
+
 void addUI(StaticNode* node) {
   const auto& data = DataSet::getConfig()["UI"]["bars"];
 
@@ -123,7 +126,7 @@ void addUI(StaticNode* node) {
   healthbar->setForegroundTexture(data["health-progress"].GetString());
   healthbar->setTotalProgress(120.0f);
   healthbar->setCurrentProgress(22.0f);
-  //healthbar->setLocalZOrder(kBars);
+  setChildrenGlobalZOrder(healthbar, kBars + 1);
   node->addChild(healthbar,kBars,kTagHealth);
 
   auto shieldbar = UIBar::create();
@@ -133,6 +136,7 @@ void addUI(StaticNode* node) {
   shieldbar->setForegroundTexture(data["shield-progress"].GetString());
   shieldbar->setTotalProgress(120.0f);
   shieldbar->setCurrentProgress(22.0f);
+  setChildrenGlobalZOrder(shieldbar, kBars + 1);
   node->addChild(shieldbar, kBars, kTagShield);
 
   auto magicbar = UIBar::create();
@@ -142,6 +146,7 @@ void addUI(StaticNode* node) {
   magicbar->setForegroundTexture(data["magic-progress"].GetString());
   magicbar->setTotalProgress(120.0f);
   magicbar->setCurrentProgress(22.0f);
+  setChildrenGlobalZOrder(magicbar, kBars + 1);
   node->addChild(magicbar,kBars,kTagMagic);
 
   auto weaponbg = Sprite::create(data["bg-weapon"].GetString());
@@ -149,4 +154,10 @@ void addUI(StaticNode* node) {
   weaponbg->setPosition(node->getVisibleSize().width-50, 50);
   weaponbg->setGlobalZOrder(kUserInterfaceBackground);
   node->addChild(weaponbg);
+}
+
+void setChildrenGlobalZOrder(Node* node, float zorder) {
+  for (auto child : node->getChildren()) {
+    child->setGlobalZOrder(zorder);
+  }
 }
