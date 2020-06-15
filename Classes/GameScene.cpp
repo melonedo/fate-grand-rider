@@ -32,6 +32,7 @@ bool GameScene::init() {
   // 静态节点
   auto static_node = StaticNode::create();
   this->addChild(static_node, 0, "static");
+  addUI(static_node);
 
   // 首先判断是不是用测试集
 
