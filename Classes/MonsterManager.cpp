@@ -14,6 +14,7 @@ bool MonsterManager::init() {
   _monsterManager = this;
   return true;
 }
+
 void MonsterManager::createMonsters(const Rect rect) {
   const auto& config = DataSet::getConfig();
   const auto& debug_set = config["debug-set"].GetObject();
@@ -60,12 +61,11 @@ void MonsterManager::createMonsters(const Rect rect) {
 }
 
 void MonsterManager::update(float dt) {
-  if (isAllDead()) 
-    this->decreaseMonsterCount();
-  FollowRun();
+  if (isAllDead()) _room->leaveRoom();
+  followRun();
 }
 
-void MonsterManager::FollowRun() {
+void MonsterManager::followRun() {
   for (auto monster : _monsterArr) {
     if (!monster->isAlive()) {
       if (!monster->_isCounted) {
@@ -125,6 +125,7 @@ void MonsterManager::FollowRun() {
     }
   }
 }
+
 void MonsterManager::updateMonsters(float delta) {
   for (auto monster : _monsterArr) {
     float x = _hero->getPosition().x - monster->getPosition().x;
@@ -146,5 +147,3 @@ bool MonsterManager::isAllDead() {
   else
     return false;
 }
-
-void MonsterManager::decreaseMonsterCount() { this->_room->leaveRoom(); }
