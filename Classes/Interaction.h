@@ -8,6 +8,7 @@ class Room;
 class Interaction : public cocos2d::Component {
  public:
   // 几个事件不需要全部实现，如果不响应对应的事件就直接留空即可。
+  // 每个事件都应该传递对应的触发者，即第一个source参数。
 
   // 人物靠近时触发
   virtual void touch(Hero* source) {}
@@ -92,10 +93,15 @@ class Gate : public Interaction {
  public:
   static Gate* load(const cocos2d::Vec2& position,
                     const cocos2d::ValueMap& property, chipmunk::Body&&);
-  void touch(Hero*) override;
+  // void touch(Hero*) override;
+  // 触发进入房间的事件
   void endTouch(Hero*) override;
+  // 记录所在的房间
   void linkRoom(Room**) override;
+  // 关门
   void enterRoom(Room*) override;
+  // 开门
+  void leaveRoom(Room*) override;
  private:
   CREATE_FUNC(Gate);
   // 物理刚体
