@@ -63,7 +63,7 @@ bool GameScene::init() {
     //加载UI
     /*auto node = StaticNode::create();
     this->addChild(node,0,"static");
-    UISprite::addUI(node);*/
+    UISprite::addUI(*node);*/
 
 
     return true;
@@ -100,13 +100,13 @@ void addSampleUI(StaticNode* node) {
   node->addChild(label);
 
   // 在顶部放个标签
-  label =
+  /*label =
       Label::createWithSystemFont("top", "Microsoft YaHei", 20, Size::ZERO,
                                   TextHAlignment::LEFT, TextVAlignment::TOP);
   label->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
   label->setPosition(0, node->getVisibleSize().height);
   label->setGlobalZOrder(kMapPriorityUI);
-  node->addChild(label);
+  node->addChild(label);*/
 
 
   const auto& data = DataSet::getConfig()["UI"]["bars"];
@@ -114,7 +114,7 @@ void addSampleUI(StaticNode* node) {
   auto bgBars = cocos2d::Sprite::create(data["bg-bars"].GetString());
   bgBars->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
   bgBars->setPosition(0, node->getVisibleSize().height);
-  bgBars->setGlobalZOrder(kUserInterfaceBackground);
+  bgBars->setLocalZOrder(kUserInterfaceBackground);
   node->addChild(bgBars);
 
   auto health = cocos2d::Sprite::create(data["health"].GetString());
@@ -137,30 +137,33 @@ void addSampleUI(StaticNode* node) {
 
   auto healthbar = UIBar::create();
   healthbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  healthbar->setPosition(40, node->getVisibleSize().height - 1);
+  healthbar->setPosition(30, node->getVisibleSize().height - 5);
   healthbar->setBackgroundTexture(data["bar"].GetString());
   healthbar->setForegroundTexture(data["health-progress"].GetString());
   healthbar->setTotalProgress(120.0f);
   healthbar->setCurrentProgress(22.0f);
-  node->addChild(healthbar,kBars);
+  healthbar->setLocalZOrder(kBars);
+  node->addChild(healthbar);
 
   auto shieldbar = UIBar::create();
   shieldbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  shieldbar->setPosition(40, node->getVisibleSize().height - 11);
+  shieldbar->setPosition(30, node->getVisibleSize().height - 15);
   shieldbar->setBackgroundTexture(data["bar"].GetString());
   shieldbar->setForegroundTexture(data["shield-progress"].GetString());
   shieldbar->setTotalProgress(120.0f);
   shieldbar->setCurrentProgress(22.0f);
-  node->addChild(shieldbar, kBars);
+  shieldbar->setLocalZOrder(kBars);
+  node->addChild(shieldbar);
 
   auto magicbar = UIBar::create();
   magicbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  magicbar->setPosition(40, node->getVisibleSize().height - 21);
+  magicbar->setPosition(30, node->getVisibleSize().height - 25);
   magicbar->setBackgroundTexture(data["bar"].GetString());
   magicbar->setForegroundTexture(data["magic-progress"].GetString());
   magicbar->setTotalProgress(120.0f);
   magicbar->setCurrentProgress(22.0f);
-  node->addChild(magicbar, kBars);
+  magicbar->setLocalZOrder(kBars);
+  node->addChild(magicbar);
 
   auto weaponbg = Sprite::create(data["bg-weapon"].GetString());
   weaponbg->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
