@@ -26,3 +26,14 @@ class GameScene : public cocos2d::Scene {
   // 当前运行的场景，否则获取的时候要dynamic_cast一遍
   static GameScene* runningGameScene;
 };
+
+// 静止节点，会自动同步位置和缩放比例，保持相对窗口不动
+class StaticNode : public cocos2d::Node {
+ public:
+  CREATE_FUNC(StaticNode);
+  const cocos2d::Size& getVisibleSize() const;
+
+ protected:
+  bool init() override;
+  cocos2d::Size _visibleSize;
+};

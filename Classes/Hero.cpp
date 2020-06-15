@@ -205,8 +205,10 @@ void Hero::update(float delta) {
   // 滚动屏幕（Size和Vec没有减法只有加法，所以倒过来）
   auto scene = this->getScene();
   float scale = DataSet::getGlobaZoomScale();
-  scene->setPosition(-new_pos * scale + designResolutionSize / 2 * scale);
   this->setPosition(new_pos);
+  scene->setPosition((-new_pos + designResolutionSize / 2) * scale);
+  scene->getChildByName("static")->setPosition(
+    new_pos - designResolutionSize / 2 / scale);
 }
 
 Weapon* Hero::pickWeapon(Weapon* weapon) {

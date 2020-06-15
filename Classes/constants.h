@@ -9,7 +9,12 @@ const static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
 const static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 768);
 const static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1536);
 
-enum MapPriority{ kMapPriorityBackground = -100, kMapPrioritySprite = 0, kMapPriorityForeground = 100 };
+enum MapPriority {
+  kMapPriorityBackground = -100,
+  kMapPrioritySprite = 0,
+  kMapPriorityForeground = 100,
+  kMapPriorityUI = 200
+};
 
 const static int kTileResolution = 16, kWeaponResolution = 34;
 static int kSpriteResolution = 32;

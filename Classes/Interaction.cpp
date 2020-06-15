@@ -86,7 +86,7 @@ Gate* Gate::load(const Vec2& position, const ValueMap& property,
   return res;
 }
 
-void Gate::touch(Hero*) { log("A gate"); }
+// void Gate::touch(Hero*) { log("A gate"); }
 
 void Gate::endTouch(Hero* hero) {
   if (!_isClosed && (*_room)->getBoundingBox().containsPoint(hero->getPosition()))
@@ -105,6 +105,13 @@ void Gate::enterRoom(Room*) {
   auto layer = getLayerForTileComponent(this);
   layer->setTileGID(layer->getTileGIDAt(_position) + _tileOffset, _position);
   _isClosed = true;
+}
+
+void Gate::leaveRoom(Room*) {
+  // 删掉原有的刚体
+  _body.clear();
+  // 设置此图块不可见
+  getOwner()->setVisible(false);
 }
 
 NoInteraction* NoInteraction::load(const cocos2d::Vec2&,

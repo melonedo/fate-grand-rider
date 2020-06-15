@@ -26,13 +26,13 @@ void Space::removeBody(Body* body) {
 Space::~Space() { cpSpaceFree(_space); }
 
 void Body::initAsBox(cpFloat width, cpFloat height, cpFloat radius) {
-  this->~Body();
+  this->clear();
   _body = cpBodyNew(0, 0);
   _shape = cpBoxShapeNew(_body, width, height, radius);
 }
 
 void Body::initAsCircle(cpFloat radius, cpVect offset) {
-  this->~Body();
+  this->clear();
   _body = cpBodyNew(0, 0);
   _shape = cpCircleShapeNew(_body, radius, offset);
 }
@@ -115,18 +115,22 @@ Body& Body::operator=(Body&& other) noexcept {
   return *this;
 }
 
-Body::~Body() {
+Body::~Body() { clear(); }
+
+void Body::clear() {
   if (_shape != nullptr) {
     if (_space) {
       cpSpaceRemoveShape(_space->getSpace(), _shape);
     }
     cpShapeFree(_shape);
+    _shape = nullptr;
   }
   if (_body != nullptr) {
     if (_space) {
       cpSpaceRemoveBody(_space->getSpace(), _body);
     }
     cpBodyFree(_body);
+    _body = nullptr;
   }
 }
 

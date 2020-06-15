@@ -13,7 +13,7 @@
  </objectgroup>
  <layer id="5" name="invisible" width="60" height="60" locked="1">
   <data encoding="base64" compression="zlib">
-   eJztmEEOgzAMBHlTn9PXROILfXDFjQPUa3CdOMxIuVmezAUEywIAAAAAAABP5eU8yr6RUe/n6G2ec/3m1/hXr7hTmouE3vM5eg/n6P0xK+rDoPf2vnK9a567Jan2zhTWg7aZe0/crYOzGyP3qs9np7sFr1Sc8pzjfaTubOJoGLx/z+dm6Q3+3h+618MM3/seZvifsyfq/1XEngy2e7wD9nwEzwhk3YPePtBb22NBb22PBb21PRb01vZY0FvbY0FvbY8FvbU9FvTW9lg8sTfrAMA9vl5aSsE=
+   eJztl8ENgzAQBOkm/5STaiKlhRSc5JGndT5Y+1g8I/l3YjyAQN42AAAAAAAAWJVbckXcx2xTRk/Df65nVn3/1IzqVbqV0Nueo3f/XMathN723Eq9meu59b4K3Vdxfu/hs8pd7ax009ueG/Ftmw3/o/YcvfvnMm4l6vPq2XszXOG8n6G31wXl++zwXH/7eAiu8+7wnIFZ+6C3Bnq9PRH0ensi6PX2RNDr7Ymg19sTQa+3J4Jeb08Evd6eiBV7Zy0AOMYHCg4jGg==
   </data>
  </layer>
  <layer id="7" name="building-bg" width="60" height="60" locked="1">
@@ -26,7 +26,7 @@
    eJzt1EEKgzAQhlHP0KMEejIv4NGbjZBFZUZKJEnfBz+4mArPRbdNkiRJkqRce7AZeiV2toI3Muw3bs/qNzqi9XZd1cNbn49ovV1X8fJmb5u7qb2l7p24a945tTe7+k2OkrCu4s04eZ+Nl/fG7V95mzte3uHj/e5dpdW8JVjkjX5fnqOkyvx3/bqR4uXl5eXlHSFeXl5eXt4R4uXl5Z3FK2mOPoMcAd0=
   </data>
  </layer>
- <layer id="6" name="building-fg" width="60" height="60">
+ <layer id="6" name="building-fg" width="60" height="60" locked="1">
   <data encoding="base64" compression="zlib">
    eJzt1bERgCAQRUFsyaYswfK0IIvQxJxhBhX/bnwB74KjFAAAAAAAvmie3n7Bs2p6/7QTvW0zo0jrrZHWC0AfS9h/sob13rare29sP0J3BozP/QIAAAB6OQFRPQY6
   </data>
