@@ -82,6 +82,8 @@ list(APPEND GAME_SOURCE
      Classes/Monster.cpp
      Classes/MonsterManager.cpp
      Classes/FlowWord.cpp
+	Classes/UI.cpp
+
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -103,6 +105,7 @@ list(APPEND GAME_HEADER
      Classes/Monster.h
      Classes/MonsterManager.h
      Classes/FlowWord.h
+	Classes/UI.h
      )
 
 if(ANDROID)

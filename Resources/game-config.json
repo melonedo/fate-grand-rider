@@ -31,6 +31,7 @@
 			"slider-track": "sliderTrack.png"
 		}
 	},
+
 	"weapon": {
 		"basic-bow": {
 			"type": "bow",
@@ -120,5 +121,32 @@
 			"ball": "ball.jpg",
 			"hurt": 1
 		}
-	}
-}
+	},
+
+  "pause": {
+    "volume-control": {
+      "silder-thumb": "sliderThumb.png",
+      "slider-progress": "sliderProgress.png",
+      "slider-track": "sliderTrack.png"
+    }
+  },
+  "music": {
+    "loop-enabled": true,
+    "init-volume": 0.0,
+    "song": "loser.mp3"
+  },
+    "UI": {
+      "bars": {
+        "bg-bars": "bgBars.jpg",
+        "health": "health.jpg",
+        "health-progress": "healthProgress.jpg",
+        "shield": "shield.jpg",
+        "shield-progress": "shieldProgress.jpg",
+        "magic": "magic.jpg",
+        "magic-progress": "magicProgress.jpg",
+        "bar-thumb": "barThumb.jpg",
+        "bar": "bar.jpg"
+      }
+    }
+  }
+

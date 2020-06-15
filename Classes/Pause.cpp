@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Pause.h"
-using namespace cocos2d;
-
+#include "DataSet.h"
 // Pause场景实现
 Scene* Pause::createScene(Sprite *sp) { 
   	Pause* myscene = Pause::create();
@@ -17,8 +16,9 @@ Scene* Pause::createScene(Sprite *sp) {
   return myscene; }
 
 int Pause::_audioID = AudioEngine::INVALID_AUDIO_ID;
-bool Pause::_loopEnabled = true;
-float Pause::_volume = 0.1f;
+bool Pause::_loopEnabled =
+    DataSet::getConfig()["music"]["loop-enabled"].GetBool();
+float Pause::_volume = DataSet::getConfig()["music"]["init-volume"].GetFloat();
 
 bool Pause::init() {
   if (!Scene::init()) {
@@ -82,10 +82,10 @@ bool Pause::init() {
 }
 
 /*
-用pushScene实现场景暂停
+鐢╬ushScene瀹炵幇鍦烘櫙鏆傚仠
 */
 
-//暂停背景音量控制滑块实现
+//鏆傚仠鑳屾櫙闊抽噺鎺у埗婊戝潡瀹炵幇
 SliderEx* SliderEx::create() {
   auto ret = new (std::nothrow) SliderEx();
   const auto& data = DataSet::getConfig()["pause"]["volume-control"];

@@ -10,13 +10,13 @@ using namespace cocos2d::ui;
 
 class SliderEx : public Slider {
  public:
-   //´´½¨Ò»¸öÒôÁ¿¿ØÖÆ»¬¿éÊµÀı
+   //åˆ›å»ºä¸€ä¸ªéŸ³é‡æ§åˆ¶æ»‘å—å®ä¾‹
   static SliderEx* create();
 
-  //ÉèÖÃÒôÁ¿±ÈÂÊ
+  //è®¾ç½®éŸ³é‡æ¯”ç‡
   void setRatio(float ratio);
 
-  //µÃµ½ÒôÁ¿±ÈÂÊ
+  //å¾—åˆ°éŸ³é‡æ¯”ç‡
   float getRatio();
 
  private:
@@ -28,13 +28,13 @@ class Pause : public cocos2d::Scene {
    //´´½¨Ò»¸öÔİÍ£µÄ³¡¾°
   static cocos2d::Scene* createScene(Sprite* sp);
 
-  //ÔİÍ£³¡¾°µÄ³õÊ¼»¯£¬°üÀ¨ÁËÒôÁ¿µÄµ÷½Ú
-  virtual bool init();
+  //æš‚åœåœºæ™¯çš„åˆå§‹åŒ–ï¼ŒåŒ…æ‹¬äº†éŸ³é‡çš„è°ƒèŠ‚
+  bool init()override;
 
-  //´´½¨PauseÊµÀı
+  //åˆ›å»ºPauseå®ä¾‹
  CREATE_FUNC(Pause);
 
- //Ê¹µÃMusicÀà¿ÉÒÔÓëPause¹²ÓÃprivateµÄ³ÉÔ±£¨±³¾°ÒôÀÖºÍµ÷½ÚÒôÁ¿¹²ÓÃÍ¬Ò»¸öÒôÁ¿¿ØÖÆ¼ü£©
+ //ä½¿å¾—Musicç±»å¯ä»¥ä¸Pauseå…±ç”¨privateçš„æˆå‘˜ï¼ˆèƒŒæ™¯éŸ³ä¹å’Œè°ƒèŠ‚éŸ³é‡å…±ç”¨åŒä¸€ä¸ªéŸ³é‡æ§åˆ¶é”®ï¼‰
   friend class Music;
 
  private:
