@@ -64,8 +64,6 @@ void Monster::loadAnimation() {
 	this->runAction(animate);
 }
 
-
-
 void Monster::setMoveSpeed(float vx, float vy) { _speed = Vec2(vx, vy); }
 void Monster::update(float dt) {
   this->setPosition(this->getPosition().x + _speed.x,
@@ -143,6 +141,7 @@ bool SampleMonster::init() {
   _weapon = NULL;
   return true;
 }
+
 void SampleMonster::fire(cocos2d::Vec2 vec) {
   const auto& data = DataSet::getConfig()["monsters"][getMonsterName()];
   Sprite* ball = Sprite::create(data["ball"].GetString());

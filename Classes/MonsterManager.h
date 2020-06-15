@@ -15,11 +15,11 @@ class MonsterManager : public Node {
   void bindHero(Hero* hero);
   void bindRoom(Room* room);
   void createMonsters(const Rect rect);
-  void decreaseMonsterCount();
+
  private:
   virtual bool init();
   virtual void update(float dt);
-  void FollowRun();
+  void followRun();
   void updateMonsters(float delta);
  private:
   //存Monster们

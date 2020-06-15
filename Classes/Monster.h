@@ -28,20 +28,18 @@ class Monster : public Mob {
   void monsterRun();
   //加载动画
   void loadAnimation();
-
+  //获取怪物名字
   virtual const char* getMonsterName() const = 0;
   //每隔一秒重置isAttack
   void updateMonster(float delta);
     //拾取武器
   void pickWeapon(Weapon*);
-
+  //武器
   Weapon* _weapon;
-
   // 移动速度
   Vec2 _speed;
-
+  //血量
   int _hp;
-
  private:
   //死亡之后该做的事
   void die();
@@ -59,7 +57,7 @@ class Monster : public Mob {
   bool _isAttack;
   //活着没
   bool _isAlive;
-
+  //手的位置
   Vec2 _handPos;
   // 行走动画
   AutoRef<Animation> _walkAnimation;
