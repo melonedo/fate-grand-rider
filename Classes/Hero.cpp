@@ -40,7 +40,7 @@ void Hero::loadAnimation() {
   this->runAction(animate);
 }
 
-void Hero::setMoveSpeed(float vx, float vy) { _speed = Vec2(vx, vy); }
+// void Hero::setMoveSpeed(float vx, float vy) { _speed = Vec2(vx, vy); }
 
 void Hero::registerUserInput() {
   _speedScale = DataSet::getConfig()["hero-speed-scale"].GetFloat();
@@ -225,5 +225,20 @@ Weapon* Hero::pickWeapon(Weapon* weapon) {
   return res;
 }
 
-// 数值系统正在研发中，先留个无敌版的角色
-void Hero::HeroInteraction::attack(Sprite*, float) {}
+void Hero::HeroInteraction::attack(Sprite*, float damage) {
+  auto hero = dynamic_cast<Hero*>(getOwner());
+  
+  // 某些关于血量的计算
+
+  if (hero->_HP <= 0) {
+    hero->die();
+  }
+}
+
+float Hero::getMP() const { return _MP; }
+float Hero::getHP() const { return _HP; }
+float Hero::getShield() const { return _shield; }
+
+void Hero::die() {
+
+}
