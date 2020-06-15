@@ -200,6 +200,7 @@ Spear* Spear::create(const std::string& name) {
   spear->_spearAngleOffset = spear_data["angle-offset"].GetFloat();
   spear->setSpriteFrame(
       DataSet::load_frame(spear_data["frame"].GetString(), kWeaponResolution));
+
   spear->_hurt = spear_data["hurt"].GetFloat();
 
   const auto& anchor_data = spear_data["anchor"].GetArray();
