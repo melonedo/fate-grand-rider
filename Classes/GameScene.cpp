@@ -2,11 +2,12 @@
 #include "cocos2d.h"
 #include "DataSet.h"
 #include "constants.h"
+#include "UI.h"
 #include "Physics.h"
 using namespace cocos2d;
 
-// 测试用的ui
-void addSampleUI(StaticNode*);
+// ui
+void addUI(StaticNode*);
 
 
 bool GameScene::init() {
@@ -31,7 +32,7 @@ bool GameScene::init() {
   // 静态节点
   auto static_node = StaticNode::create();
   this->addChild(static_node, 0, "static");
-  addSampleUI(static_node);
+  addUI(static_node);
 
   // 首先判断是不是用测试集
 
@@ -59,6 +60,12 @@ bool GameScene::init() {
     // 配上武器
     hero->pickWeapon(DataSet::load_weapon(debug_set["weapon"].GetString()));
 
+    //加载UI
+    /*auto node = StaticNode::create();
+    this->addChild(node,0,"static");
+    UISprite::addUI(*node);*/
+
+
     return true;
   } else {
     CCASSERT(false, "Only debug set is supported now");
@@ -82,22 +89,64 @@ bool StaticNode::init() {
 
 const Size& StaticNode::getVisibleSize() const { return _visibleSize; }
 
-void addSampleUI(StaticNode* node) {
-  // 在（10,10）的位置放个标签（左下对齐）
-  auto label =
-      Label::createWithSystemFont("10,10", "Microsoft YaHei", 20, Size::ZERO,
-                                  TextHAlignment::LEFT, TextVAlignment::BOTTOM);
-  label->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-  label->setPosition(10, 10);
-  label->setGlobalZOrder(kMapPriorityUI);
-  node->addChild(label);
+void addUI(StaticNode* node) {
+  const auto& data = DataSet::getConfig()["UI"]["bars"];
 
-  // 在顶部放个标签
-  label =
-      Label::createWithSystemFont("top", "Microsoft YaHei", 20, Size::ZERO,
-                                  TextHAlignment::LEFT, TextVAlignment::TOP);
-  label->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  label->setPosition(0, node->getVisibleSize().height);
-  label->setGlobalZOrder(kMapPriorityUI);
-  node->addChild(label);
+  auto bgBars = cocos2d::Sprite::create(data["bg-bars"].GetString());
+  bgBars->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+  bgBars->setPosition(0, node->getVisibleSize().height);
+  bgBars->setGlobalZOrder(kMapPriorityUI);
+  node->addChild(bgBars);
+
+  auto health = cocos2d::Sprite::create(data["health"].GetString());
+  health->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+  health->setPosition(3, node->getVisibleSize().height - 1);
+  health->setGlobalZOrder(kBars);
+  node->addChild(health);
+
+  auto shield = cocos2d::Sprite::create(data["shield"].GetString());
+  shield->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+  shield->setPosition(3, node->getVisibleSize().height - 11);
+  shield->setGlobalZOrder(kBars);
+  node->addChild(shield);
+
+  auto magic = cocos2d::Sprite::create(data["magic"].GetString());
+  magic->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+  magic->setPosition(3, node->getVisibleSize().height - 21);
+  magic->setGlobalZOrder(kBars);
+  node->addChild(magic);
+
+  auto healthbar = UIBar::create();
+  healthbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+  healthbar->setPosition(30, node->getVisibleSize().height - 5);
+  healthbar->setBackgroundTexture(data["bar"].GetString());
+  healthbar->setForegroundTexture(data["health-progress"].GetString());
+  healthbar->setTotalProgress(120.0f);
+  healthbar->setCurrentProgress(22.0f);
+  //healthbar->setLocalZOrder(kBars);
+  node->addChild(healthbar,kBars,kTagHealth);
+
+  auto shieldbar = UIBar::create();
+  shieldbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+  shieldbar->setPosition(30, node->getVisibleSize().height - 15);
+  shieldbar->setBackgroundTexture(data["bar"].GetString());
+  shieldbar->setForegroundTexture(data["shield-progress"].GetString());
+  shieldbar->setTotalProgress(120.0f);
+  shieldbar->setCurrentProgress(22.0f);
+  node->addChild(shieldbar, kBars, kTagShield);
+
+  auto magicbar = UIBar::create();
+  magicbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+  magicbar->setPosition(30, node->getVisibleSize().height - 25);
+  magicbar->setBackgroundTexture(data["bar"].GetString());
+  magicbar->setForegroundTexture(data["magic-progress"].GetString());
+  magicbar->setTotalProgress(120.0f);
+  magicbar->setCurrentProgress(22.0f);
+  node->addChild(magicbar,kBars,kTagMagic);
+
+  auto weaponbg = Sprite::create(data["bg-weapon"].GetString());
+  weaponbg->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+  weaponbg->setPosition(node->getVisibleSize().width-50, 50);
+  weaponbg->setGlobalZOrder(kUserInterfaceBackground);
+  node->addChild(weaponbg);
 }
