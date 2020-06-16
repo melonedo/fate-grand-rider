@@ -9,7 +9,7 @@
 git clone https://github.com/melonedo/fate-grand-rider.git
 cd fate-grand-rider
 ```
-* 下载cocos2d-x-4.0，把cocos2d-x-4.0的文件解压并放到`cocos2d`文件夹中（coco2d中应有`cmake`, `cocos`, `external`等文件夹）；
+* 下载[cocos2d-x-4.0](http://cocos2d-x.org/filedown/cocos2d-x-v4.0)，把cocos2d-x-4.0的文件解压并放到`cocos2d`文件夹中（coco2d中应有`cmake`, `cocos`, `external`等文件夹）；
 * 进入`fate-grand-rider`后使用下列指令编译（需要vs2019和cmake）：
 ```shell
 mkdir win32-build
