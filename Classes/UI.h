@@ -4,29 +4,24 @@
 #include "ui/CocosGUI.h"
 #include "GameScene.h"
 
-class UISprite : public cocos2d::Sprite{
- public:
-  bool init();
-  
-  static void addUI(StaticNode&);
-
-  CREATE_FUNC(UISprite);
-
-  private:
-  cocos2d::Vec2 _offSet;
-
-};
-
 class UIBar:public cocos2d::Sprite {
  public:
+   //初始化变量
   bool init();
+  //创建实例
   static UIBar* create();
 
+  //设置背景框
   void setBackgroundTexture(const char* type);
+  //设置前景条
   void setForegroundTexture(const char* type);
+  //设置总血量等
   void setTotalProgress(float total);
+  //设置现有血量
   void setCurrentProgress(float progress);
+  //得到现有血量
   float getCurrentProgress() const;
+  //得到总血量
   float getTotalProgress() const;
 
  private:

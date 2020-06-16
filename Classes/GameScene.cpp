@@ -6,7 +6,7 @@
 #include "Physics.h"
 using namespace cocos2d;
 
-// ui
+// 添加ui（以静态节点）
 void addUI(StaticNode*);
 
 
@@ -60,12 +60,6 @@ bool GameScene::init() {
     // 配上武器
     hero->pickWeapon(DataSet::load_weapon(debug_set["weapon"].GetString()));
 
-    //加载UI
-    /*auto node = StaticNode::create();
-    this->addChild(node,0,"static");
-    UISprite::addUI(*node);*/
-
-
     return true;
   } else {
     CCASSERT(false, "Only debug set is supported now");
@@ -89,6 +83,7 @@ bool StaticNode::init() {
 
 const Size& StaticNode::getVisibleSize() const { return _visibleSize; }
 
+
 void addUI(StaticNode* node) {
   const auto& data = DataSet::getConfig()["UI"]["bars"];
 
@@ -101,19 +96,19 @@ void addUI(StaticNode* node) {
   auto health = cocos2d::Sprite::create(data["health"].GetString());
   health->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
   health->setPosition(3, node->getVisibleSize().height - 1);
-  health->setGlobalZOrder(kBars);
+  health->setGlobalZOrder(kUserInterfaceBars);
   node->addChild(health);
 
   auto shield = cocos2d::Sprite::create(data["shield"].GetString());
   shield->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
   shield->setPosition(3, node->getVisibleSize().height - 11);
-  shield->setGlobalZOrder(kBars);
+  shield->setGlobalZOrder(kUserInterfaceBars);
   node->addChild(shield);
 
   auto magic = cocos2d::Sprite::create(data["magic"].GetString());
   magic->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
   magic->setPosition(3, node->getVisibleSize().height - 21);
-  magic->setGlobalZOrder(kBars);
+  magic->setGlobalZOrder(kUserInterfaceBars);
   node->addChild(magic);
 
   auto healthbar = UIBar::create();
@@ -123,8 +118,8 @@ void addUI(StaticNode* node) {
   healthbar->setForegroundTexture(data["health-progress"].GetString());
   healthbar->setTotalProgress(120.0f);
   healthbar->setCurrentProgress(22.0f);
-  //healthbar->setLocalZOrder(kBars);
-  node->addChild(healthbar,kBars,kTagHealth);
+  healthbar->setLocalZOrder(kUserInterfaceBars);
+  node->addChild(healthbar, kUserInterfaceBars, kTagHealth);
 
   auto shieldbar = UIBar::create();
   shieldbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
@@ -133,7 +128,7 @@ void addUI(StaticNode* node) {
   shieldbar->setForegroundTexture(data["shield-progress"].GetString());
   shieldbar->setTotalProgress(120.0f);
   shieldbar->setCurrentProgress(22.0f);
-  node->addChild(shieldbar, kBars, kTagShield);
+  node->addChild(shieldbar, kUserInterfaceBars, kTagShield);
 
   auto magicbar = UIBar::create();
   magicbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
@@ -142,11 +137,11 @@ void addUI(StaticNode* node) {
   magicbar->setForegroundTexture(data["magic-progress"].GetString());
   magicbar->setTotalProgress(120.0f);
   magicbar->setCurrentProgress(22.0f);
-  node->addChild(magicbar,kBars,kTagMagic);
+  node->addChild(magicbar, kUserInterfaceBars, kTagMagic);
 
   auto weaponbg = Sprite::create(data["bg-weapon"].GetString());
   weaponbg->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
   weaponbg->setPosition(node->getVisibleSize().width-50, 50);
-  weaponbg->setGlobalZOrder(kUserInterfaceBackground);
+  weaponbg->setGlobalZOrder(kMapPriorityUI);
   node->addChild(weaponbg);
 }
