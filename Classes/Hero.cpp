@@ -30,9 +30,9 @@ void Hero::loadAnimation() {
   // 加载站立和行走动画
   const auto& data = DataSet::getConfig()["heroes"][getHeroName()];
   
-  _walkAnimation = DataSet::load_animation(data["walk"]);
+  _walkAnimation = DataSet::loadAnimation(data["walk"]);
   _walkAnimation->setLoops(-1);
-  _standAnimation = DataSet::load_animation(data["stand"]);
+  _standAnimation = DataSet::loadAnimation(data["stand"]);
   _standAnimation->setLoops(-1);
 
   // 不播放的话英雄看不见

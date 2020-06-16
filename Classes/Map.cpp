@@ -84,7 +84,7 @@ std::vector<Room> processMap(cocos2d::TMXTiledMap* map) {
         auto&& body = space->addBoxForTile(tile);
         auto type = value_map.at("type").asString();
         if (type != "room") {
-          auto interaction = DataSet::load_interaction(
+          auto interaction = DataSet::loadInteraction(
               type, Vec2(x, y), value_map, std::move(body));
           tile->addComponent(interaction);
           tile_set.emplace(pos, interaction);

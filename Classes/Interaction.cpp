@@ -157,7 +157,7 @@ void Chest::dialog(Hero*) {
   std::string name;
   name = names.MemberBegin()[rand() % names.MemberCount()].name.GetString();
   // 加载
-  Weapon* weapon = DataSet::load_weapon(name);
+  Weapon* weapon = DataSet::loadWeapon(name);
   // 放到地上
   weapon->setPosition(getOwner()->getPosition() + Vec2(0, -kTileResolution));
   weapon->addComponent(DroppedWeapon::create(weapon));

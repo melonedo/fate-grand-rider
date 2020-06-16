@@ -48,7 +48,7 @@ bool GameScene::init() {
 
     // 加载地图
     auto map_dir = debug_set["map"].GetString();
-    auto map = DataSet::load_map(map_dir, _rooms);
+    auto map = DataSet::loadMap(map_dir, _rooms);
 
     if (config["show-physics-debug-boxes"].GetBool()) {
       this->getPhysicsWorld()->setDebugDrawMask(~0);
@@ -57,7 +57,7 @@ bool GameScene::init() {
     this->addChild(map);
 
     // 加载角色
-    auto hero = DataSet::load_hero(debug_set["hero"].GetString());
+    auto hero = DataSet::loadHero(debug_set["hero"].GetString());
     auto spawn = map->getObjectGroup("obj")->getObject("spawn");
     hero->setPosition(spawn["x"].asFloat(), spawn["y"].asFloat());
     hero->setName("hero");
@@ -66,7 +66,7 @@ bool GameScene::init() {
 
     // 配上武器
     auto a = debug_set["weapon"].GetString();
-    hero->pickWeapon(DataSet::load_weapon(debug_set["weapon"].GetString()));
+    hero->pickWeapon(DataSet::loadWeapon(debug_set["weapon"].GetString()));
 
 
     return true;

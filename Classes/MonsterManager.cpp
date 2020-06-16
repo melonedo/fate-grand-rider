@@ -19,11 +19,11 @@ void MonsterManager::createMonsters(const Rect rect) {
   const auto& config = DataSet::getConfig();
   const auto& debug_set = config["debug-set"].GetObject();
   for (int i = 0; i < MAX_MONSTER_NUM; i++) {
-    auto monster = DataSet::load_monster(debug_set["monster"].GetString());
+    auto monster = DataSet::loadMonster(debug_set["monster"].GetString());
     this->addChild(monster, kMapPrioritySprite);
     monster->reset(rect);
     monster->show();
-   // monster->pickWeapon(DataSet::load_weapon(debug_set["monster-weapon"].GetString()));
+   // monster->pickWeapon(DataSet::loadWeapon(debug_set["monster-weapon"].GetString()));
     _monsterArr.pushBack(monster);
     //碰撞
     auto space = GameScene::getRunningScene()->getPhysicsSpace();

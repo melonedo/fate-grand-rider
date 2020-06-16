@@ -56,7 +56,7 @@ void Monster::loadAnimation() {
 	const auto& config = DataSet::getConfig();
 	// 加载站立和行走动画
 	const auto& data = DataSet::getConfig()["monsters"][getMonsterName()];
-	_walkAnimation = DataSet::load_animation(data["walk"]);
+	_walkAnimation = DataSet::loadAnimation(data["walk"]);
 	_walkAnimation->setLoops(-1);
 	// 不播放的话怪物看不见
 	auto animate = Animate::create(_walkAnimation);
