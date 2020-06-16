@@ -7,6 +7,7 @@
 #include "Weapon.h"
 #include "GameScene.h"
 #include "constants.h"
+#include "DialogBox.h"
 using namespace cocos2d;
 
 // 获取对应的图层用来动态调整GID
@@ -142,13 +143,18 @@ DroppedWeapon* DroppedWeapon::create(Weapon* weapon) {
   return dropped;
 }
 
-void DroppedWeapon::touch(Hero*) { log("%s", getOwner()->getName().c_str()); }
+void DroppedWeapon::touch(Hero*) {
+  createDialog(getOwner(), getOwner()->getName());
+}
+
+void DroppedWeapon::endTouch(Hero*) { destroyDialog(getOwner()); }
 
 void DroppedWeapon::dialog(Hero* hero) {
   Weapon* weapon = dynamic_cast<Weapon*>(getOwner());
   hero->pickWeapon(weapon);
   weapon->removeComponent(this);
   endInteracting(hero);
+  destroyDialog(weapon);
 }
 
 void Chest::dialog(Hero*) {

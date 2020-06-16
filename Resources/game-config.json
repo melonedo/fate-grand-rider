@@ -3,7 +3,7 @@
   "global-zoom-scale": 2,
   "show-physics-debug-boxes": false,
   "display-cocos-stats": true,
-  "skip-starting-scene": false,
+  "skip-starting-scene": true,
   "hero-speed-scale": 100,
   "debug-set": {
     "map": "maps/sample_map.tmx",

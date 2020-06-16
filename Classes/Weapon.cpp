@@ -101,7 +101,6 @@ void Bow::pointTo(Vec2 offset) {
   float angle_offset = isFlippedX() ? 180 - _bowAngleOffset : _bowAngleOffset;
   float angle = -offset.getAngle() * 180 / M_PI + angle_offset;
   this->setRotation(angle);
-  log("%f,%f %f", offset.x, offset.y, angle);
 }
 
 void Weapon::drop() {

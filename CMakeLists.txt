@@ -66,17 +66,17 @@ endif()
 # add cross-platforms source files and header files
 list(APPEND GAME_SOURCE
      Classes/AppDelegate.cpp
-	 Classes/HomeScene.cpp
-	 Classes/DataSet.cpp
-	 Classes/GameScene.cpp
+     Classes/HomeScene.cpp
+     Classes/DataSet.cpp
+     Classes/GameScene.cpp
      Classes/Hero.cpp
      Classes/Physics.cpp
      Classes/Mob.cpp
      Classes/Weapon.cpp
      Classes/Interaction.cpp
-	Classes/Music.cpp
-	Classes/Pause.cpp
-	Classes/UI.cpp
+     Classes/Music.cpp
+     Classes/Pause.cpp
+     Classes/UI.cpp
      Classes/Map.cpp
      Classes/Map.cpp
      Classes/PauseScene.cpp
@@ -84,22 +84,23 @@ list(APPEND GAME_SOURCE
      Classes/Monster.cpp
      Classes/MonsterManager.cpp
      Classes/FlowWord.cpp
+     Classes/DialogBox.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
-	 Classes/HomeScene.h
-	 Classes/constants.h
-	 Classes/DataSet.h
-	 Classes/GameScene.h
-	 Classes/AutoRef.h
+     Classes/HomeScene.h
+     Classes/constants.h
+     Classes/DataSet.h
+     Classes/GameScene.h
+     Classes/AutoRef.h
      Classes/Mob.h
      Classes/Hero.h
      Classes/Physics.h
      Classes/Weapon.h
      Classes/Interaction.h
-	Classes/Music.h
-	Classes/Pause.h
-	Classes/UI.h
+     Classes/Music.h
+     Classes/Pause.h
+     Classes/UI.h
      Classes/Map.h
      Classes/Map.h
      Classes/PauseScene.h
@@ -107,6 +108,7 @@ list(APPEND GAME_HEADER
      Classes/Monster.h
      Classes/MonsterManager.h
      Classes/FlowWord.h
+     Classes/DialogBox.h
      )
 
 if(ANDROID)
