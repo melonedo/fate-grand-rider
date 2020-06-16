@@ -15,6 +15,7 @@ Body& Space::addBodyAndOwn(Body&& body) {
 void Space::addBody(Body* body) {
   cpSpaceAddBody(_space, body->getBody());
   cpSpaceAddShape(_space, body->getShape());
+  body->setSpace(shared_from_this());
 }
 
 void Space::removeBody(Body* body) {
@@ -25,13 +26,13 @@ void Space::removeBody(Body* body) {
 Space::~Space() { cpSpaceFree(_space); }
 
 void Body::initAsBox(cpFloat width, cpFloat height, cpFloat radius) {
-  this->~Body();
+  this->clear();
   _body = cpBodyNew(0, 0);
   _shape = cpBoxShapeNew(_body, width, height, radius);
 }
 
 void Body::initAsCircle(cpFloat radius, cpVect offset) {
-  this->~Body();
+  this->clear();
   _body = cpBodyNew(0, 0);
   _shape = cpCircleShapeNew(_body, radius, offset);
 }
@@ -100,29 +101,36 @@ cocos2d::Sprite* getSpriteFromShape(const cpShape* shape) {
   }
 }
 
-Body::Body(Body&& other) noexcept : _body(other._body), _shape(other._shape) {
+Body::Body(Body&& other) noexcept
+    : _body(other._body), _shape(other._shape), _space(other._space) {
   other._body = nullptr;
   other._shape = nullptr;
+  other._space.reset();
 }
 
 Body& Body::operator=(Body&& other) noexcept {
   std::swap(_body, other._body);
   std::swap(_shape, other._shape);
+  std::swap(_space, other._space);
   return *this;
 }
 
-Body::~Body() {
+Body::~Body() { clear(); }
+
+void Body::clear() {
   if (_shape != nullptr) {
-    //if (auto space = cpShapeGetSpace(_shape)) {
-    //  cpSpaceRemoveShape(space, _shape);
-    //}
+    if (_space) {
+      cpSpaceRemoveShape(_space->getSpace(), _shape);
+    }
     cpShapeFree(_shape);
+    _shape = nullptr;
   }
   if (_body != nullptr) {
-    //if (auto space = cpBodyGetSpace(_body)) {
-    //  cpSpaceRemoveBody(space, _body);
-    //}
+    if (_space) {
+      cpSpaceRemoveBody(_space->getSpace(), _body);
+    }
     cpBodyFree(_body);
+    _body = nullptr;
   }
 }
 

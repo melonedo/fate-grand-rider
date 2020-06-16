@@ -8,6 +8,7 @@ class Room;
 class Interaction : public cocos2d::Component {
  public:
   // 几个事件不需要全部实现，如果不响应对应的事件就直接留空即可。
+  // 每个事件都应该传递对应的触发者，即第一个source参数。
 
   // 人物靠近时触发
   virtual void touch(Hero* source) {}
@@ -31,6 +32,8 @@ class Interaction : public cocos2d::Component {
   // 攻击时触发，适用于会被破坏的建筑和生物。
   virtual void attack(cocos2d::Sprite* source, float damage) {}
 
+  // 强制结束互动，防止出现dangling pointer
+  void endInteracting(Hero*);
  protected:
   bool init() override;
 };
@@ -74,8 +77,8 @@ class Chest : public Interaction {
 
   void touch(Hero*) override;
   void endTouch(Hero*) override;
-  void dialog(Hero*) override {}
-  // TODO: 建一个Item类把东西放在地上
+  // 放一个武器在地上
+  void dialog(Hero*) override;
 
  private:
   CREATE_FUNC(Chest);
@@ -90,10 +93,15 @@ class Gate : public Interaction {
  public:
   static Gate* load(const cocos2d::Vec2& position,
                     const cocos2d::ValueMap& property, chipmunk::Body&&);
-  void touch(Hero*) override;
+  // void touch(Hero*) override;
+  // 触发进入房间的事件
   void endTouch(Hero*) override;
+  // 记录所在的房间
   void linkRoom(Room**) override;
+  // 关门
   void enterRoom(Room*) override;
+  // 开门
+  void leaveRoom(Room*) override;
  private:
   CREATE_FUNC(Gate);
   // 物理刚体
@@ -108,6 +116,7 @@ class Gate : public Interaction {
   Room** _room;
 };
 
+// 靶子
 class Target : public Interaction {
  public:
   static Target* load(const cocos2d::Vec2& position,
@@ -116,5 +125,22 @@ class Target : public Interaction {
 
  private:
   CREATE_FUNC(Target);
+  chipmunk::Body _body;
+};
+
+class Weapon;
+// 地上的武器，可穿越，碰到时显示名字，对话时给予。
+class DroppedWeapon : public Interaction {
+ public:
+  // 展示武器名
+  void touch(Hero*) override;
+  // 捡起武器
+  void dialog(Hero*) override;
+  // 生成对应于地上的武器所需的交互。
+  static DroppedWeapon* create(Weapon* weapon);
+
+ private:
+  CREATE_FUNC(DroppedWeapon);
+
   chipmunk::Body _body;
 };

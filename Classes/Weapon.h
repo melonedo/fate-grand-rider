@@ -2,7 +2,7 @@
 #include "cocos2d.h"
 #include "Hero.h"
 #include "AutoRef.h"
-
+#include "Monster.h"
 // 武器
 class Weapon : public cocos2d::Sprite {
  public:
@@ -12,6 +12,8 @@ class Weapon : public cocos2d::Sprite {
   virtual void fire(cocos2d::Vec2 offset) = 0;
   // 设置所有者，用于同步位置
   void setOwner(Mob* owner) { _owner = owner; }
+  // 设置为掉落物
+  void drop();
  protected:
   using Sprite::init;
   Mob* _owner;
@@ -35,6 +37,7 @@ class Bow : public Weapon {
   AutoRef<Sprite> _arrow2;
   // 箭的速度
   float _arrowSpeed;
+
 };
 
 class BlinkBow : public Bow {

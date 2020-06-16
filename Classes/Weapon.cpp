@@ -6,7 +6,7 @@
 using namespace cocos2d;
 using namespace std;
 
-/***武器——弓1***/ 
+/***武器——弓1***/
 BlinkBow* BlinkBow::create(const std::string& name) {
   BlinkBow* blinkbow = new BlinkBow;
   blinkbow->Weapon::init();
@@ -15,23 +15,25 @@ BlinkBow* BlinkBow::create(const std::string& name) {
 
   const auto& blinkbow_data = data["bow"];
   blinkbow->_bowAngleOffset = blinkbow_data["angle-offset"].GetFloat();
-  blinkbow->setSpriteFrame(DataSet::load_frame(
+  blinkbow->setSpriteFrame(DataSet::loadFrame(
       blinkbow_data["frame"].GetString(), kWeaponResolution));
   blinkbow->_bowNumber = blinkbow_data["number"].GetInt();
   blinkbow->_angleConstant = blinkbow_data["angleconstant"].GetInt();
   blinkbow->_hurt = blinkbow_data["hurt"].GetFloat();
 
+  blinkbow->_hurt = blinkbow_data["hurt"].GetInt();
+
   const auto& arrow_data = data["arrow"];
   blinkbow->_arrow = Sprite::create();
   blinkbow->_arrow->setSpriteFrame(
-      DataSet::load_frame(arrow_data["frame"].GetString()));
+      DataSet::loadFrame(arrow_data["frame"].GetString()));
   blinkbow->_arrow->setRotation(arrow_data["angle-offset"].GetFloat());
   blinkbow->_arrowSpeed = arrow_data["speed"].GetFloat();
-  
+
     const auto& arrow_data2 = data["arrow2"];
   blinkbow->_arrow2 = Sprite::create();
     blinkbow->_arrow2->setSpriteFrame(
-        DataSet::load_frame(arrow_data2["frame"].GetString()));
+        DataSet::loadFrame(arrow_data2["frame"].GetString()));
   blinkbow->_arrow2->setRotation(arrow_data2["angle-offset"].GetFloat());
 
   const auto& anchor_data = blinkbow_data["anchor"].GetArray();
@@ -48,6 +50,7 @@ BlinkBow* BlinkBow::create(const std::string& name) {
 void BlinkBow::fire(Vec2 offset) {
   Sprite* arrows;   // 飞行中的箭
   Sprite* arrows2;  // 爆炸的箭
+  int hurt = _hurt;
   arrows2 = Sprite::create();
   arrows2->setSpriteFrame(_arrow2->getSpriteFrame());
   arrows2->setAnchorPoint(
@@ -93,7 +96,7 @@ void BlinkBow::fire(Vec2 offset) {
   lambdaArrow->schedule(collision_detect, 0, "collistion_detect");
 }
 
-/***武器——弓2***/ 
+/***武器——弓2***/
 void Bow::pointTo(Vec2 offset) {
   float angle_offset = isFlippedX() ? 180 - _bowAngleOffset : _bowAngleOffset;
   float angle = -offset.getAngle() * 180 / M_PI + angle_offset;
@@ -101,24 +104,35 @@ void Bow::pointTo(Vec2 offset) {
   log("%f,%f %f", offset.x, offset.y, angle);
 }
 
+void Weapon::drop() {
+  if (_owner) {
+    this->removeFromParent();
+    this->setPosition(_owner->getPosition());
+    _owner = nullptr;
+  }
+  GameScene::getRunningScene()->addChild(this, kMapPriorityBackground);
+  this->addComponent(DroppedWeapon::create(this));
+}
+
 Bow* Bow::create(const std::string& name) {
   Bow* bow = new Bow;
   bow->Weapon::init();
   bow->setName(name);
   const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
-
   const auto& bow_data = data["bow"];
   bow->_bowAngleOffset = bow_data["angle-offset"].GetFloat();
-  bow->setSpriteFrame(DataSet::load_frame(
+  bow->setSpriteFrame(DataSet::loadFrame(
       bow_data["frame"].GetString(), kWeaponResolution));
   bow->_bowNumber = bow_data["number"].GetInt();
   bow->_angleConstant = bow_data["angleconstant"].GetInt();
   bow->_hurt = bow_data["hurt"].GetFloat();
 
+ // bow->_hurt = bow_data["hurt"].GetInt();
+
   const auto& arrow_data = data["arrow"];
   bow->_arrow = Sprite::create();
   bow->_arrow->setSpriteFrame(
-      DataSet::load_frame(arrow_data["frame"].GetString()));
+      DataSet::loadFrame(arrow_data["frame"].GetString()));
   bow->_arrow->setRotation(arrow_data["angle-offset"].GetFloat());
   bow->_arrowSpeed = arrow_data["speed"].GetFloat();
 
@@ -141,6 +155,7 @@ void Bow::fire(Vec2 offset) {
   v[0] = Vec2((offset.x * 12 - offset.y * 5) / 15,
                  (offset.y * 12 + offset.x * 5) / 15);
   Sprite* arrows[3];
+  int hurt = _hurt;
   for (int i =0; i < 3; i++) {
     arrows[i] = Sprite::create();
     arrows[i]->setSpriteFrame(_arrow->getSpriteFrame());
@@ -161,11 +176,12 @@ void Bow::fire(Vec2 offset) {
       if (auto target = space->querySegmentFirst(
               lambdaArrow->getPosition(), lambdaArrow->getPosition() + delta,
               filter)) {
+        lambdaArrow->setVisible(false);
         lambdaArrow->stopAllActions();
         lambdaArrow->unscheduleAllCallbacks();
         getInteraction(target)->attack(lambdaArrow, hurt);
       }
-      
+
     };
     lambdaArrow->schedule(collision_detect, 0, "collistion_detect");
   }
@@ -173,7 +189,7 @@ void Bow::fire(Vec2 offset) {
 
 
 /***武器——矛***/
-Spear* Spear::create(const std::string& name) { 
+Spear* Spear::create(const std::string& name) {
   Spear* spear = new Spear;
   spear->Weapon::init();
   spear->setName(name);
@@ -181,7 +197,8 @@ Spear* Spear::create(const std::string& name) {
   const auto& spear_data = data["spear"];
   spear->_spearAngleOffset = spear_data["angle-offset"].GetFloat();
   spear->setSpriteFrame(
-      DataSet::load_frame(spear_data["frame"].GetString(), kWeaponResolution));
+      DataSet::loadFrame(spear_data["frame"].GetString(), kWeaponResolution));
+
   spear->_hurt = spear_data["hurt"].GetFloat();
 
   const auto& anchor_data = spear_data["anchor"].GetArray();
@@ -220,16 +237,18 @@ Magic* Magic::create(const std::string& name) {
   const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
   const auto& magic_data = data["magicball"];
   magic->setSpriteFrame(
-      DataSet::load_frame(magic_data["frame"].GetString(), kWeaponResolution));
+      DataSet::loadFrame(magic_data["frame"].GetString(), kWeaponResolution));
   const auto& anchor_data = magic_data["anchor"].GetArray();
   magic->setAnchorPoint(
       Vec2(anchor_data[0].GetFloat(), anchor_data[1].GetFloat()));
   magic->_hurt = magic_data["hurt"].GetFloat();
 
+  magic->_hurt = magic_data["hurt"].GetInt();
+
   const auto& magic_data2 = data["magic"];
   magic->_magicSquare = Sprite::create();
   magic->_magicSquare->setSpriteFrame(
-      DataSet::load_frame(magic_data2["frame"].GetString(),150));
+      DataSet::loadFrame(magic_data2["frame"].GetString(),150));
   const auto& anchor_data2 = magic_data2["anchor"].GetArray();
   magic->_magicSquare->setAnchorPoint(
       Vec2(anchor_data2[0].GetFloat(), anchor_data2[1].GetFloat()));
@@ -239,8 +258,9 @@ Magic* Magic::create(const std::string& name) {
 void Magic::pointTo(Vec2 offset) {
 }
 
-void Magic::fire(Vec2 offset) { 
+void Magic::fire(Vec2 offset) {
   Sprite* magicSquare;
+ int hurt = _hurt;
   magicSquare = Sprite::create();
   auto space = GameScene::getRunningScene()->getPhysicsSpace();
   magicSquare->setSpriteFrame(_magicSquare->getSpriteFrame());
@@ -278,13 +298,13 @@ Darts* Darts::create(const std::string& name) {
   const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
   const auto& dart_data = data["darts"];
   dart->setSpriteFrame(
-      DataSet::load_frame(dart_data["frame"].GetString(), kWeaponResolution));
+      DataSet::loadFrame(dart_data["frame"].GetString(), kWeaponResolution));
   dart->_hurt = dart_data["hurt"].GetFloat();
 
   const auto& dart_out_data = data["darts"];
   dart->_dart = Sprite::create();
   dart->_dart->setSpriteFrame(
-      DataSet::load_frame(dart_out_data["frame"].GetString()));
+      DataSet::loadFrame(dart_out_data["frame"].GetString()));
   dart->_dartSpeed = dart_out_data["speed"].GetFloat();
 
   const auto& anchor_data = dart_out_data["anchor"].GetArray();
@@ -294,11 +314,12 @@ Darts* Darts::create(const std::string& name) {
 }
 
 void Darts::pointTo(Vec2 offset) {
- 
+
 }
 
 void Darts::fire(Vec2 offset) {
-  Sprite* darts; 
+  Sprite* darts;
+  int hurt = _hurt;
    darts = Sprite::create();
   darts->setSpriteFrame(_dart->getSpriteFrame());
    darts->setAnchorPoint(_dart->getAnchorPoint());
@@ -324,12 +345,4 @@ void Darts::fire(Vec2 offset) {
     }
   };
   darts->schedule(collision_detect, 0, "collistion_detect");
-}
-
-void Loading::loading(const std::string& name,Value& weapon_data) {
-  blinkbow->Weapon::init();
-  blinkbow->setName(name);
-  const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
-  blinkbow->setSpriteFrame(DataSet::load_frame(weapon_data["frame"].GetString(), kWeaponResolution));
-  blinkbow->_hurt = weapon_data["hurt"].GetFloat();
 }

@@ -5,6 +5,7 @@
 #include "Hero.h"
 #include "Interaction.h"
 #include "Map.h"
+#include "Pause.h"
 using namespace cocos2d;
 
 DataSet* DataSet::getInstance() {
@@ -36,7 +37,7 @@ const static std::unordered_map<
                     {"gate", Gate::load},
                     {"target", Target::load}};
 
-Interaction* DataSet::load_interaction(const std::string& interaction_name,
+Interaction* DataSet::loadInteraction(const std::string& interaction_name,
                                        const Vec2& position,
                                        const ValueMap& property,
                                        chipmunk::Body&& body) {
@@ -44,7 +45,7 @@ Interaction* DataSet::load_interaction(const std::string& interaction_name,
   return create_func(position, property, std::move(body));
 }
 
-TMXTiledMap* DataSet::load_map(const std::string& map_dir, std::vector<Room>& rooms) {
+TMXTiledMap* DataSet::loadMap(const std::string& map_dir, std::vector<Room>& rooms) {
   auto map = TMXTiledMap::create(map_dir);
   rooms = std::move(processMap(map));
   return map;
@@ -54,26 +55,35 @@ TMXTiledMap* DataSet::load_map(const std::string& map_dir, std::vector<Room>& ro
 const static std::unordered_map<std::string, std::function<Hero*()>> kHeroSet{
     {"sample-man", SampleHero::create}};
 
-Hero* DataSet::load_hero(const std::string& hero_name) {
-  const auto& hero_data =
-      DataSet::getConfig()["heroes"][hero_name.c_str()].GetObject();
+Hero* DataSet::loadHero(const std::string& hero_name) {
+
   Hero* hero = kHeroSet.at(hero_name)();
   hero->setTag(kTagHero);
   return hero;
 }
 
-SpriteFrame* DataSet::load_frame(const std::string& frame_dir, int size) {
+//各怪物的名字和对应的构造函数
+const static std::unordered_map<std::string, std::function<Monster* ()>> kMonsterSet{
+    {"sample-monster", SampleMonster::create} };
+
+Monster* DataSet::loadMonster(const std::string& monster_name){
+    Monster* monster = kMonsterSet.at(monster_name)();
+    //monster->setTag(kTagMonster);
+    return monster;
+ }
+
+SpriteFrame* DataSet::loadFrame(const std::string& frame_dir, int size) {
   auto frame = SpriteFrame::create(frame_dir, Rect(0, 0, size, size));
   CCASSERT(frame, "Unable to load frame");
   return frame;
 }
 
-Animation* DataSet::load_animation(const rapidjson::Value& animation_obj) {
+Animation* DataSet::loadAnimation(const rapidjson::Value& animation_obj) {
   auto animation = Animation::create();
   animation->setDelayPerUnit(animation_obj["interval"].GetFloat());
 
   for (const auto& frame_dir : animation_obj["frames"].GetArray()) {
-    animation->addSpriteFrame(load_frame(frame_dir.GetString()));
+    animation->addSpriteFrame(loadFrame(frame_dir.GetString()));
   }
   return animation;
 }
@@ -87,7 +97,9 @@ const static std::unordered_map<std::string,
                {"spear", Spear::create},
                {"blinkbow", BlinkBow::create}};
 
-Weapon* DataSet::load_weapon(const std::string& weapon_name) {
+Weapon* DataSet::loadWeapon(const std::string& weapon_name) {
   const auto& weapon_data = getConfig()["weapon"][weapon_name.c_str()];
-  return kWeaponSet.at(weapon_data["type"].GetString())(weapon_name);
+  auto res = kWeaponSet.at(weapon_data["type"].GetString())(weapon_name);
+  res->setName(weapon_name);
+  return res;
 }

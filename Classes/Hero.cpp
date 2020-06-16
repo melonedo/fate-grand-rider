@@ -17,6 +17,9 @@ bool Hero::init() {
   const auto& hand_data =
       DataSet::getConfig()["heroes"][getHeroName()]["hand-pos"];
   _handPos = Vec2(hand_data[0].GetFloat(), hand_data[1].GetFloat());
+  // 加入互动
+  addComponent(HeroInteraction::create());
+
   return true;
 }
 
@@ -27,9 +30,9 @@ void Hero::loadAnimation() {
   // 加载站立和行走动画
   const auto& data = DataSet::getConfig()["heroes"][getHeroName()];
   
-  _walkAnimation = DataSet::load_animation(data["walk"]);
+  _walkAnimation = DataSet::loadAnimation(data["walk"]);
   _walkAnimation->setLoops(-1);
-  _standAnimation = DataSet::load_animation(data["stand"]);
+  _standAnimation = DataSet::loadAnimation(data["stand"]);
   _standAnimation->setLoops(-1);
 
   // 不播放的话英雄看不见
@@ -38,7 +41,7 @@ void Hero::loadAnimation() {
   this->runAction(animate);
 }
 
-void Hero::setMoveSpeed(float vx, float vy) { _speed = Vec2(vx, vy); }
+// void Hero::setMoveSpeed(float vx, float vy) { _speed = Vec2(vx, vy); }
 
 void Hero::registerUserInput() {
   _speedScale = DataSet::getConfig()["hero-speed-scale"].GetFloat();
@@ -181,7 +184,8 @@ void Hero::update(float delta) {
   // 保证可以碰到已经碰上的的建筑
   cpShapeFilter filter = _body.getFilter();
   filter.mask = CP_ALL_CATEGORIES;
-  auto stepping = space->queryPointNearest(new_pos, radius - 1, filter);
+  // 加个0.1不然碰不到
+  auto stepping = space->queryPointNearest(new_pos, radius + 0.1, filter);
   if (stepping != nullptr) result = stepping;
 
   Interaction* interacting = nullptr;
@@ -201,19 +205,41 @@ void Hero::update(float delta) {
   // 滚动屏幕（Size和Vec没有减法只有加法，所以倒过来）
   auto scene = this->getScene();
   float scale = DataSet::getGlobaZoomScale();
-  scene->setPosition(-new_pos * scale + designResolutionSize / 2 * scale);
   this->setPosition(new_pos);
+  scene->setPosition((-new_pos + designResolutionSize / 2) * scale);
+  scene->getChildByName("static")->setPosition(
+    new_pos - designResolutionSize / 2 / scale);
 }
 
 Weapon* Hero::pickWeapon(Weapon* weapon) {
+  // 扔掉原有的武器
+  if (_weapon) {
+    _weapon->drop();
+  }
   auto res = _weapon;
   _weapon = weapon;
   weapon->setVisible(true);
   weapon->setPositionNormalized(_handPos);
+  weapon->removeFromParent();
   this->addChild(weapon, 1);
   weapon->setOwner(this);
   return res;
 }
 
-// 数值系统正在研发中，先留个无敌版的角色
-void Hero::HeroInteraction::attack(Sprite*, float) {}
+void Hero::HeroInteraction::attack(Sprite*, float damage) {
+  auto hero = dynamic_cast<Hero*>(getOwner());
+  
+  // 某些关于血量的计算
+
+  if (hero->_HP <= 0) {
+    hero->die();
+  }
+}
+
+float Hero::getMP() const { return _MP; }
+float Hero::getHP() const { return _HP; }
+float Hero::getShield() const { return _shield; }
+
+void Hero::die() {
+
+}
