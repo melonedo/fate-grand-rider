@@ -104,6 +104,9 @@ class Body {
   // 初始化为方形，radius为边框的粗细。
   void initAsBox(cpFloat width, cpFloat height, cpFloat radius = 0);
 
+  // 清除原有的物理刚体和形状
+  void clear();
+
   // 获取cpBody，供chipmunk引擎使用。
   cpBody* getBody() { return _body; }
   // 获取cpShape，供chipmunk引擎使用。
