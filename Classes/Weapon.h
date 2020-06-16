@@ -55,6 +55,14 @@ class BlinkBow : public Bow {
   float _arrowSpeed;
 };
 
+//多重继承
+class Loading : public virtual Weapon {
+ public:
+  void loading(const std::string& name, Value& weapon_data);
+
+ protected:
+  Loading() = default;
+};
 
 //矛
 class Spear : public Weapon {

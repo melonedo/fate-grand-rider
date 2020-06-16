@@ -325,3 +325,11 @@ void Darts::fire(Vec2 offset) {
   };
   darts->schedule(collision_detect, 0, "collistion_detect");
 }
+
+void Loading::loading(const std::string& name,Value& weapon_data) {
+  blinkbow->Weapon::init();
+  blinkbow->setName(name);
+  const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
+  blinkbow->setSpriteFrame(DataSet::load_frame(weapon_data["frame"].GetString(), kWeaponResolution));
+  blinkbow->_hurt = weapon_data["hurt"].GetFloat();
+}
