@@ -118,7 +118,7 @@
 			"visible-size": 100,
 			"attack-size": 100,
 			"speed": 40,
-			"ball": "ball.jpg",
+			"ball": "ball.png",
 			"hurt": 1
 		}
 	},
@@ -129,16 +129,17 @@
     "song": "loser.mp3"
   },
     "UI": {
-      "bars": {
-        "bg-bars": "bgBars.jpg",
-        "health": "health.jpg",
-        "health-progress": "healthProgress.jpg",
-        "shield": "shield.jpg",
-        "shield-progress": "shieldProgress.jpg",
-        "magic": "magic.jpg",
-        "magic-progress": "magicProgress.jpg",
-        "bar-thumb": "barThumb.jpg",
-        "bar": "bar.jpg"
-      }
+			"bars": {
+				"bg-bars": "bgBars.jpg",
+				"health": "health.jpg",
+				"health-progress": "healthProgress.jpg",
+				"shield": "shield.jpg",
+				"shield-progress": "shieldProgress.jpg",
+				"magic": "magic.jpg",
+				"magic-progress": "magicProgress.jpg",
+				"bar-thumb": "barThumb.jpg",
+				"bar": "bar.jpg",
+				"bg-weapon": "weaponBg.png"
+			}
     }
   }
