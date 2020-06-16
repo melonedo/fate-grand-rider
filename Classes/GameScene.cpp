@@ -157,13 +157,13 @@ void addUI(StaticNode* node) {
   magicbar->setCurrentProgress(22.0f);
   node->addChild(magicbar, kBars);
   setChildrenGlobalZOrder(magicbar, kBars + 1);
-  node->addChild(magicbar,kBars,kTagMagic);
-
+  //node->addChild(magicbar,kBars,kTagMagic);
+  /*
   auto weaponbg = Sprite::create(data["bg-weapon"].GetString());
   weaponbg->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
   weaponbg->setPosition(node->getVisibleSize().width-50, 50);
   weaponbg->setGlobalZOrder(kUserInterfaceBackground);
-  node->addChild(weaponbg);
+  node->addChild(weaponbg);*/
 }
 
 void setChildrenGlobalZOrder(Node* node, float zorder) {

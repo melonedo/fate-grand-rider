@@ -118,6 +118,7 @@ void Monster::die() {
   this->_isAlive = false;
   setColor(Color3B::GRAY);
   auto backeRodate = RotateBy::create(0.1f, -10, 0);
+  _body.clear();
   this->runAction(backeRodate);
   this->stopAllActions();
   this->unscheduleAllCallbacks();
