@@ -63,7 +63,7 @@ if(WINDOWS)
     target_compile_options(cocos2d PRIVATE /w)
 endif()
 
-# add cross-platforms source files and header files 
+# add cross-platforms source files and header files
 list(APPEND GAME_SOURCE
      Classes/AppDelegate.cpp
 	 Classes/HomeScene.cpp
@@ -78,6 +78,12 @@ list(APPEND GAME_SOURCE
 	Classes/Pause.cpp
 	Classes/UI.cpp
      Classes/Map.cpp
+     Classes/Map.cpp
+     Classes/PauseScene.cpp
+     Classes/PauseGame.cpp
+     Classes/Monster.cpp
+     Classes/MonsterManager.cpp
+     Classes/FlowWord.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -95,6 +101,12 @@ list(APPEND GAME_HEADER
 	Classes/Pause.h
 	Classes/UI.h
      Classes/Map.h
+     Classes/Map.h
+     Classes/PauseScene.h
+     Classes/PauseGame.h
+     Classes/Monster.h
+     Classes/MonsterManager.h
+     Classes/FlowWord.h
      )
 
 if(ANDROID)

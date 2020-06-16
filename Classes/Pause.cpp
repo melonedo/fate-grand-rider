@@ -3,8 +3,18 @@
 #include "Pause.h"
 #include "DataSet.h"
 
-// Pause场景实现
-Scene* Pause::createScene() { return Pause::create(); }
+// Pause����ʵ��
+Scene* Pause::createScene(Sprite *sp) {
+  	Pause* myscene = Pause::create();
+  auto visibleSize = Director::getInstance()->getVisibleSize();
+  Sprite* _sp = sp;
+    _sp->setPosition(
+      Point(visibleSize.width / 2, visibleSize.height / 2));  //����λ��
+
+  _sp->setColor(Color3B::GRAY);//��ɫ��Ϊ��ɫ
+  myscene->addChild(_sp,0);
+    _sp->setGlobalZOrder(0);
+  return myscene; }
 
 int Pause::_audioID = AudioEngine::INVALID_AUDIO_ID;
 bool Pause::_loopEnabled =
@@ -24,7 +34,7 @@ bool Pause::init() {
   label->setPosition(Vec2(origin.x + visibleSize.width / 8,
                           origin.y + visibleSize.height / 2));
   this->addChild(label);
-
+  label->setGlobalZOrder(2);
   auto volumeSlider = SliderEx::create();
   volumeSlider->setPercent(_volume * 100);
   volumeSlider->addEventListener([&](Ref* sender, Slider::EventType event) {
@@ -37,7 +47,37 @@ bool Pause::init() {
   volumeSlider->setPosition(Vec2(origin.x + visibleSize.width / 2,
                                  origin.y + visibleSize.height / 2));
 
-  addChild(volumeSlider);
+ this->addChild(volumeSlider,4);
+  volumeSlider->setGlobalZOrder(5);
+
+  	//������Ϸ
+  auto label2 = Label::createWithTTF("go on", "fonts/Marker Felt.ttf", 60);
+  assert(label);
+  label2->setAnchorPoint(Vec2(0.5f, 0.5f));
+  label2->setPosition(Point(visibleSize.width / 8, visibleSize.height / 8));
+  this->addChild(label2);
+  label2->setGlobalZOrder(4);
+  auto listener = EventListenerMouse::create();
+  listener->onMouseMove = [](EventMouse* event) {
+    // �����ƶ�����ǩ��ʱ�Ŵ���ǩ
+    auto target = event->getCurrentTarget();
+    auto bbox = target->getBoundingBox();
+    if (bbox.containsPoint(Vec2(event->getCursorX(), event->getCursorY()))) {
+      target->setScale(1.1f);
+    } else {  // �Ƴ�ʱ����ԭ����
+      target->setScale(1);
+    }
+  };
+  listener->onMouseDown = [&](EventMouse* event) {
+    auto target = event->getCurrentTarget();
+    auto bbox = target->getBoundingBox();
+    if (bbox.containsPoint(Vec2(event->getCursorX(), event->getCursorY()))) {
+      Director::getInstance()->resume();
+      Director::getInstance()->popScene();  //������һ����������������Ϸ
+    }
+  };
+  label2->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener,
+                                                                      label2);
 
   return true;
 }
@@ -66,7 +106,7 @@ SliderEx* SliderEx::create() {
   return ret;
 }
 
-void SliderEx::setRatio(float ratio) 
+void SliderEx::setRatio(float ratio)
 {
    ratio = cocos2d::clampf(ratio, 0.0f, 1.0f);
 

@@ -8,7 +8,8 @@
   "debug-set": {
     "map": "maps/sample_map.tmx",
     "hero": "sample-man",
-    "weapon": "basic-bow"
+    "weapon": "basic-bow",
+    "monster": "sample-monster"
   },
   "heroes": {
     "sample-man": {
@@ -120,6 +121,21 @@
         "speed": 300,
         "hurt": 2
       }
+    }
+  },
+  "monsters": {
+    "sample-monster": {
+      "walk": {
+        "interval": 0.2,
+        "frames": [ "monster1.png", "monster2.png" ]
+      },
+      "hand-pos": [ 0.75, 0.44 ],
+      "hp": 5,
+      "visible-size": 100,
+      "attack-size": 100,
+      "speed": 40,
+      "ball": "ball.jpg",
+      "hurt": 1
     }
   }
 }

@@ -5,6 +5,7 @@
 #include "Hero.h"
 #include "Interaction.h"
 #include "Map.h"
+#include "Pause.h"
 using namespace cocos2d;
 
 DataSet* DataSet::getInstance() {
@@ -55,12 +56,21 @@ const static std::unordered_map<std::string, std::function<Hero*()>> kHeroSet{
     {"sample-man", SampleHero::create}};
 
 Hero* DataSet::load_hero(const std::string& hero_name) {
-  const auto& hero_data =
-      DataSet::getConfig()["heroes"][hero_name.c_str()].GetObject();
+
   Hero* hero = kHeroSet.at(hero_name)();
   hero->setTag(kTagHero);
   return hero;
 }
+
+//各怪物的名字和对应的构造函数
+const static std::unordered_map<std::string, std::function<Monster* ()>> kMonsterSet{
+    {"sample-monster", SampleMonster::create} };
+
+Monster* DataSet::load_monster(const std::string& monster_name){
+    Monster* monster = kMonsterSet.at(monster_name)();
+    //monster->setTag(kTagMonster);
+    return monster;
+ }
 
 SpriteFrame* DataSet::load_frame(const std::string& frame_dir, int size) {
   auto frame = SpriteFrame::create(frame_dir, Rect(0, 0, size, size));

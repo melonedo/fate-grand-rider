@@ -4,6 +4,7 @@
 #include "Hero.h"
 #include "Weapon.h"
 #include "Map.h"
+#include "Monster.h"
 using namespace cocos2d;
 // 全局的数据集
 class DataSet {
@@ -25,6 +26,9 @@ class DataSet {
 
   // 加载一个人物
   static Hero* load_hero(const std::string& hero_name);
+
+  //加载一个怪物
+  static Monster* load_monster(const std::string& monster_name);
 
   // 加载一个动画，读取对应的interval作为间隔，然后依次读取frame中的图片
   static Animation* load_animation(const rapidjson::Value& animation_obj);

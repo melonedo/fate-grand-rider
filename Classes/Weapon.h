@@ -2,7 +2,7 @@
 #include "cocos2d.h"
 #include "Hero.h"
 #include "AutoRef.h"
-
+#include "Monster.h"
 // 武器
 class Weapon : public cocos2d::Sprite {
  public:
@@ -37,6 +37,7 @@ class Bow : public Weapon {
   AutoRef<Sprite> _arrow2;
   // 箭的速度
   float _arrowSpeed;
+
 };
 
 class BlinkBow : public Bow {

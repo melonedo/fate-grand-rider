@@ -5,6 +5,7 @@
 #include "DataSet.h"
 #include "sstream"
 #include "GameScene.h"
+#include "MonsterManager.h"
 using namespace cocos2d;
 using namespace chipmunk;
 
@@ -174,6 +175,13 @@ Room::Room(Room&& other) noexcept
 
 void Room::enterRoom() {
   for (auto i : _buildings) i->enterRoom(this);
+  //加载怪物
+  MonsterManager* monsterMgr = MonsterManager::create();
+  monsterMgr->bindHero(static_cast<Hero*>(
+  GameScene::getRunningScene()->getChildByTag(kTagHero)));
+  monsterMgr->bindRoom(this);
+  monsterMgr->createMonsters(this->getBoundingBox());
+  GameScene::getRunningScene()->addChild(monsterMgr, kMapPrioritySprite);
 }
 
 void Room::leaveRoom() {

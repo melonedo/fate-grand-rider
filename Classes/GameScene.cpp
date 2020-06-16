@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "UI.h"
 #include "Physics.h"
+#include "MonsterManager.h"
 using namespace cocos2d;
 
 // ui
@@ -11,16 +12,22 @@ void addUI(StaticNode*);
 
 
 bool GameScene::init() {
+
   bool result;
   if (DataSet::getShowPhysicsDebugBoxes()) {
     result = Scene::initWithPhysics();
-  } else {
+  }
+  else {
     result = Scene::init();
   }
   if (!result) return false;
 
   runningGameScene = this;
 
+
+  //暂停
+  auto m_pause = PauseGame::create();
+  this->addChild(m_pause);
   const auto& config = DataSet::getConfig();
 
   // 缩放
@@ -61,14 +68,10 @@ bool GameScene::init() {
     auto a = debug_set["weapon"].GetString();
     hero->pickWeapon(DataSet::load_weapon(debug_set["weapon"].GetString()));
 
-    //加载UI
-    /*auto node = StaticNode::create();
-    this->addChild(node,0,"static");
-    UISprite::addUI(*node);*/
-
 
     return true;
-  } else {
+  }
+  else {
     CCASSERT(false, "Only debug set is supported now");
     return false;
   }
