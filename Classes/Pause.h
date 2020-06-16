@@ -25,7 +25,7 @@ class SliderEx : public Slider {
 
 class Pause : public cocos2d::Scene {
  public:
-   //´´½¨Ò»¸öÔİÍ£µÄ³¡¾°
+   //ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Í£ï¿½Ä³ï¿½ï¿½ï¿½
   static cocos2d::Scene* createScene(Sprite* sp);
 
   //æš‚åœåœºæ™¯çš„åˆå§‹åŒ–ï¼ŒåŒ…æ‹¬äº†éŸ³é‡çš„è°ƒèŠ‚

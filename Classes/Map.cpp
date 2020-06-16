@@ -84,7 +84,7 @@ std::vector<Room> processMap(cocos2d::TMXTiledMap* map) {
         auto&& body = space->addBoxForTile(tile);
         auto type = value_map.at("type").asString();
         if (type != "room") {
-          auto interaction = DataSet::load_interaction(
+          auto interaction = DataSet::loadInteraction(
               type, Vec2(x, y), value_map, std::move(body));
           tile->addComponent(interaction);
           tile_set.emplace(pos, interaction);
@@ -97,22 +97,30 @@ std::vector<Room> processMap(cocos2d::TMXTiledMap* map) {
 
   // 生成房间
   std::vector<Room> rooms;
-  for (auto&& room_pos : room_set) {
-    std::array<int, 4> bound;
-    rooms.emplace_back(std::move(processRoom(tile_set, room_pos, bound)));
-    auto&& room = rooms.back();
-    // 转换坐标
-    Rect bbox;
-    int height = map->getMapSize().height;
-    bbox.origin.x = bound[0];
-    bbox.origin.y = height - bound[3];
-    bbox.size.width = bound[1] - bound[0] + 1;
-    bbox.size.height = bound[3] - bound[2] + 1;
-    room._boundingBox.size = bbox.size * kTileResolution;
-    room._boundingBox.origin = bbox.origin * kTileResolution;
+  try {
+    for (auto&& room_pos : room_set) {
+      std::array<int, 4> bound;
+      rooms.emplace_back(std::move(processRoom(tile_set, room_pos, bound)));
+      auto&& room = rooms.back();
+      // 转换坐标
+      Rect bbox;
+      int height = map->getMapSize().height;
+      bbox.origin.x = bound[0];
+      bbox.origin.y = height - bound[3];
+      bbox.size.width = bound[1] - bound[0] + 1;
+      bbox.size.height = bound[3] - bound[2] + 1;
+      room._boundingBox.size = bbox.size * kTileResolution;
+      room._boundingBox.origin = bbox.origin * kTileResolution;
+    }
+  } catch (const std::runtime_error& err) {
+    ccMessageBox(err.what(), "Error when processing map");
+    throw;
   }
   return rooms;
 }
+
+// 每个房间最多可以容纳的图块数，用来检测房间是否未封死。
+const static int kRoomMaxTileNum = 1e4;
 
 Room processRoom(const tile_set_t& tiles, const Vec2& room_pos,
                  std::array<int, 4>& bound) {
@@ -129,6 +137,13 @@ Room processRoom(const tile_set_t& tiles, const Vec2& room_pos,
   up = down = room_pos.y;
 
   while (to_visit.size() != 0) {
+    if (to_visit.size() > kRoomMaxTileNum) {
+      // 房间没封死
+      std::stringstream sstream;
+      sstream << "The room at (" << room_pos.x << ", " << room_pos.y
+              << ") is not closed by buildings.";
+      throw std::runtime_error(sstream.str());
+    }
     Vec2 cur = to_visit.back();
     to_visit.pop_back();
 

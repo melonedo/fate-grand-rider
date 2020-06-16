@@ -66,9 +66,9 @@ endif()
 # add cross-platforms source files and header files
 list(APPEND GAME_SOURCE
      Classes/AppDelegate.cpp
-	 Classes/HomeScene.cpp
-	 Classes/DataSet.cpp
-	 Classes/GameScene.cpp
+     Classes/HomeScene.cpp
+     Classes/DataSet.cpp
+     Classes/GameScene.cpp
      Classes/Hero.cpp
      Classes/Physics.cpp
      Classes/Mob.cpp
@@ -84,14 +84,15 @@ list(APPEND GAME_SOURCE
      Classes/FlowWord.cpp
 	Classes/UI.cpp
 
+     Classes/DialogBox.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
-	 Classes/HomeScene.h
-	 Classes/constants.h
-	 Classes/DataSet.h
-	 Classes/GameScene.h
-	 Classes/AutoRef.h
+     Classes/HomeScene.h
+     Classes/constants.h
+     Classes/DataSet.h
+     Classes/GameScene.h
+     Classes/AutoRef.h
      Classes/Mob.h
      Classes/Hero.h
      Classes/Physics.h
@@ -106,6 +107,7 @@ list(APPEND GAME_HEADER
      Classes/MonsterManager.h
      Classes/FlowWord.h
 	Classes/UI.h
+     Classes/DialogBox.h
      )
 
 if(ANDROID)

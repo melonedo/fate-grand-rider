@@ -15,7 +15,7 @@ BlinkBow* BlinkBow::create(const std::string& name) {
 
   const auto& blinkbow_data = data["bow"];
   blinkbow->_bowAngleOffset = blinkbow_data["angle-offset"].GetFloat();
-  blinkbow->setSpriteFrame(DataSet::load_frame(
+  blinkbow->setSpriteFrame(DataSet::loadFrame(
       blinkbow_data["frame"].GetString(), kWeaponResolution));
   blinkbow->_bowNumber = blinkbow_data["number"].GetInt();
   blinkbow->_angleConstant = blinkbow_data["angleconstant"].GetInt();
@@ -26,14 +26,14 @@ BlinkBow* BlinkBow::create(const std::string& name) {
   const auto& arrow_data = data["arrow"];
   blinkbow->_arrow = Sprite::create();
   blinkbow->_arrow->setSpriteFrame(
-      DataSet::load_frame(arrow_data["frame"].GetString()));
+      DataSet::loadFrame(arrow_data["frame"].GetString()));
   blinkbow->_arrow->setRotation(arrow_data["angle-offset"].GetFloat());
   blinkbow->_arrowSpeed = arrow_data["speed"].GetFloat();
 
     const auto& arrow_data2 = data["arrow2"];
   blinkbow->_arrow2 = Sprite::create();
     blinkbow->_arrow2->setSpriteFrame(
-        DataSet::load_frame(arrow_data2["frame"].GetString()));
+        DataSet::loadFrame(arrow_data2["frame"].GetString()));
   blinkbow->_arrow2->setRotation(arrow_data2["angle-offset"].GetFloat());
 
   const auto& anchor_data = blinkbow_data["anchor"].GetArray();
@@ -101,7 +101,6 @@ void Bow::pointTo(Vec2 offset) {
   float angle_offset = isFlippedX() ? 180 - _bowAngleOffset : _bowAngleOffset;
   float angle = -offset.getAngle() * 180 / M_PI + angle_offset;
   this->setRotation(angle);
-  log("%f,%f %f", offset.x, offset.y, angle);
 }
 
 void Weapon::drop() {
@@ -119,10 +118,9 @@ Bow* Bow::create(const std::string& name) {
   bow->Weapon::init();
   bow->setName(name);
   const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
-
   const auto& bow_data = data["bow"];
   bow->_bowAngleOffset = bow_data["angle-offset"].GetFloat();
-  bow->setSpriteFrame(DataSet::load_frame(
+  bow->setSpriteFrame(DataSet::loadFrame(
       bow_data["frame"].GetString(), kWeaponResolution));
   bow->_bowNumber = bow_data["number"].GetInt();
   bow->_angleConstant = bow_data["angleconstant"].GetInt();
@@ -131,10 +129,9 @@ Bow* Bow::create(const std::string& name) {
  // bow->_hurt = bow_data["hurt"].GetInt();
 
   const auto& arrow_data = data["arrow"];
-  bow->_hurt = arrow_data["hurt"].GetInt();
   bow->_arrow = Sprite::create();
   bow->_arrow->setSpriteFrame(
-      DataSet::load_frame(arrow_data["frame"].GetString()));
+      DataSet::loadFrame(arrow_data["frame"].GetString()));
   bow->_arrow->setRotation(arrow_data["angle-offset"].GetFloat());
   bow->_arrowSpeed = arrow_data["speed"].GetFloat();
 
@@ -199,7 +196,7 @@ Spear* Spear::create(const std::string& name) {
   const auto& spear_data = data["spear"];
   spear->_spearAngleOffset = spear_data["angle-offset"].GetFloat();
   spear->setSpriteFrame(
-      DataSet::load_frame(spear_data["frame"].GetString(), kWeaponResolution));
+      DataSet::loadFrame(spear_data["frame"].GetString(), kWeaponResolution));
 
   spear->_hurt = spear_data["hurt"].GetFloat();
 
@@ -239,7 +236,7 @@ Magic* Magic::create(const std::string& name) {
   const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
   const auto& magic_data = data["magicball"];
   magic->setSpriteFrame(
-      DataSet::load_frame(magic_data["frame"].GetString(), kWeaponResolution));
+      DataSet::loadFrame(magic_data["frame"].GetString(), kWeaponResolution));
   const auto& anchor_data = magic_data["anchor"].GetArray();
   magic->setAnchorPoint(
       Vec2(anchor_data[0].GetFloat(), anchor_data[1].GetFloat()));
@@ -250,7 +247,7 @@ Magic* Magic::create(const std::string& name) {
   const auto& magic_data2 = data["magic"];
   magic->_magicSquare = Sprite::create();
   magic->_magicSquare->setSpriteFrame(
-      DataSet::load_frame(magic_data2["frame"].GetString(),150));
+      DataSet::loadFrame(magic_data2["frame"].GetString(),150));
   const auto& anchor_data2 = magic_data2["anchor"].GetArray();
   magic->_magicSquare->setAnchorPoint(
       Vec2(anchor_data2[0].GetFloat(), anchor_data2[1].GetFloat()));
@@ -300,13 +297,13 @@ Darts* Darts::create(const std::string& name) {
   const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
   const auto& dart_data = data["darts"];
   dart->setSpriteFrame(
-      DataSet::load_frame(dart_data["frame"].GetString(), kWeaponResolution));
+      DataSet::loadFrame(dart_data["frame"].GetString(), kWeaponResolution));
   dart->_hurt = dart_data["hurt"].GetFloat();
 
   const auto& dart_out_data = data["darts"];
   dart->_dart = Sprite::create();
   dart->_dart->setSpriteFrame(
-      DataSet::load_frame(dart_out_data["frame"].GetString()));
+      DataSet::loadFrame(dart_out_data["frame"].GetString()));
   dart->_dartSpeed = dart_out_data["speed"].GetFloat();
 
   const auto& anchor_data = dart_out_data["anchor"].GetArray();

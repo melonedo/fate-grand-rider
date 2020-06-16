@@ -8,7 +8,7 @@ class UISprite : public cocos2d::Sprite{
  public:
   bool init();
   
-  static void addUI(StaticNode*);
+  static void addUI(StaticNode&);
 
   CREATE_FUNC(UISprite);
 

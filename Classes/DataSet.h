@@ -19,29 +19,28 @@ class DataSet {
   }
 
   // 所有load系列的函数的功能主要都是加载对应的资源，或者负责把字符串映射到具体的对象上
-  // FIXME：把load_改成驼峰
 
   // 从map_dir加载一张地图，并不往上面放生物
-  static cocos2d::TMXTiledMap* load_map(const std::string& map_dir, std::vector<Room>& rooms);
+  static cocos2d::TMXTiledMap* loadMap(const std::string& map_dir, std::vector<Room>& rooms);
 
   // 加载一个人物
-  static Hero* load_hero(const std::string& hero_name);
+  static Hero* loadHero(const std::string& hero_name);
 
   //加载一个怪物
-  static Monster* load_monster(const std::string& monster_name);
+  static Monster* loadMonster(const std::string& monster_name);
 
   // 加载一个动画，读取对应的interval作为间隔，然后依次读取frame中的图片
-  static Animation* load_animation(const rapidjson::Value& animation_obj);
+  static Animation* loadAnimation(const rapidjson::Value& animation_obj);
 
   // 加载一张图片
-  static SpriteFrame* load_frame(const std::string& frame_dir,
+  static SpriteFrame* loadFrame(const std::string& frame_dir,
                                  int size = kSpriteResolution);
 
   // 加载一个武器
-  static Weapon* load_weapon(const std::string& weapon_name);
+  static Weapon* loadWeapon(const std::string& weapon_name);
 
   // 加载一个互动
-  static Interaction* load_interaction(const std::string& interaction_name,
+  static Interaction* loadInteraction(const std::string& interaction_name,
                                        const cocos2d::Vec2& position,
                                        const cocos2d::ValueMap& property,
                                        chipmunk::Body&& body);

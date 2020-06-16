@@ -11,9 +11,9 @@ bool UISprite::init() {
   if (!Sprite::init()) return false;
   
 
-  /*
+  
 
-  auto shieldbar = UIBar::create();
+  /*auto shieldbar = UIBar::create();
   shieldbar->setPosition(
       Vec2(position.x - visibleSize.width / 2 + bgSize.width / 2 + 25,
            position.y + visibleSize.height / 2 - 20));
@@ -31,13 +31,12 @@ bool UISprite::init() {
   magicbar->setForegroundTexture(data["magic-progress"].GetString());
   magicbar->setTotalProgress(120.0f);
   magicbar->setCurrentProgress(22.0f);
-  this->addChild(magicbar, kBars);
+  this->addChild(magicbar, kBars);*/
 
-  scheduleUpdate();
-  return true;*/
+  return true;
 }
 
-void UISprite::addUI(StaticNode* node) {
+/*void UISprite::addUI(StaticNode& node) {
   const auto& data = DataSet::getConfig()["UI"]["bars"];
 
   auto bgBars = cocos2d::Sprite::create(data["bg-bars"].GetString());
@@ -66,13 +65,13 @@ void UISprite::addUI(StaticNode* node) {
 
   auto healthbar = UIBar::create();
   healthbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  healthbar->setPosition(15, node->getVisibleSize().height - 1);
+  healthbar->setPosition(40, node.getVisibleSize().height - 1);
   healthbar->setBackgroundTexture(data["bar"].GetString());
   healthbar->setForegroundTexture(data["health-progress"].GetString());
   healthbar->setTotalProgress(120.0f);
   healthbar->setCurrentProgress(22.0f);
-  node->addChild(healthbar, kBars);
-}
+  node.addChild(healthbar, kBars);
+}*/
 
 
 bool UIBar::init() {

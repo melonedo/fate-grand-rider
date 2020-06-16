@@ -25,7 +25,9 @@ enum AnimationTag{
 
 enum SpriteTag { kTagHero = 2000, kTagWeapon, kTagWall, kTagInteractable};
 
-enum UITag { kUserInterfaceBackground = 2000, kBars, kProgress,kHealthPoint };
+enum UI { kUserInterfaceBackground = 1000, kBars, kProgress,kHealthPoint };
+
+enum UITag { kTagHealth, kTagShield, kTagMagic };
 
 // 用cpBitMask会报错C3064: must be a simple type or resolve to one，只得直接写下unsigned int
 enum PhysicsShapeMask : unsigned int {

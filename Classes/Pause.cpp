@@ -2,15 +2,16 @@
 
 #include "Pause.h"
 #include "DataSet.h"
-// Pause³¡¾°ÊµÏÖ
-Scene* Pause::createScene(Sprite *sp) { 
+
+// Pauseåœºæ™¯å®žçŽ°
+Scene* Pause::createScene(Sprite *sp) {
   	Pause* myscene = Pause::create();
   auto visibleSize = Director::getInstance()->getVisibleSize();
   Sprite* _sp = sp;
     _sp->setPosition(
-      Point(visibleSize.width / 2, visibleSize.height / 2));  //ÖÐÐÄÎ»ÖÃ
+      Point(visibleSize.width / 2, visibleSize.height / 2));  //ä¸­å¿ƒä½ç½®
 
-  _sp->setColor(Color3B::GRAY);//ÑÕÉ«¸ÄÎª»ÒÉ«
+  _sp->setColor(Color3B::GRAY);//é¢œè‰²æ”¹ä¸ºç°è‰²
   myscene->addChild(_sp,0);
     _sp->setGlobalZOrder(0);
   return myscene; }
@@ -49,7 +50,7 @@ bool Pause::init() {
  this->addChild(volumeSlider,4);
   volumeSlider->setGlobalZOrder(5);
 
-  	//¼ÌÐøÓÎÏ·
+  	//ç»§ç»­æ¸¸æˆ
   auto label2 = Label::createWithTTF("go on", "fonts/Marker Felt.ttf", 60);
   assert(label);
   label2->setAnchorPoint(Vec2(0.5f, 0.5f));
@@ -58,12 +59,12 @@ bool Pause::init() {
   label2->setGlobalZOrder(4);
   auto listener = EventListenerMouse::create();
   listener->onMouseMove = [](EventMouse* event) {
-    // Êó±êÒÆ¶¯µ½±êÇ©ÉÏÊ±·Å´ó±êÇ©
+    // é¼ æ ‡ç§»åŠ¨åˆ°æ ‡ç­¾ä¸Šæ—¶æ”¾å¤§æ ‡ç­¾
     auto target = event->getCurrentTarget();
     auto bbox = target->getBoundingBox();
     if (bbox.containsPoint(Vec2(event->getCursorX(), event->getCursorY()))) {
       target->setScale(1.1f);
-    } else {  // ÒÆ³öÊ±Éè»ØÔ­±ÈÀý
+    } else {  // ç§»å‡ºæ—¶è®¾å›žåŽŸæ¯”ä¾‹
       target->setScale(1);
     }
   };
@@ -72,7 +73,7 @@ bool Pause::init() {
     auto bbox = target->getBoundingBox();
     if (bbox.containsPoint(Vec2(event->getCursorX(), event->getCursorY()))) {
       Director::getInstance()->resume();
-      Director::getInstance()->popScene();  //·µ»ØÉÏÒ»¸ö³¡¾°£¬¼´¼ÌÐøÓÎÏ·
+      Director::getInstance()->popScene();  //è¿”å›žä¸Šä¸€ä¸ªåœºæ™¯ï¼Œå³ç»§ç»­æ¸¸æˆ
     }
   };
   label2->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener,
@@ -105,7 +106,7 @@ SliderEx* SliderEx::create() {
   return ret;
 }
 
-void SliderEx::setRatio(float ratio) 
+void SliderEx::setRatio(float ratio)
 {
    ratio = cocos2d::clampf(ratio, 0.0f, 1.0f);
 
