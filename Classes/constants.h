@@ -16,7 +16,8 @@ enum MapPriority {
   kMapPriorityUI = 200
 };
 
-const static int kSpriteResolution = 32, kTileResolution = 16, kWeaponResolution = 34;
+const static int kTileResolution = 16, kWeaponResolution = 34;
+static int kSpriteResolution = 32;
 
 enum AnimationTag{ 
   kTagStandAnimation = 1000, 

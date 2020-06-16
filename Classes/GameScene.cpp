@@ -58,6 +58,7 @@ bool GameScene::init() {
     hero->registerUserInput();
 
     // 配上武器
+    auto a = debug_set["weapon"].GetString();
     hero->pickWeapon(DataSet::load_weapon(debug_set["weapon"].GetString()));
 
     //加载UI
