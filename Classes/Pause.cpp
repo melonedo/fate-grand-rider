@@ -3,15 +3,15 @@
 #include "Pause.h"
 #include "DataSet.h"
 
-// Pause����ʵ��
+// Pause场景实现
 Scene* Pause::createScene(Sprite *sp) {
   	Pause* myscene = Pause::create();
   auto visibleSize = Director::getInstance()->getVisibleSize();
   Sprite* _sp = sp;
     _sp->setPosition(
-      Point(visibleSize.width / 2, visibleSize.height / 2));  //����λ��
+      Point(visibleSize.width / 2, visibleSize.height / 2));  //中心位置
 
-  _sp->setColor(Color3B::GRAY);//��ɫ��Ϊ��ɫ
+  _sp->setColor(Color3B::GRAY);//颜色改为灰色
   myscene->addChild(_sp,0);
     _sp->setGlobalZOrder(0);
   return myscene; }
@@ -50,7 +50,7 @@ bool Pause::init() {
  this->addChild(volumeSlider,4);
   volumeSlider->setGlobalZOrder(5);
 
-  	//������Ϸ
+  	//继续游戏
   auto label2 = Label::createWithTTF("go on", "fonts/Marker Felt.ttf", 60);
   assert(label);
   label2->setAnchorPoint(Vec2(0.5f, 0.5f));
@@ -59,12 +59,12 @@ bool Pause::init() {
   label2->setGlobalZOrder(4);
   auto listener = EventListenerMouse::create();
   listener->onMouseMove = [](EventMouse* event) {
-    // �����ƶ�����ǩ��ʱ�Ŵ���ǩ
+    // 鼠标移动到标签上时放大标签
     auto target = event->getCurrentTarget();
     auto bbox = target->getBoundingBox();
     if (bbox.containsPoint(Vec2(event->getCursorX(), event->getCursorY()))) {
       target->setScale(1.1f);
-    } else {  // �Ƴ�ʱ����ԭ����
+    } else {  // 移出时设回原比例
       target->setScale(1);
     }
   };
@@ -73,7 +73,7 @@ bool Pause::init() {
     auto bbox = target->getBoundingBox();
     if (bbox.containsPoint(Vec2(event->getCursorX(), event->getCursorY()))) {
       Director::getInstance()->resume();
-      Director::getInstance()->popScene();  //������һ����������������Ϸ
+      Director::getInstance()->popScene();  //返回上一个场景，即继续游戏
     }
   };
   label2->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener,
