@@ -254,21 +254,17 @@ const float Hero::getMp() { return _mp; }
 
 void Hero::die() {}
 
-// 数值系统正在研发中，先留个无敌版的角色
 void Hero::HeroInteraction::attack(Sprite* source, float damage) {
-  auto target = dynamic_cast<Hero*>(getOwner());
-  const auto& data = DataSet::getConfig()["heroes"][target->getHeroName()];
-  if (target->_se - damage < 0) {
-    damage = damage-target->_se;
-    target->_se = 0;
-    target->_hp -= damage;
+  auto hero = dynamic_cast<Hero*>(getOwner());
+  const auto& data = DataSet::getConfig()["heroes"][hero->getHeroName()];
+  if (hero->_se - damage < 0) {
+    damage = damage-hero->_se;
+    hero->_se = 0;
+    hero->_hp -= damage;
   } else {
-    target->_se -= damage;
+    hero->_se -= damage;
   }
- /*auto shieldbar = static_cast<UIBar*>(
-      GameScene::getRunningScene()->getChildByTag(kTagShield));
-  auto healthbar = static_cast<Hero*>(
-      GameScene::getRunningScene()->getChildByTag(kTagHealth));
-      */
-  
+  if (hero->_hp < 0||hero->_hp==0) {
+    hero->die();
+  }
 }

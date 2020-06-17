@@ -1,29 +1,25 @@
 #include "GameScene.h"
-#include "cocos2d.h"
 #include "DataSet.h"
-#include "constants.h"
-#include "UI.h"
-#include "Physics.h"
 #include "MonsterManager.h"
+#include "Physics.h"
+#include "UI.h"
+#include "cocos2d.h"
+#include "constants.h"
 using namespace cocos2d;
 
 // 添加ui（以静态节点）
 void addUI(StaticNode*);
 
-
 bool GameScene::init() {
-
   bool result;
   if (DataSet::getShowPhysicsDebugBoxes()) {
     result = Scene::initWithPhysics();
-  }
-  else {
+  } else {
     result = Scene::init();
   }
   if (!result) return false;
 
   runningGameScene = this;
-
 
   //暂停
   auto m_pause = PauseGame::create();
@@ -35,8 +31,6 @@ bool GameScene::init() {
 
   // 物理空间
   _space = std::make_shared<chipmunk::Space>();
-
-
 
   // 首先判断是不是用测试集
 
@@ -68,10 +62,13 @@ bool GameScene::init() {
     auto static_node = StaticNode::create();
     this->addChild(static_node, 0, "static");
     addUI(static_node);
+    _node = static_node;
+
+
+    scheduleUpdate();
 
     return true;
-  }
-  else {
+  } else {
     CCASSERT(false, "Only debug set is supported now");
     return false;
   }
@@ -133,8 +130,9 @@ void addUI(StaticNode* node) {
   healthbar->setForegroundTexture(data["health-progress"].GetString());
   healthbar->setTotalProgress(hero->getTotalHp());
   healthbar->setCurrentProgress(hero->getHp());
-  healthbar->setLocalZOrder(kUserInterfaceBars);
-  node->addChild(healthbar, kUserInterfaceBars, kTagHealth);
+  setChildrenGlobalZOrder(healthbar, kUserInterfaceBars + 1);
+  node->addChild(healthbar, kUserInterfaceBars);
+  healthbar->setTag(kTagHealth);
 
   auto shieldbar = UIBar::create();
   shieldbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
@@ -143,6 +141,7 @@ void addUI(StaticNode* node) {
   shieldbar->setForegroundTexture(data["shield-progress"].GetString());
   shieldbar->setTotalProgress(hero->getTotalSe());
   shieldbar->setCurrentProgress(hero->getSe());
+  setChildrenGlobalZOrder(shieldbar, kUserInterfaceBars + 1);
   node->addChild(shieldbar, kUserInterfaceBars, kTagShield);
 
   auto magicbar = UIBar::create();
@@ -152,11 +151,12 @@ void addUI(StaticNode* node) {
   magicbar->setForegroundTexture(data["magic-progress"].GetString());
   magicbar->setTotalProgress(hero->getTotalMp());
   magicbar->setCurrentProgress(hero->getMp());
+  setChildrenGlobalZOrder(magicbar, kUserInterfaceBars + 1);
   node->addChild(magicbar, kUserInterfaceBars, kTagMagic);
 
   auto weaponbg = Sprite::create(data["bg-weapon"].GetString());
   weaponbg->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
-  weaponbg->setPosition(node->getVisibleSize().width-50, 50);
+  weaponbg->setPosition(node->getVisibleSize().width - 50, 50);
   weaponbg->setGlobalZOrder(kMapPriorityUI);
   node->addChild(weaponbg);
 }
@@ -165,4 +165,18 @@ void setChildrenGlobalZOrder(Node* node, float zorder) {
   for (auto child : node->getChildren()) {
     child->setGlobalZOrder(zorder);
   }
+}
+
+void GameScene::update(float dt) {
+  auto hero =
+      static_cast<Hero*>(GameScene::getRunningScene()->getChildByTag(kTagHero));
+  auto healthbar = static_cast<UIBar*>(
+      GameScene::getRunningScene()->getStaticNode()->getChildByTag(kTagHealth));
+  auto shieldbar = static_cast<UIBar*>(
+      GameScene::getRunningScene()->getStaticNode()->getChildByTag(kTagShield));
+  auto magicbar = static_cast<UIBar*>(
+      GameScene::getRunningScene()->getStaticNode()->getChildByTag(kTagMagic));
+  healthbar->setCurrentProgress(hero->getHp());
+  shieldbar->setCurrentProgress(hero->getSe());
+  magicbar->setCurrentProgress(hero->getMp());
 }

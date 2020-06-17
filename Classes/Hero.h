@@ -18,19 +18,18 @@ class Hero : public Mob {
   Weapon* pickWeapon(Weapon*);
   // 监听键盘和鼠标移动
   void registerUserInput();
-  // 获取状态
-  float getHP() const;
-  float getShield() const;
-  float getMP() const;
 
+  //设置hp、se、mp
   void setHp(float);
   void setSe(float);
   void setMp(float);
 
+  //获得血条等总数值初始化ui
   const float getTotalHp();
   const float getTotalSe();
   const float getTotalMp();
 
+  //获得现有的血量等数值
   const float getHp();
   const float getSe();
   const float getMp();
