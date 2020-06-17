@@ -134,6 +134,8 @@ class DroppedWeapon : public Interaction {
  public:
   // 展示武器名
   void touch(Hero*) override;
+  // 关掉对话框
+  void endTouch(Hero*) override;
   // 捡起武器
   void dialog(Hero*) override;
   // 生成对应于地上的武器所需的交互。

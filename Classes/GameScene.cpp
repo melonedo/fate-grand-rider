@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "UI.h"
 #include "Physics.h"
+#include "MonsterManager.h"
 using namespace cocos2d;
 
 // 添加ui（以静态节点）
@@ -11,16 +12,22 @@ void addUI(StaticNode*);
 
 
 bool GameScene::init() {
+
   bool result;
   if (DataSet::getShowPhysicsDebugBoxes()) {
     result = Scene::initWithPhysics();
-  } else {
+  }
+  else {
     result = Scene::init();
   }
   if (!result) return false;
 
   runningGameScene = this;
 
+
+  //暂停
+  auto m_pause = PauseGame::create();
+  this->addChild(m_pause);
   const auto& config = DataSet::getConfig();
 
   // 缩放
@@ -38,7 +45,7 @@ bool GameScene::init() {
 
     // 加载地图
     auto map_dir = debug_set["map"].GetString();
-    auto map = DataSet::load_map(map_dir, _rooms);
+    auto map = DataSet::loadMap(map_dir, _rooms);
 
     if (config["show-physics-debug-boxes"].GetBool()) {
       this->getPhysicsWorld()->setDebugDrawMask(~0);
@@ -47,7 +54,7 @@ bool GameScene::init() {
     this->addChild(map);
 
     // 加载角色
-    auto hero = DataSet::load_hero(debug_set["hero"].GetString());
+    auto hero = DataSet::loadHero(debug_set["hero"].GetString());
     auto spawn = map->getObjectGroup("obj")->getObject("spawn");
     hero->setPosition(spawn["x"].asFloat(), spawn["y"].asFloat());
     hero->setName("hero");
@@ -63,7 +70,8 @@ bool GameScene::init() {
     addUI(static_node);
 
     return true;
-  } else {
+  }
+  else {
     CCASSERT(false, "Only debug set is supported now");
     return false;
   }
@@ -85,6 +93,8 @@ bool StaticNode::init() {
 
 const Size& StaticNode::getVisibleSize() const { return _visibleSize; }
 
+// UIBar下属有两个Sprite，用这个方法设置一下
+void setChildrenGlobalZOrder(Node*, float);
 
 void addUI(StaticNode* node) {
   const auto& data = DataSet::getConfig()["UI"]["bars"];
@@ -149,4 +159,10 @@ void addUI(StaticNode* node) {
   weaponbg->setPosition(node->getVisibleSize().width-50, 50);
   weaponbg->setGlobalZOrder(kMapPriorityUI);
   node->addChild(weaponbg);
+}
+
+void setChildrenGlobalZOrder(Node* node, float zorder) {
+  for (auto child : node->getChildren()) {
+    child->setGlobalZOrder(zorder);
+  }
 }

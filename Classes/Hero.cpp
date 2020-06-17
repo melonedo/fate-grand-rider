@@ -34,9 +34,10 @@ void Hero::loadAnimation() {
   assert(config["heroes"].HasMember(getHeroName()));
   // 加载站立和行走动画
   const auto& data = DataSet::getConfig()["heroes"][getHeroName()];
-  _walkAnimation = DataSet::load_animation(data["walk"]);
+  
+  _walkAnimation = DataSet::loadAnimation(data["walk"]);
   _walkAnimation->setLoops(-1);
-  _standAnimation = DataSet::load_animation(data["stand"]);
+  _standAnimation = DataSet::loadAnimation(data["stand"]);
   _standAnimation->setLoops(-1);
 
   // 不播放的话英雄看不见
@@ -45,7 +46,7 @@ void Hero::loadAnimation() {
   this->runAction(animate);
 }
 
-void Hero::setMoveSpeed(float vx, float vy) { _speed = Vec2(vx, vy); }
+// void Hero::setMoveSpeed(float vx, float vy) { _speed = Vec2(vx, vy); }
 
 void Hero::registerUserInput() {
   _speedScale = DataSet::getConfig()["hero-speed-scale"].GetFloat();
@@ -250,6 +251,8 @@ const float Hero::getTotalMp() {
 const float Hero::getHp() { return _hp; }
 const float Hero::getSe() { return _se; }
 const float Hero::getMp() { return _mp; }
+
+void Hero::die() {}
 
 // 数值系统正在研发中，先留个无敌版的角色
 void Hero::HeroInteraction::attack(Sprite* source, float damage) {

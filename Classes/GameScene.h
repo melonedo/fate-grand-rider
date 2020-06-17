@@ -3,6 +3,7 @@
 #include "DataSet.h"
 #include "Physics.h"
 #include "Map.h"
+#include "PauseGame.h"
 
 class GameScene : public cocos2d::Scene {
  public:
@@ -12,12 +13,12 @@ class GameScene : public cocos2d::Scene {
 
   // 获取当前的场景
   static GameScene* getRunningScene() { return runningGameScene; }
-  
+
   // 获取物理空间
   chipmunk::Space* getPhysicsSpace() { return _space.get(); }
  private:
   bool init() override;
-  
+
   std::shared_ptr<chipmunk::Space> _space;
 
   std::vector<Room> _rooms;
