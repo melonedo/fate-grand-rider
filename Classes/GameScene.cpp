@@ -29,10 +29,7 @@ bool GameScene::init() {
   // 物理空间
   _space = std::make_shared<chipmunk::Space>();
 
-  // 静态节点
-  auto static_node = StaticNode::create();
-  this->addChild(static_node, 0, "static");
-  addUI(static_node);
+
 
   // 首先判断是不是用测试集
 
@@ -59,6 +56,11 @@ bool GameScene::init() {
 
     // 配上武器
     hero->pickWeapon(DataSet::load_weapon(debug_set["weapon"].GetString()));
+
+    // 静态节点
+    auto static_node = StaticNode::create();
+    this->addChild(static_node, 0, "static");
+    addUI(static_node);
 
     return true;
   } else {
@@ -111,13 +113,16 @@ void addUI(StaticNode* node) {
   magic->setGlobalZOrder(kUserInterfaceBars);
   node->addChild(magic);
 
+  auto hero =
+      static_cast<Hero*>(GameScene::getRunningScene()->getChildByTag(kTagHero));
+
   auto healthbar = UIBar::create();
   healthbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
   healthbar->setPosition(30, node->getVisibleSize().height - 5);
   healthbar->setBackgroundTexture(data["bar"].GetString());
   healthbar->setForegroundTexture(data["health-progress"].GetString());
-  healthbar->setTotalProgress(120.0f);
-  healthbar->setCurrentProgress(22.0f);
+  healthbar->setTotalProgress(hero->getTotalHp());
+  healthbar->setCurrentProgress(hero->getHp());
   healthbar->setLocalZOrder(kUserInterfaceBars);
   node->addChild(healthbar, kUserInterfaceBars, kTagHealth);
 
@@ -126,8 +131,8 @@ void addUI(StaticNode* node) {
   shieldbar->setPosition(30, node->getVisibleSize().height - 15);
   shieldbar->setBackgroundTexture(data["bar"].GetString());
   shieldbar->setForegroundTexture(data["shield-progress"].GetString());
-  shieldbar->setTotalProgress(120.0f);
-  shieldbar->setCurrentProgress(22.0f);
+  shieldbar->setTotalProgress(hero->getTotalSe());
+  shieldbar->setCurrentProgress(hero->getSe());
   node->addChild(shieldbar, kUserInterfaceBars, kTagShield);
 
   auto magicbar = UIBar::create();
@@ -135,8 +140,8 @@ void addUI(StaticNode* node) {
   magicbar->setPosition(30, node->getVisibleSize().height - 25);
   magicbar->setBackgroundTexture(data["bar"].GetString());
   magicbar->setForegroundTexture(data["magic-progress"].GetString());
-  magicbar->setTotalProgress(120.0f);
-  magicbar->setCurrentProgress(22.0f);
+  magicbar->setTotalProgress(hero->getTotalMp());
+  magicbar->setCurrentProgress(hero->getMp());
   node->addChild(magicbar, kUserInterfaceBars, kTagMagic);
 
   auto weaponbg = Sprite::create(data["bg-weapon"].GetString());

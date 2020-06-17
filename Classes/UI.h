@@ -25,9 +25,14 @@ class UIBar:public cocos2d::Sprite {
   float getTotalProgress() const;
 
  private:
+   //血条背景图片
   cocos2d::Sprite* _bar;
+  //血条图片
   cocos2d::Sprite* _progress;
+  //总血量
   float _totalProgress;
+  //现有血量
   float _currentProgress;
+  //现在血量占总血量的比率
   float _scale;
 };

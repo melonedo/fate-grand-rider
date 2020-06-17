@@ -1,16 +1,15 @@
 #pragma once
-#include "Mob.h"
-#include "constants.h"
-#include "AutoRef.h"
 #include <unordered_map>
 #include <unordered_set>
+#include "AutoRef.h"
 #include "Interaction.h"
+#include "Mob.h"
+#include "constants.h"
 class Weapon;
 
 // 英雄
 class Hero : public Mob {
  public:
-
   // 每次更新都会尝试往对应的方向行走，速度单位像素每秒
   void setMoveSpeed(float vx, float vy);
 
@@ -19,6 +18,18 @@ class Hero : public Mob {
 
   // 监听键盘和鼠标移动
   void registerUserInput();
+
+  void setHp(float);
+  void setSe(float);
+  void setMp(float);
+
+  const float getTotalHp();
+  const float getTotalSe();
+  const float getTotalMp();
+
+  const float getHp();
+  const float getSe();
+  const float getMp();
 
  protected:
   // 初始化，设置update，加载动画
@@ -60,7 +71,7 @@ class Hero : public Mob {
 
   // 正在互动的建筑
   Interaction* _interacting;
-  friend Interaction; // 有些互动需要修改_interacting以防止endTouch再次访问
+  friend Interaction;  // 有些互动需要修改_interacting以防止endTouch再次访问
 
   // 角色的互动
   class HeroInteraction : public Interaction {
@@ -72,12 +83,19 @@ class Hero : public Mob {
   // 角色的名字
   std::string _heroName;
   const char* getHeroName() { return _heroName.c_str(); }
+
+  // hit point
+  float _hp;
+  // shield energy
+  float _se;
+  // magic point
+  float _mp;
 };
 
 class SampleHero : public Hero {
  public:
   CREATE_FUNC(SampleHero);
-  
+
  protected:
   bool init() override {
     _heroName = "sample-man";

@@ -1,12 +1,12 @@
 #include "Hero.h"
-#include "cocos2d.h"
-#include "DataSet.h"
 #include <unordered_map>
 #include <unordered_set>
+#include "DataSet.h"
 #include "GameScene.h"
 #include "Interaction.h"
+#include "cocos2d.h"
+#include "ui.h"
 using namespace cocos2d;
-
 
 bool Hero::init() {
   if (!Mob::init()) return false;
@@ -19,6 +19,11 @@ bool Hero::init() {
   _handPos = Vec2(hand_data[0].GetFloat(), hand_data[1].GetFloat());
   // 加入互动
   addComponent(HeroInteraction::create());
+
+  const auto& data = DataSet::getConfig()["heroes"][getHeroName()];
+  _hp = data["total-hp"].GetFloat();
+  _se = data["total-se"].GetFloat();
+  _mp = data["total-mp"].GetFloat();
 
   return true;
 }
@@ -47,8 +52,10 @@ void Hero::registerUserInput() {
 
   auto keyboard_listener = EventListenerKeyboard::create();
   using namespace std::placeholders;
-  keyboard_listener->onKeyPressed = std::bind(&Hero::onKeyPressed, this, _1, _2);
-  keyboard_listener->onKeyReleased = std::bind(&Hero::onKeyReleased, this, _1, _2);
+  keyboard_listener->onKeyPressed =
+      std::bind(&Hero::onKeyPressed, this, _1, _2);
+  keyboard_listener->onKeyReleased =
+      std::bind(&Hero::onKeyReleased, this, _1, _2);
   this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(
       keyboard_listener, this);
 
@@ -118,7 +125,6 @@ void Hero::updateSpeed() {
   this->_speed = speed * _speedScale;
 }
 
-
 void Hero::update(float delta) {
   auto old_pos = this->getPosition();
   auto disp = _speed * delta;
@@ -151,7 +157,7 @@ void Hero::update(float delta) {
       }
       // 如果不能完全地移动到new_pos则进一步修正
       if (nearest_obj != -1) {
-        //log("%f,%f", getPosition().x, getPosition().y);
+        // log("%f,%f", getPosition().x, getPosition().y);
         // 先设置好互动对象
         result = getSpriteFromShape(nearest_info.shape);
         // 除去这个障碍
@@ -179,7 +185,7 @@ void Hero::update(float delta) {
       }
     }
   }
- 
+
   // 保证可以碰到已经碰上的的建筑
   cpShapeFilter filter = _body.getFilter();
   filter.mask = CP_ALL_CATEGORIES;
@@ -206,8 +212,8 @@ void Hero::update(float delta) {
   float scale = DataSet::getGlobaZoomScale();
   this->setPosition(new_pos);
   scene->setPosition((-new_pos + designResolutionSize / 2) * scale);
-  scene->getChildByName("static")->setPosition(
-    new_pos - designResolutionSize / 2 / scale);
+  scene->getChildByName("static")->setPosition(new_pos - designResolutionSize /
+                                                             2 / scale);
 }
 
 Weapon* Hero::pickWeapon(Weapon* weapon) {
@@ -225,5 +231,41 @@ Weapon* Hero::pickWeapon(Weapon* weapon) {
   return res;
 }
 
+void Hero::setHp(float hp) { _hp = hp; }
+void Hero::setSe(float se) { _se = se; }
+void Hero::setMp(float mp) { _mp = mp; }
+
+const float Hero::getTotalHp() {
+  return DataSet::getConfig()["heroes"][getHeroName()]["total-hp"].GetFloat();
+}
+const float Hero::getTotalSe() {
+  return DataSet::getConfig()["heroes"][getHeroName()]["total-se"].GetFloat();
+}
+const float Hero::getTotalMp() {
+  return DataSet::getConfig()["heroes"][getHeroName()]["total-mp"].GetFloat();
+}
+
+
+
+const float Hero::getHp() { return _hp; }
+const float Hero::getSe() { return _se; }
+const float Hero::getMp() { return _mp; }
+
 // 数值系统正在研发中，先留个无敌版的角色
-void Hero::HeroInteraction::attack(Sprite*, float) {}
+void Hero::HeroInteraction::attack(Sprite* source, float damage) {
+  auto target = dynamic_cast<Hero*>(getOwner());
+  const auto& data = DataSet::getConfig()["heroes"][target->getHeroName()];
+  if (target->_se - damage < 0) {
+    damage = damage-target->_se;
+    target->_se = 0;
+    target->_hp -= damage;
+  } else {
+    target->_se -= damage;
+  }
+ /*auto shieldbar = static_cast<UIBar*>(
+      GameScene::getRunningScene()->getChildByTag(kTagShield));
+  auto healthbar = static_cast<Hero*>(
+      GameScene::getRunningScene()->getChildByTag(kTagHealth));
+      */
+  
+}
