@@ -62,7 +62,7 @@ bool GameScene::init() {
     hero->registerUserInput();
 
     // 配上武器
-    hero->pickWeapon(DataSet::load_weapon(debug_set["weapon"].GetString()));
+    hero->pickWeapon(DataSet::loadWeapon(debug_set["weapon"].GetString()));
 
     // 静态节点
     auto static_node = StaticNode::create();
