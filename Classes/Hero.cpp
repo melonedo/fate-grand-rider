@@ -25,7 +25,15 @@ bool Hero::init() {
   _se = data["total-se"].GetFloat();
   _mp = data["total-mp"].GetFloat();
 
+  schedule(SEL_SCHEDULE(&Hero::shieldUpdate), 1.0f);
+
   return true;
+}
+
+void Hero::shieldUpdate(float dt) {
+  if (_se < this->getTotalSe()) {
+    _se += 1;
+  }
 }
 
 void Hero::loadAnimation() {
@@ -34,7 +42,7 @@ void Hero::loadAnimation() {
   assert(config["heroes"].HasMember(getHeroName()));
   // 加载站立和行走动画
   const auto& data = DataSet::getConfig()["heroes"][getHeroName()];
-  
+
   _walkAnimation = DataSet::loadAnimation(data["walk"]);
   _walkAnimation->setLoops(-1);
   _standAnimation = DataSet::loadAnimation(data["stand"]);
@@ -246,8 +254,6 @@ const float Hero::getTotalMp() {
   return DataSet::getConfig()["heroes"][getHeroName()]["total-mp"].GetFloat();
 }
 
-
-
 const float Hero::getHp() { return _hp; }
 const float Hero::getSe() { return _se; }
 const float Hero::getMp() { return _mp; }
@@ -258,13 +264,13 @@ void Hero::HeroInteraction::attack(Sprite* source, float damage) {
   auto hero = dynamic_cast<Hero*>(getOwner());
   const auto& data = DataSet::getConfig()["heroes"][hero->getHeroName()];
   if (hero->_se - damage < 0) {
-    damage = damage-hero->_se;
+    damage = damage - hero->_se;
     hero->_se = 0;
     hero->_hp -= damage;
   } else {
     hero->_se -= damage;
   }
-  if (hero->_hp < 0||hero->_hp==0) {
+  if (hero->_hp < 0 || hero->_hp == 0) {
     hero->die();
   }
 }

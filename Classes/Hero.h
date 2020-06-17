@@ -34,6 +34,8 @@ class Hero : public Mob {
   const float getSe();
   const float getMp();
 
+  void shieldUpdate(float);
+
  protected:
   // 初始化，设置update，加载动画
   bool init() override;
