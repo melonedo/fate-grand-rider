@@ -8,7 +8,7 @@
   "debug-set": {
     "map": "maps/sample_map.tmx",
     "hero": "sample-man",
-    "weapon": "basic-bow",
+    "weapon": "金闪闪",
     "monster": "sample-monster"
   },
   "heroes": {
@@ -63,6 +63,23 @@
       },
       "arrow": {
         "frame": "S_Bow04.png",
+        "angle-offset": -135,
+        "anchor": [ 0.3, 0.3 ],
+        "speed": 400
+      }
+    },
+    "金闪闪": {
+        "type": "bow",
+        "bow": {
+        "frame": "W_Bow08.png",
+        "angle-offset": 135,
+        "anchor": [ 0.5, 0.5 ],
+        "number": 3,
+        "angleconstant": 22,
+        "hurt": 3
+      },
+      "arrow": {
+        "frame": "S_Bow03.png",
         "angle-offset": -135,
         "anchor": [ 0.3, 0.3 ],
         "speed": 400
