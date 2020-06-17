@@ -2,7 +2,8 @@ using Documenter
 
 makedocs(
     sitename = "Fate grand rider",
-    format = Documenter.HTML(),
+    format = Documenter.HTML(prettyurls=false),
+    pages = ["index.md", "project.md"]
 )
 
 deploydocs(
