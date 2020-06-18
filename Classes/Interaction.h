@@ -4,7 +4,8 @@
 class Hero;
 class Room;
 
-// 所有物品间的互动都通过Interaction来实现。交互时，先找到名为"interaction"的组件，然后调用对应的函数。
+// 所有物品间的互动都通过Interaction来实现。交互时，先用getInteraction找到名为"interaction"的组件，
+// 然后调用对应的接口函数。
 class Interaction : public cocos2d::Component {
  public:
   // 几个事件不需要全部实现，如果不响应对应的事件就直接留空即可。
@@ -40,7 +41,8 @@ class Interaction : public cocos2d::Component {
   bool init() override;
 };
 
-// 获取对应的互动组件
+// 获取对应的互动组件。
+// cocos2d-x引擎中，根本没有组件的对象连组件容器都是空指针，直接就空指针报错了，无法检查。
 inline Interaction* getInteraction(cocos2d::Node* node) {
   return dynamic_cast<Interaction*>(node->getComponent("interaction"));
 }

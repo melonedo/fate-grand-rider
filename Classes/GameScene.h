@@ -27,7 +27,8 @@ class GameScene : public cocos2d::Scene {
   static GameScene* runningGameScene;
 };
 
-// 静止节点，会自动同步位置和缩放比例，保持相对窗口不动
+// 静止节点，会自动同步位置和缩放比例，保持相对窗口不动。
+// Hero::update中每次都会调整位置。
 class StaticNode : public cocos2d::Node {
  public:
   CREATE_FUNC(StaticNode);
