@@ -31,11 +31,9 @@ void DataSet::init() {
 const static std::unordered_map<
     std::string,
     std::function<Interaction*(const Vec2&, const ValueMap&, chipmunk::Body&&)>>
-    kInteractionSet{{"wall", NoInteraction::load},
-                    {"hide", HideSpot::load},
-                    {"chest", Chest::load},
-                    {"gate", Gate::load},
-                    {"target", Target::load}};
+    kInteractionSet{{"wall", NoInteraction::load}, {"hide", HideSpot::load},
+                    {"chest", Chest::load},        {"gate", Gate::load},
+                    {"target", Target::load},      {"item-chest", Chest::load}};
 
 Interaction* DataSet::loadInteraction(const std::string& interaction_name,
                                        const Vec2& position,
