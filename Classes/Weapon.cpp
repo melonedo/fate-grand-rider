@@ -3,6 +3,7 @@
 #include "DataSet.h"
 #include "GameScene.h"
 #include "CCVector.h"
+#include "json/document.h"
 using namespace cocos2d;
 using namespace std;
 
@@ -13,27 +14,28 @@ using namespace std;
   weaponLoading->setName(name);
 }*/
 
-bool init(const std::string& name,
+bool multipleInheritance::init(const std::string& name,
                            Weapon* weaponLoading,
-                            const rapidjson::Value& data,
-                            const rapidjson::Value& weapon_data) {
+                            const rapidjson::Value& data, const rapidjson::Value& weapon_data) {
   weaponLoading->setName(name);
   weaponLoading->_weaponAngleOffset = weapon_data["angle-offset"].GetFloat();
   weaponLoading->setSpriteFrame(DataSet::loadFrame(
       weapon_data["frame"].GetString(), kWeaponResolution));
   weaponLoading->_hurt = weapon_data["hurt"].GetFloat();
+  return true;
 }
 
 /***武器——弓1***/
 BlinkBow* BlinkBow::create(const std::string& name) {
-  BlinkBow* blinkbow = new BlinkBow;
-  
+  BlinkBow* blinkbow = new BlinkBow();
   //blinkbow->setName(name);
   //blinkbow->loading(name, blinkbow);
   const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
-
   const auto& blinkbow_data = data["bow"];
-  blinkbow->Weapon::init(name, blinkbow, data, blinkbow_data);
+  if (blinkbow && blinkbow->init(name, blinkbow, data, blinkbow_data)) {
+    blinkbow->autorelease();
+  }
+  blinkbow->multipleInheritance::init(name, blinkbow, data, blinkbow_data);
  /* blinkbow->_bowAngleOffset = blinkbow_data["angle-offset"].GetFloat();
   blinkbow->setSpriteFrame(DataSet::loadFrame(
       blinkbow_data["frame"].GetString(), kWeaponResolution));*/

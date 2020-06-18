@@ -3,6 +3,7 @@
 #include "Hero.h"
 #include "AutoRef.h"
 #include "Monster.h"
+#include "json/document.h"
 // 武器
 class Weapon : public cocos2d::Sprite {
  public:
@@ -14,22 +15,25 @@ class Weapon : public cocos2d::Sprite {
   void setOwner(Mob* owner) { _owner = owner; }
   // 设置为掉落物
   void drop();
-  bool init(const std::string& name, Weapon* weaponLoading,
-            const rapidjson::Value& data, const rapidjson::Value& weapon_data);
+  virtual bool init(const std::string& name, Weapon* weaponLoading,
+                    const rapidjson::Value& data,
+                    const rapidjson::Value& weapon_data) = 0;
   Mob* _owner;
   float _hurt;
   float _weaponAngleOffset;
 };
 
 //多重继承
-/*class multipleInheritance : public Weapon {
+class multipleInheritance : public Weapon {
  public:
-  void loading(const std::string& name, multipleInheritance*);
+  bool init(const std::string& name, Weapon* weaponLoading,
+            const rapidjson::Value& data,
+            const rapidjson::Value& weapon_data) override;
   multipleInheritance() = default;
-};*/
+};
 
 // 弓
-class Bow : public Weapon {
+class Bow : public multipleInheritance {
  public:
   static Bow* create(const std::string& name);
   void pointTo(cocos2d::Vec2) override;
@@ -66,7 +70,7 @@ class BlinkBow : public Bow {
 };
 
 //矛
-class Spear : public Weapon {
+class Spear : public multipleInheritance {
  public:
   static Spear* create(const std::string& name);
   void pointTo(cocos2d::Vec2) override;
@@ -82,7 +86,7 @@ class Spear : public Weapon {
 };
 
 //法阵
-class Magic : public Weapon {
+class Magic : public multipleInheritance {
  public:
   static Magic* create(const std::string& name);
   void pointTo(cocos2d::Vec2) override;
@@ -96,7 +100,7 @@ class Magic : public Weapon {
 };
 
 //飞镖
-class Darts : public Weapon {
+class Darts : public multipleInheritance {
  public:
   static Darts* create(const std::string& name);
   void pointTo(cocos2d::Vec2) override;
