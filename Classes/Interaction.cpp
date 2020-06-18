@@ -174,3 +174,25 @@ void Chest::dialog(Hero*) {
   GameScene::getRunningScene()->addChild(weapon, kMapPriorityBackground);
 }
 
+
+Teleport* Teleport::load(const Vec2& position, const ValueMap& property,
+                         chipmunk::Body&& body) {
+  
+  Teleport* teleport = create();
+  teleport->_body = std::move(body);
+  return teleport;
+}
+
+void Teleport::onAdd() {
+  // 加载图片
+  auto teleport = Sprite::create("teleport.png");
+  teleport->setPosition(getOwner()->getPosition() +
+                        getOwner()->getBoundingBox().size / 2);
+  teleport->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+  GameScene::getRunningScene()->addChild(teleport);
+}
+
+void Teleport::touch(Hero*) {
+  // todo: 转换到下一张地图
+  ccMessageBox(".....", "Teleporting");
+}

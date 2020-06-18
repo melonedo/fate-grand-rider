@@ -150,3 +150,16 @@ class DroppedWeapon : public Interaction {
 
   chipmunk::Body _body;
 };
+
+// 传送门
+class Teleport : public Interaction {
+ public:
+  static Teleport* load(const cocos2d::Vec2& position,
+                    const cocos2d::ValueMap& property, chipmunk::Body&&);
+  void onAdd() override;
+  void touch(Hero*) override;
+  CREATE_FUNC(Teleport);
+
+ private:
+  chipmunk::Body _body;
+};

@@ -12,6 +12,11 @@
    <property name="type" value="hide"/>
   </properties>
  </tile>
+ <tile id="149">
+  <properties>
+   <property name="type" value="teleport"/>
+  </properties>
+ </tile>
  <tile id="190">
   <properties>
    <property name="offset" type="int" value="16"/>
