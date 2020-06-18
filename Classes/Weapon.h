@@ -15,37 +15,39 @@ class Weapon : public cocos2d::Sprite {
   void setOwner(Mob* owner) { _owner = owner; }
   // 设置为掉落物
   void drop();
-  virtual bool init(const std::string& name, Weapon* weaponLoading,
+  /*virtual bool init(const std::string& name, Weapon* weaponLoading,
                     const rapidjson::Value& data,
-                    const rapidjson::Value& weapon_data) = 0;
+                    const rapidjson::Value& weapon_data){};*/
+  using cocos2d::Sprite::init;
   Mob* _owner;
   float _hurt;
   float _weaponAngleOffset;
+  Sprite* _fireweapon;
+
 };
 
 //多重继承
 class multipleInheritance : public Weapon {
  public:
-  bool init(const std::string& name, Weapon* weaponLoading,
-            const rapidjson::Value& data,
-            const rapidjson::Value& weapon_data) override;
+  void load(const std::string& name, Weapon* weaponLoading,
+            const rapidjson::Value& data, const rapidjson::Value& weapon_data);
+  void loadfire(Weapon* weaponLoading, const rapidjson::Value& weapon_data);
+  void preparefire(Sprite* weapon, Vec2 offset);
   multipleInheritance() = default;
 };
 
 // 弓
 class Bow : public multipleInheritance {
  public:
-  static Bow* create(const std::string& name);
+  CREATE_FUNC(Bow);
+  using Weapon::init;
+  static Bow*createweapon(const std::string& name);
   void pointTo(cocos2d::Vec2) override;
   void fire(cocos2d::Vec2) override;
   Bow() = default;
   // 弓图片的角度
-  float _hurt;
-  float _bowAngleOffset;
   int _angleConstant;
   int _bowNumber;
-  // 箭
-  AutoRef<Sprite> _arrow;
   // 箭的速度
   float _arrowSpeed;
 
@@ -53,18 +55,18 @@ class Bow : public multipleInheritance {
 
 class BlinkBow : public Bow {
  public:
-  static BlinkBow* create(const std::string& name);
+   CREATE_FUNC(BlinkBow);
+  using Weapon::init;
+   static BlinkBow* createweapon(const std::string& name);
   void fire(cocos2d::Vec2) override;
 
  protected:
   BlinkBow() = default;
   // 弓图片的角度
-  
+  // 箭
+  AutoRef<Sprite> _arrow2;
   int _angleConstant;
   int _bowNumber;
-  // 箭
-  AutoRef<Sprite> _arrow;
-  AutoRef<Sprite> _arrow2;
   // 箭的速度
   float _arrowSpeed;
 };
@@ -72,13 +74,14 @@ class BlinkBow : public Bow {
 //矛
 class Spear : public multipleInheritance {
  public:
-  static Spear* create(const std::string& name);
+   CREATE_FUNC(Spear);
+  using Weapon::init;
+   static Spear* createweapon(const std::string& name);
   void pointTo(cocos2d::Vec2) override;
   void fire(cocos2d::Vec2) override;
 
  protected:
   Spear() = default;
-  float _hurt;
   // 矛图片的角度
   float _spearAngleOffset;
   // 矛刺出的速度
@@ -88,28 +91,28 @@ class Spear : public multipleInheritance {
 //法阵
 class Magic : public multipleInheritance {
  public:
-  static Magic* create(const std::string& name);
+   CREATE_FUNC(Magic);
+  using Weapon::init;
+   static Magic* createweapon(const std::string& name);
   void pointTo(cocos2d::Vec2) override;
   void fire(cocos2d::Vec2) override;
 
  protected:
   Magic() = default;
-  float _hurt;
-  Sprite* _magicSquare;
   friend Hero;
 };
 
 //飞镖
 class Darts : public multipleInheritance {
  public:
-  static Darts* create(const std::string& name);
+   CREATE_FUNC(Darts);
+  using Weapon::init;
+   static Darts* createweapon(const std::string& name);
   void pointTo(cocos2d::Vec2) override;
   void fire(cocos2d::Vec2) override;
-  Sprite* _dart;
 
  protected:
   Darts() = default;
-  float _hurt;
   // 飞镖速度
   float _dartSpeed;
 };
