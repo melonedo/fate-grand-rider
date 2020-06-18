@@ -14,10 +14,19 @@ class Weapon : public cocos2d::Sprite {
   void setOwner(Mob* owner) { _owner = owner; }
   // 设置为掉落物
   void drop();
- protected:
-  using Sprite::init;
+  bool init(const std::string& name, Weapon* weaponLoading,
+            const rapidjson::Value& data, const rapidjson::Value& weapon_data);
   Mob* _owner;
+  float _hurt;
+  float _weaponAngleOffset;
 };
+
+//多重继承
+/*class multipleInheritance : public Weapon {
+ public:
+  void loading(const std::string& name, multipleInheritance*);
+  multipleInheritance() = default;
+};*/
 
 // 弓
 class Bow : public Weapon {
@@ -25,7 +34,6 @@ class Bow : public Weapon {
   static Bow* create(const std::string& name);
   void pointTo(cocos2d::Vec2) override;
   void fire(cocos2d::Vec2) override;
- protected:
   Bow() = default;
   // 弓图片的角度
   float _hurt;
@@ -34,7 +42,6 @@ class Bow : public Weapon {
   int _bowNumber;
   // 箭
   AutoRef<Sprite> _arrow;
-  AutoRef<Sprite> _arrow2;
   // 箭的速度
   float _arrowSpeed;
 
@@ -48,23 +55,14 @@ class BlinkBow : public Bow {
  protected:
   BlinkBow() = default;
   // 弓图片的角度
-  float _hurt;
-  float _bowAngleOffset;
+  
   int _angleConstant;
   int _bowNumber;
   // 箭
   AutoRef<Sprite> _arrow;
+  AutoRef<Sprite> _arrow2;
   // 箭的速度
   float _arrowSpeed;
-};
-
-//多重继承
-class Loading : public virtual Weapon {
- public:
-  void loading(const std::string& name, Value& weapon_data);
-
- protected:
-  Loading() = default;
 };
 
 //矛
@@ -93,7 +91,7 @@ class Magic : public Weapon {
  protected:
   Magic() = default;
   float _hurt;
-  AutoRef<Sprite> _magicSquare;
+  Sprite* _magicSquare;
   friend Hero;
 };
 
@@ -103,7 +101,7 @@ class Darts : public Weapon {
   static Darts* create(const std::string& name);
   void pointTo(cocos2d::Vec2) override;
   void fire(cocos2d::Vec2) override;
-  AutoRef<Sprite> _dart;
+  Sprite* _dart;
 
  protected:
   Darts() = default;
