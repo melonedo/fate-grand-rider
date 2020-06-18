@@ -16,6 +16,15 @@ class Interaction : public cocos2d::Component {
   virtual void endTouch(Hero* source) {}
   // 靠近并空格时触发
   virtual void dialog(Hero* source) {}
+  // 攻击时触发，适用于会被破坏的建筑和生物。source应该是Weapon*，这里暂时不强制要求。
+  virtual void attack(cocos2d::Sprite* source, float damage) {}
+
+  // 从地图中加载的互动对应的工厂函数都应为以下形式
+  //（其中position为格子的位置，property为该格子对应的属性列表，body是对应的刚体，有需要可以调用）
+  // static Interaction* load(const cocos2d::Vec2& position,
+  //                          const cocos2d::ValueMap& property
+  //                          chipmunk::Body&& body);
+  // 从地图中加载出来后，与房间想关联需要以下方法：
   // 连接到对应的房间,通常只有门需要实现
   virtual void linkRoom(Room**) {}
   // 进入房间时调用
@@ -23,17 +32,10 @@ class Interaction : public cocos2d::Component {
   // 离开房间（结束关卡）时调用
   virtual void leaveRoom(Room*) {}
 
-  // 从地图中加载的互动对应的工厂函数都应为以下形式
-  //（其中position为格子的位置，property为该格子对应的属性列表，body是对应的刚体，有需要可以调用）
-  // static Interaction* load(const cocos2d::Vec2& position,
-  //                          const cocos2d::ValueMap& property
-  //                          chipmunk::Body&& body);
 
-  // 攻击时触发，适用于会被破坏的建筑和生物。
-  virtual void attack(cocos2d::Sprite* source, float damage) {}
-
-  // 强制结束互动，防止出现dangling pointer
+  // 强制结束互动，防止出现dangling pointer。注意删除互动的时候一定要调用这个函数，否则立刻报错。
   void endInteracting(Hero*);
+
  protected:
   bool init() override;
 };

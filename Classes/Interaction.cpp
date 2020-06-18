@@ -30,7 +30,11 @@ bool Interaction::init() {
   }
 }
 
-void Interaction::endInteracting(Hero* hero) { hero->_interacting = nullptr; }
+void Interaction::endInteracting(Hero* hero) {
+  if (hero->_interacting == this) {
+    hero->_interacting = nullptr;
+  }
+}
 
 HideSpot* HideSpot::load(const cocos2d::Vec2&, const cocos2d::ValueMap&,
                          chipmunk::Body&& body) {
@@ -169,3 +173,4 @@ void Chest::dialog(Hero*) {
   weapon->addComponent(DroppedWeapon::create(weapon));
   GameScene::getRunningScene()->addChild(weapon, kMapPriorityBackground);
 }
+
