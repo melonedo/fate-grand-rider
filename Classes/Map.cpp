@@ -59,12 +59,15 @@ std::vector<Room> processMap(cocos2d::TMXTiledMap* map) {
       layer->setGlobalZOrder(kMapPriorityBackground);
     }
 
-    // 遍历地图中所有的图块，添加对应的互动
-    auto space = GameScene::getRunningScene()->getPhysicsSpace();
-    // 记录房间中的关键信息，虽然Vec2是float，但是值很小，可以精确对应整数。
+
+    // 地图中所有的建筑的位置（以位置为所有的建筑字典）
     tile_set_t tile_set;
+    // 地图中所有房间的位置
     std::vector<Vec2> room_set;
+
+    // 遍历地图中所有的图块，添加对应的互动，记录对应的建筑
     for (auto&& name : layer_names) {
+      // 遍历所有图层
       auto layer = map->getLayer(name);
       using namespace std::string_literals;
       if (layer == nullptr) {
@@ -79,8 +82,10 @@ std::vector<Room> processMap(cocos2d::TMXTiledMap* map) {
         throw std::runtime_error("Size of map and eachlayer must be the same.");
       }
 
+      auto space = GameScene::getRunningScene()->getPhysicsSpace();
       for (int x = 0; x < map_size.width; x++) {
         for (int y = 0; y < map_size.height; y++) {
+          // 遍历本层所有图块
           Vec2 pos(x, y);
           auto prop = map->getPropertiesForGID(layer->getTileGIDAt(pos));
           if (prop.isNull()) continue;
