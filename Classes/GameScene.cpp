@@ -104,19 +104,19 @@ void addUI(StaticNode* node) {
 
   auto health = cocos2d::Sprite::create(data["health"].GetString());
   health->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  health->setPosition(3, node->getVisibleSize().height - 1);
+  health->setPosition(7, node->getVisibleSize().height - 10);
   health->setGlobalZOrder(kUserInterfaceBars);
   node->addChild(health);
 
   auto shield = cocos2d::Sprite::create(data["shield"].GetString());
   shield->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  shield->setPosition(3, node->getVisibleSize().height - 11);
+  shield->setPosition(7, node->getVisibleSize().height - 35);
   shield->setGlobalZOrder(kUserInterfaceBars);
   node->addChild(shield);
 
   auto magic = cocos2d::Sprite::create(data["magic"].GetString());
   magic->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  magic->setPosition(3, node->getVisibleSize().height - 21);
+  magic->setPosition(7, node->getVisibleSize().height - 60);
   magic->setGlobalZOrder(kUserInterfaceBars);
   node->addChild(magic);
 
@@ -125,7 +125,7 @@ void addUI(StaticNode* node) {
 
   auto healthbar = UIBar::create();
   healthbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  healthbar->setPosition(30, node->getVisibleSize().height - 5);
+  healthbar->setPosition(125, node->getVisibleSize().height - 20);
   healthbar->setBackgroundTexture(data["bar"].GetString());
   healthbar->setForegroundTexture(data["health-progress"].GetString());
   healthbar->setTotalProgress(hero->getTotalHp());
@@ -136,7 +136,7 @@ void addUI(StaticNode* node) {
 
   auto shieldbar = UIBar::create();
   shieldbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  shieldbar->setPosition(30, node->getVisibleSize().height - 15);
+  shieldbar->setPosition(125, node->getVisibleSize().height - 45);
   shieldbar->setBackgroundTexture(data["bar"].GetString());
   shieldbar->setForegroundTexture(data["shield-progress"].GetString());
   shieldbar->setTotalProgress(hero->getTotalSe());
@@ -146,7 +146,7 @@ void addUI(StaticNode* node) {
 
   auto magicbar = UIBar::create();
   magicbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  magicbar->setPosition(30, node->getVisibleSize().height - 25);
+  magicbar->setPosition(125, node->getVisibleSize().height - 70);
   magicbar->setBackgroundTexture(data["bar"].GetString());
   magicbar->setForegroundTexture(data["magic-progress"].GetString());
   magicbar->setTotalProgress(hero->getTotalMp());
