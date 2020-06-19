@@ -16,7 +16,6 @@ class StaticNode : public cocos2d::Node {
  protected:
   bool init() override;
   cocos2d::Size _visibleSize;
-    void update(float);
 };
 
 class GameScene : public cocos2d::Scene {
@@ -43,6 +42,8 @@ class GameScene : public cocos2d::Scene {
   static GameScene* runningGameScene;
 
   StaticNode* _node;
+
+   void update(float);
 };
 
 
