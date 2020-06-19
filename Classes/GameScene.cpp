@@ -32,46 +32,46 @@ bool GameScene::init() {
   // 物理空间
   _space = std::make_shared<chipmunk::Space>();
 
-  // 首先判断是不是用测试集
-
+  std::string map_dir;
+  Hero* hero;
+  // 判断是不是用测试集
   if (config["use-debug-mode"].GetBool()) {
     const auto& debug_set = config["debug-set"].GetObject();
-
     // 加载地图
-    auto map_dir = debug_set["map"].GetString();
-    auto map = DataSet::loadMap(map_dir, _rooms);
-
-    if (config["show-physics-debug-boxes"].GetBool()) {
-      this->getPhysicsWorld()->setDebugDrawMask(~0);
-    }
-
-    this->addChild(map);
-
+    map_dir = debug_set["map"].GetString();
     // 加载角色
-    auto hero = DataSet::loadHero(debug_set["hero"].GetString());
-    auto spawn = map->getObjectGroup("obj")->getObject("spawn");
-    hero->setPosition(spawn["x"].asFloat(), spawn["y"].asFloat());
-    hero->setName("hero");
-    this->addChild(hero, kMapPrioritySprite, kTagHero);
-    hero->registerUserInput();
-
+    hero = DataSet::loadHero(debug_set["hero"].GetString());
     // 配上武器
     hero->pickWeapon(DataSet::loadWeapon(debug_set["weapon"].GetString()));
-
-    // 静态节点
-    auto static_node = StaticNode::create();
-    this->addChild(static_node, 0, "static");
-    addUI(static_node);
-    _node = static_node;
-
-
-    scheduleUpdate();
-
-    return true;
   } else {
-    CCASSERT(false, "Only debug set is supported now");
-    return false;
+    const auto& start_set = config["start-set"];
+    map_dir = start_set["map"].GetString();
+    hero = DataSet::loadHero(start_set["hero"].GetString());
+    hero->pickWeapon(DataSet::loadWeapon(start_set["weapon"].GetString()));
   }
+
+  auto map = DataSet::loadMap(map_dir, _rooms);
+  this->addChild(map);
+
+  auto spawn = map->getObjectGroup("obj")->getObject("spawn");
+  hero->setPosition(spawn["x"].asFloat(), spawn["y"].asFloat());
+  hero->setName("hero");
+  this->addChild(hero, kMapPrioritySprite, kTagHero);
+  hero->registerUserInput();
+
+  if (config["show-physics-debug-boxes"].GetBool()) {
+    this->getPhysicsWorld()->setDebugDrawMask(~0);
+  }
+
+  // 静态节点
+  auto static_node = StaticNode::create();
+  this->addChild(static_node, 0, "static");
+  addUI(static_node);
+  _node = static_node;
+
+  scheduleUpdate();
+
+  return true;
 }
 
 GameScene* GameScene::runningGameScene = nullptr;
