@@ -1,13 +1,13 @@
 #include "Hero.h"
-#include "cocos2d.h"
-#include "DataSet.h"
 #include <unordered_map>
 #include <unordered_set>
+#include "DataSet.h"
 #include "GameScene.h"
 #include "Interaction.h"
 #include "Endgame.h"
+#include "cocos2d.h"
+#include "ui.h"
 using namespace cocos2d;
-
 
 bool Hero::init() {
   if (!Mob::init()) return false;
@@ -21,7 +21,33 @@ bool Hero::init() {
   // 加入互动
   addComponent(HeroInteraction::create());
 
+  const auto& data = DataSet::getConfig()["heroes"][getHeroName()];
+  _hp = data["total-hp"].GetFloat();
+  _se = data["total-se"].GetFloat();
+  _mp = data["total-mp"].GetFloat();
+  _totalHp = data["total-hp"].GetFloat();
+  _totalSe = data["total-se"].GetFloat();
+  _totalMp = data["total-mp"].GetFloat();
+  _ifShield = true;
+
+  schedule(static_cast<SEL_SCHEDULE>(&Hero::timeUpdate));
+  schedule(static_cast<SEL_SCHEDULE>(&Hero::shieldUpdate), 1.0f);
+
   return true;
+}
+
+void Hero::timeUpdate(float dt) {
+  struct timeval now;
+  gettimeofday(&now, NULL);
+  if (now.tv_sec - _timeOfAttack == 3) {
+    _ifShield = true;
+  }
+}
+
+void Hero::shieldUpdate(float dt) {
+  if (_se < this->getTotalSe() && _ifShield) {
+    _se += 1;
+  }
 }
 
 void Hero::loadAnimation() {
@@ -30,7 +56,7 @@ void Hero::loadAnimation() {
   assert(config["heroes"].HasMember(getHeroName()));
   // 加载站立和行走动画
   const auto& data = DataSet::getConfig()["heroes"][getHeroName()];
-  
+
   _walkAnimation = DataSet::loadAnimation(data["walk"]);
   _walkAnimation->setLoops(-1);
   _standAnimation = DataSet::loadAnimation(data["stand"]);
@@ -49,8 +75,10 @@ void Hero::registerUserInput() {
 
   auto keyboard_listener = EventListenerKeyboard::create();
   using namespace std::placeholders;
-  keyboard_listener->onKeyPressed = std::bind(&Hero::onKeyPressed, this, _1, _2);
-  keyboard_listener->onKeyReleased = std::bind(&Hero::onKeyReleased, this, _1, _2);
+  keyboard_listener->onKeyPressed =
+      std::bind(&Hero::onKeyPressed, this, _1, _2);
+  keyboard_listener->onKeyReleased =
+      std::bind(&Hero::onKeyReleased, this, _1, _2);
   this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(
       keyboard_listener, this);
 
@@ -120,7 +148,6 @@ void Hero::updateSpeed() {
   this->_speed = speed * _speedScale;
 }
 
-
 void Hero::update(float delta) {
   auto old_pos = this->getPosition();
   auto disp = _speed * delta;
@@ -153,7 +180,7 @@ void Hero::update(float delta) {
       }
       // 如果不能完全地移动到new_pos则进一步修正
       if (nearest_obj != -1) {
-        //log("%f,%f", getPosition().x, getPosition().y);
+        // log("%f,%f", getPosition().x, getPosition().y);
         // 先设置好互动对象
         result = getSpriteFromShape(nearest_info.shape);
         // 除去这个障碍
@@ -181,7 +208,7 @@ void Hero::update(float delta) {
       }
     }
   }
- 
+
   // 保证可以碰到已经碰上的的建筑
   cpShapeFilter filter = _body.getFilter();
   filter.mask = CP_ALL_CATEGORIES;
@@ -208,8 +235,8 @@ void Hero::update(float delta) {
   float scale = DataSet::getGlobaZoomScale();
   this->setPosition(new_pos);
   scene->setPosition((-new_pos + designResolutionSize / 2) * scale);
-  scene->getChildByName("static")->setPosition(
-    new_pos - designResolutionSize / 2 / scale);
+  scene->getChildByName("static")->setPosition(new_pos - designResolutionSize /
+                                                             2 / scale);
 }
 
 Weapon* Hero::pickWeapon(Weapon* weapon) {
@@ -227,21 +254,41 @@ Weapon* Hero::pickWeapon(Weapon* weapon) {
   return res;
 }
 
-void Hero::HeroInteraction::attack(Sprite*, float damage) {
-  auto hero = dynamic_cast<Hero*>(getOwner());
-  
-  // 某些关于血量的计算
+void Hero::setHp(float hp) { _hp = hp; }
+void Hero::setSe(float se) { _se = se; }
+void Hero::setMp(float mp) { _mp = mp; }
 
-  if (hero->_HP <= 0) {
-    hero->die();
-  }
-}
+const float Hero::getTotalHp() { return _totalHp; }
+const float Hero::getTotalSe() { return _totalSe; }
+const float Hero::getTotalMp() { return _totalMp; }
 
-float Hero::getMP() const { return _MP; }
-float Hero::getHP() const { return _HP; }
-float Hero::getShield() const { return _shield; }
+const float Hero::getHp() { return _hp; }
+const float Hero::getSe() { return _se; }
+const float Hero::getMp() { return _mp; }
 
-void Hero::die() { 
+void Hero::die() {
   auto director = Director::getInstance();
   director->replaceScene(EndScene::create(false));
+}
+
+void Hero::HeroInteraction::attack(Sprite* source, float damage) {
+  auto hero = dynamic_cast<Hero*>(getOwner());
+
+  hero->_ifShield = false;
+
+  const auto& data = DataSet::getConfig()["heroes"][hero->getHeroName()];
+  if (hero->_se - damage < 0) {
+    damage = damage - hero->_se;
+    hero->_se = 0;
+    hero->_hp -= damage;
+  } else {
+    hero->_se -= damage;
+  }
+  if (hero->_hp < 0 || hero->_hp == 0) {
+    hero->die();
+  }
+
+  struct timeval now;
+  gettimeofday(&now, NULL);
+  hero->_timeOfAttack = now.tv_sec;
 }

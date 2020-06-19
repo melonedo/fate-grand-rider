@@ -21,7 +21,10 @@
         "interval": 0.2,
         "frames": [ "man1_rt2.png", "man1_rt1.png" ]
       },
-      "hand-pos": [ 0.75, 0.44 ]
+      "hand-pos": [ 0.75, 0.44 ],
+      "total-hp": 7.0,
+      "total-se": 6.0,
+      "total-mp": 200.0
     }
   },
   "pause": {
@@ -45,7 +48,6 @@
       "shield-progress": "shieldProgress.jpg",
       "magic": "magic.jpg",
       "magic-progress": "magicProgress.jpg",
-      "bar-thumb": "barThumb.jpg",
       "bar": "bar.jpg",
       "bg-weapon": "weaponBg.png"
     }

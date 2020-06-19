@@ -25,7 +25,7 @@ enum AnimationTag{
 
 enum SpriteTag { kTagHero = 2000, kTagWeapon, kTagWall, kTagInteractable};
 
-enum UI { kUserInterfaceBackground = 1000, kBars, kProgress,kHealthPoint };
+enum UI { kUserInterfaceBars = 1000, kUserInterfaceProgress };
 
 enum UITag { kTagHealth, kTagShield, kTagMagic };
 

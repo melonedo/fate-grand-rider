@@ -5,74 +5,6 @@
 #include "GameScene.h"
 #include "Hero.h"
 
-using namespace cocos2d;
-
-bool UISprite::init() {
-  if (!Sprite::init()) return false;
-  
-
-  
-
-  /*auto shieldbar = UIBar::create();
-  shieldbar->setPosition(
-      Vec2(position.x - visibleSize.width / 2 + bgSize.width / 2 + 25,
-           position.y + visibleSize.height / 2 - 20));
-  shieldbar->setBackgroundTexture(data["bar"].GetString());
-  shieldbar->setForegroundTexture(data["shield-progress"].GetString());
-  shieldbar->setTotalProgress(120.0f);
-  shieldbar->setCurrentProgress(22.0f);
-  this->addChild(shieldbar, kBars);
-
-  auto magicbar = UIBar::create();
-  magicbar->setPosition(
-      Vec2(position.x - visibleSize.width / 2 + bgSize.width / 2 + 25,
-           position.y + visibleSize.height / 2 - 30));
-  magicbar->setBackgroundTexture(data["bar"].GetString());
-  magicbar->setForegroundTexture(data["magic-progress"].GetString());
-  magicbar->setTotalProgress(120.0f);
-  magicbar->setCurrentProgress(22.0f);
-  this->addChild(magicbar, kBars);*/
-
-  return true;
-}
-
-/*void UISprite::addUI(StaticNode& node) {
-  const auto& data = DataSet::getConfig()["UI"]["bars"];
-
-  auto bgBars = cocos2d::Sprite::create(data["bg-bars"].GetString());
-  bgBars->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  bgBars->setPosition(0, node->getVisibleSize().height);
-  bgBars->setGlobalZOrder(kUserInterfaceBackground);
-  node->addChild(bgBars);
-
-  auto health = cocos2d::Sprite::create(data["health"].GetString());
-  health->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  health->setPosition(3, node->getVisibleSize().height - 1);
-  health->setGlobalZOrder(kBars);
-  node->addChild(health);
-
-  auto shield = cocos2d::Sprite::create(data["shield"].GetString());
-  shield->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  shield->setPosition(3, node->getVisibleSize().height - 11);
-  shield->setGlobalZOrder(kBars);
-  node->addChild(shield);
-
-  auto magic = cocos2d::Sprite::create(data["magic"].GetString());
-  magic->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  magic->setPosition(3, node->getVisibleSize().height - 21);
-  magic->setGlobalZOrder(kBars);
-  node->addChild(magic);
-
-  auto healthbar = UIBar::create();
-  healthbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  healthbar->setPosition(40, node.getVisibleSize().height - 1);
-  healthbar->setBackgroundTexture(data["bar"].GetString());
-  healthbar->setForegroundTexture(data["health-progress"].GetString());
-  healthbar->setTotalProgress(120.0f);
-  healthbar->setCurrentProgress(22.0f);
-  node.addChild(healthbar, kBars);
-}*/
-
 
 bool UIBar::init() {
   _bar = NULL;
@@ -95,14 +27,14 @@ UIBar* UIBar::create() {
 
 void UIBar::setBackgroundTexture(const char* type) {
   _bar = Sprite::create(type);
-  this->addChild(_bar, kBars);
+  this->addChild(_bar, kUserInterfaceBars);
 }
 
 void UIBar::setForegroundTexture(const char* type) {
   _progress = Sprite::create(type);
   _progress->setAnchorPoint(Vec2(0.0f, 0.5f));
   _progress->setPosition(Vec2(-_progress->getContentSize().width * 0.5f, 0));
-  this->addChild(_progress, kProgress);
+  this->addChild(_progress, kUserInterfaceProgress);
 }
 
 void UIBar::setTotalProgress(float total) {

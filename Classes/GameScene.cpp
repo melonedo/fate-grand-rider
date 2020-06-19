@@ -1,29 +1,25 @@
 #include "GameScene.h"
-#include "cocos2d.h"
 #include "DataSet.h"
-#include "constants.h"
-#include "UI.h"
-#include "Physics.h"
 #include "MonsterManager.h"
+#include "Physics.h"
+#include "UI.h"
+#include "cocos2d.h"
+#include "constants.h"
 using namespace cocos2d;
 
-// ui
+// 添加ui（以静态节点）
 void addUI(StaticNode*);
 
-
 bool GameScene::init() {
-
   bool result;
   if (DataSet::getShowPhysicsDebugBoxes()) {
     result = Scene::initWithPhysics();
-  }
-  else {
+  } else {
     result = Scene::init();
   }
   if (!result) return false;
 
   runningGameScene = this;
-
 
   //暂停
   auto m_pause = PauseGame::create();
@@ -35,11 +31,6 @@ bool GameScene::init() {
 
   // 物理空间
   _space = std::make_shared<chipmunk::Space>();
-
-  // 静态节点
-  auto static_node = StaticNode::create();
-  this->addChild(static_node, 0, "static");
-  addUI(static_node);
 
   // 首先判断是不是用测试集
 
@@ -65,13 +56,19 @@ bool GameScene::init() {
     hero->registerUserInput();
 
     // 配上武器
-    auto a = debug_set["weapon"].GetString();
     hero->pickWeapon(DataSet::loadWeapon(debug_set["weapon"].GetString()));
 
+    // 静态节点
+    auto static_node = StaticNode::create();
+    this->addChild(static_node, 0, "static");
+    addUI(static_node);
+    _node = static_node;
+
+
+    scheduleUpdate();
 
     return true;
-  }
-  else {
+  } else {
     CCASSERT(false, "Only debug set is supported now");
     return false;
   }
@@ -107,56 +104,60 @@ void addUI(StaticNode* node) {
 
   auto health = cocos2d::Sprite::create(data["health"].GetString());
   health->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  health->setPosition(3, node->getVisibleSize().height - 1);
-  health->setGlobalZOrder(kBars);
+  health->setPosition(7, node->getVisibleSize().height - 10);
+  health->setGlobalZOrder(kUserInterfaceBars);
   node->addChild(health);
 
   auto shield = cocos2d::Sprite::create(data["shield"].GetString());
   shield->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  shield->setPosition(3, node->getVisibleSize().height - 11);
-  shield->setGlobalZOrder(kBars);
+  shield->setPosition(7, node->getVisibleSize().height - 35);
+  shield->setGlobalZOrder(kUserInterfaceBars);
   node->addChild(shield);
 
   auto magic = cocos2d::Sprite::create(data["magic"].GetString());
   magic->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  magic->setPosition(3, node->getVisibleSize().height - 21);
-  magic->setGlobalZOrder(kBars);
+  magic->setPosition(7, node->getVisibleSize().height - 60);
+  magic->setGlobalZOrder(kUserInterfaceBars);
   node->addChild(magic);
+
+  auto hero =
+      static_cast<Hero*>(GameScene::getRunningScene()->getChildByTag(kTagHero));
 
   auto healthbar = UIBar::create();
   healthbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  healthbar->setPosition(30, node->getVisibleSize().height - 5);
+  healthbar->setPosition(125, node->getVisibleSize().height - 20);
   healthbar->setBackgroundTexture(data["bar"].GetString());
   healthbar->setForegroundTexture(data["health-progress"].GetString());
-  healthbar->setTotalProgress(120.0f);
-  healthbar->setCurrentProgress(22.0f);
-  setChildrenGlobalZOrder(healthbar, kBars + 1);
-  node->addChild(healthbar,kBars,kTagHealth);
+  healthbar->setTotalProgress(hero->getTotalHp());
+  healthbar->setCurrentProgress(hero->getHp());
+  setChildrenGlobalZOrder(healthbar, kUserInterfaceBars + 1);
+  node->addChild(healthbar, kUserInterfaceBars);
+  healthbar->setTag(kTagHealth);
 
   auto shieldbar = UIBar::create();
   shieldbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  shieldbar->setPosition(30, node->getVisibleSize().height - 15);
+  shieldbar->setPosition(125, node->getVisibleSize().height - 45);
   shieldbar->setBackgroundTexture(data["bar"].GetString());
   shieldbar->setForegroundTexture(data["shield-progress"].GetString());
-  shieldbar->setTotalProgress(120.0f);
-  shieldbar->setCurrentProgress(22.0f);
-  setChildrenGlobalZOrder(shieldbar, kBars + 1);
-  node->addChild(shieldbar, kBars, kTagShield);
+  shieldbar->setTotalProgress(hero->getTotalSe());
+  shieldbar->setCurrentProgress(hero->getSe());
+  setChildrenGlobalZOrder(shieldbar, kUserInterfaceBars + 1);
+  node->addChild(shieldbar, kUserInterfaceBars, kTagShield);
 
   auto magicbar = UIBar::create();
   magicbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  magicbar->setPosition(30, node->getVisibleSize().height - 25);
+  magicbar->setPosition(125, node->getVisibleSize().height - 70);
   magicbar->setBackgroundTexture(data["bar"].GetString());
   magicbar->setForegroundTexture(data["magic-progress"].GetString());
-  magicbar->setTotalProgress(120.0f);
-  magicbar->setCurrentProgress(22.0f);
-  setChildrenGlobalZOrder(magicbar, kBars + 1);
-  node->addChild(magicbar,kBars,kTagMagic);
+  magicbar->setTotalProgress(hero->getTotalMp());
+  magicbar->setCurrentProgress(hero->getMp());
+  setChildrenGlobalZOrder(magicbar, kUserInterfaceBars + 1);
+  node->addChild(magicbar, kUserInterfaceBars, kTagMagic);
 
   auto weaponbg = Sprite::create(data["bg-weapon"].GetString());
   weaponbg->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
-  weaponbg->setPosition(node->getVisibleSize().width-50, 50);
-  weaponbg->setGlobalZOrder(kUserInterfaceBackground);
+  weaponbg->setPosition(node->getVisibleSize().width - 50, 50);
+  weaponbg->setGlobalZOrder(kMapPriorityUI);
   node->addChild(weaponbg);
 }
 
@@ -164,4 +165,18 @@ void setChildrenGlobalZOrder(Node* node, float zorder) {
   for (auto child : node->getChildren()) {
     child->setGlobalZOrder(zorder);
   }
+}
+
+void GameScene::update(float dt) {
+  auto hero =
+      static_cast<Hero*>(GameScene::getRunningScene()->getChildByTag(kTagHero));
+  auto healthbar = static_cast<UIBar*>(
+      GameScene::getRunningScene()->getStaticNode()->getChildByTag(kTagHealth));
+  auto shieldbar = static_cast<UIBar*>(
+      GameScene::getRunningScene()->getStaticNode()->getChildByTag(kTagShield));
+  auto magicbar = static_cast<UIBar*>(
+      GameScene::getRunningScene()->getStaticNode()->getChildByTag(kTagMagic));
+  healthbar->setCurrentProgress(hero->getHp());
+  shieldbar->setCurrentProgress(hero->getSe());
+  magicbar->setCurrentProgress(hero->getMp());
 }
