@@ -4,6 +4,7 @@
 #include "Physics.h"
 #include "Map.h"
 #include "PauseGame.h"
+#include "LevelManager.h"
 
 // 静止节点，会自动同步位置和缩放比例，保持相对窗口不动
 class StaticNode : public cocos2d::Node {
@@ -29,6 +30,10 @@ class GameScene : public cocos2d::Scene {
 
   // 获取物理空间
   chipmunk::Space* getPhysicsSpace() { return _space.get(); }
+
+  // 进入下一张地图
+  void nextLevel();
+
  private:
   bool init() override;
 
@@ -40,6 +45,8 @@ class GameScene : public cocos2d::Scene {
   static GameScene* runningGameScene;
 
   StaticNode* _node;
+
+  LevelManager _levelManager;
 
   void update(float);
 };

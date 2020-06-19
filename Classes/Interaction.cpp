@@ -189,10 +189,14 @@ void Teleport::onAdd() {
   teleport->setPosition(getOwner()->getPosition() +
                         getOwner()->getBoundingBox().size / 2);
   teleport->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-  GameScene::getRunningScene()->addChild(teleport);
+  getOwner()->getParent()->getParent()->addChild(teleport);
 }
 
-void Teleport::touch(Hero*) {
-  // todo: 转换到下一张地图
-  ccMessageBox(".....", "Teleporting");
+void Teleport::touch(Hero* hero) {
+  GameScene::getRunningScene()->scheduleOnce(
+      [this, hero] (float) {
+        this->endInteracting(hero);
+        GameScene::getRunningScene()->nextLevel();
+      },
+      0, "next-level");
 }

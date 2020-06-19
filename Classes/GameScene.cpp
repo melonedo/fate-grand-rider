@@ -5,6 +5,7 @@
 #include "UI.h"
 #include "cocos2d.h"
 #include "constants.h"
+#include "Endgame.h"
 using namespace cocos2d;
 
 // 添加ui（以静态节点）
@@ -32,29 +33,23 @@ bool GameScene::init() {
   // 物理空间
   _space = std::make_shared<chipmunk::Space>();
 
-  std::string map_dir;
   Hero* hero;
   // 判断是不是用测试集
   if (config["use-debug-mode"].GetBool()) {
     const auto& debug_set = config["debug-set"].GetObject();
     // 加载地图
-    map_dir = debug_set["map"].GetString();
+    _levelManager = LevelManager(debug_set["maps"]);
     // 加载角色
     hero = DataSet::loadHero(debug_set["hero"].GetString());
     // 配上武器
     hero->pickWeapon(DataSet::loadWeapon(debug_set["weapon"].GetString()));
   } else {
     const auto& start_set = config["start-set"];
-    map_dir = start_set["map"].GetString();
+    _levelManager = LevelManager(start_set["maps"]);
     hero = DataSet::loadHero(start_set["hero"].GetString());
     hero->pickWeapon(DataSet::loadWeapon(start_set["weapon"].GetString()));
   }
 
-  auto map = DataSet::loadMap(map_dir, _rooms);
-  this->addChild(map);
-
-  auto spawn = map->getObjectGroup("obj")->getObject("spawn");
-  hero->setPosition(spawn["x"].asFloat(), spawn["y"].asFloat());
   hero->setName("hero");
   this->addChild(hero, kMapPrioritySprite, kTagHero);
   hero->registerUserInput();
@@ -71,7 +66,26 @@ bool GameScene::init() {
 
   scheduleUpdate();
 
+  this->nextLevel();
+
   return true;
+}
+
+void GameScene::nextLevel() {
+  auto map = _levelManager.getMap(_rooms);
+  if (map == nullptr) {
+    // 通关拉
+    Director::getInstance()->replaceScene(EndScene::create(true));
+    return;
+  }
+
+  this->removeChildByName("map");
+  map->setName("map");
+  this->addChild(map);
+
+  auto hero = this->getChildByTag(kTagHero);
+  auto spawn = map->getObjectGroup("obj")->getObject("spawn");
+  hero->setPosition(spawn["x"].asFloat(), spawn["y"].asFloat());
 }
 
 GameScene* GameScene::runningGameScene = nullptr;

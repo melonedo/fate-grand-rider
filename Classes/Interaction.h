@@ -40,6 +40,9 @@ class Interaction : public cocos2d::Component {
  protected:
   bool init() override;
 };
+// 关于析构，需要注意：
+// 1.英雄可能会有残存的指针，需要析构Interaction的方法必须手动调用 endInteracting清除。
+// 2.touch中有局部变量指向当前的互动，不能立即析构当前互动，可以把对应的函数用scheduleOnce包装。
 
 // 获取对应的互动组件。
 // cocos2d-x引擎中，根本没有组件的对象连组件容器都是空指针，直接就空指针报错了，无法检查。

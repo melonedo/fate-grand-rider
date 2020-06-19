@@ -61,7 +61,11 @@ void MonsterManager::createMonsters(const Rect rect) {
 }
 
 void MonsterManager::update(float dt) {
-  if (isAllDead()) _room->leaveRoom();
+  if (isAllDead()) {
+    _room->leaveRoom();
+    removeFromParent();
+    return;
+  }
   followRun();
 }
 

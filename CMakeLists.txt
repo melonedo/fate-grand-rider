@@ -86,6 +86,7 @@ list(APPEND GAME_SOURCE
      Classes/FlowWord.cpp
      Classes/DialogBox.cpp
      Classes/Endgame.cpp
+     Classes/LevelManager.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -111,6 +112,7 @@ list(APPEND GAME_HEADER
      Classes/FlowWord.h
      Classes/DialogBox.h
      Classes/Endgame.h
+     Classes/LevelManager.h
      )
 
 if(ANDROID)
