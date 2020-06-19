@@ -30,7 +30,11 @@ bool Interaction::init() {
   }
 }
 
-void Interaction::endInteracting(Hero* hero) { hero->_interacting = nullptr; }
+void Interaction::endInteracting(Hero* hero) {
+  if (hero->_interacting == this) {
+    hero->_interacting = nullptr;
+  }
+}
 
 HideSpot* HideSpot::load(const cocos2d::Vec2&, const cocos2d::ValueMap&,
                          chipmunk::Body&& body) {
@@ -168,4 +172,27 @@ void Chest::dialog(Hero*) {
   weapon->setPosition(getOwner()->getPosition() + Vec2(0, -kTileResolution));
   weapon->addComponent(DroppedWeapon::create(weapon));
   GameScene::getRunningScene()->addChild(weapon, kMapPriorityBackground);
+}
+
+
+Teleport* Teleport::load(const Vec2& position, const ValueMap& property,
+                         chipmunk::Body&& body) {
+  
+  Teleport* teleport = create();
+  teleport->_body = std::move(body);
+  return teleport;
+}
+
+void Teleport::onAdd() {
+  // 加载图片
+  auto teleport = Sprite::create("teleport.png");
+  teleport->setPosition(getOwner()->getPosition() +
+                        getOwner()->getBoundingBox().size / 2);
+  teleport->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+  GameScene::getRunningScene()->addChild(teleport);
+}
+
+void Teleport::touch(Hero*) {
+  // todo: 转换到下一张地图
+  ccMessageBox(".....", "Teleporting");
 }

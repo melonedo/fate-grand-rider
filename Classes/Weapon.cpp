@@ -242,8 +242,6 @@ Magic* Magic::create(const std::string& name) {
       Vec2(anchor_data[0].GetFloat(), anchor_data[1].GetFloat()));
   magic->_hurt = magic_data["hurt"].GetFloat();
 
-  magic->_hurt = magic_data["hurt"].GetInt();
-
   const auto& magic_data2 = data["magic"];
   magic->_magicSquare = Sprite::create();
   magic->_magicSquare->setSpriteFrame(

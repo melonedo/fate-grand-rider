@@ -27,8 +27,10 @@ class Room {
   // 房间的边界
   cocos2d::Rect _boundingBox;
   friend std::vector<Room> processMap(cocos2d::TMXTiledMap* map);
-  // 指向房间的指针，由于房间在构造过程中多次转手，这里使用双层指针解决
+  // 指向房间的指针，由于房间在构造过程中多次转手，这里使用双层指针解决。
   std::unique_ptr<Room*> _ref;
+  // 右值引用害人不浅呐，本来我直接一路unique_ptr<Room>下来就完事了。
+  // 现在一路std::move转手，搞得指针变来变去。
 };
 
 // 预处理地图，包括添加碰撞箱，设定互动信息，判断房间边界
