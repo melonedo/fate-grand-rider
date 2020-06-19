@@ -24,14 +24,27 @@ bool Hero::init() {
   _hp = data["total-hp"].GetFloat();
   _se = data["total-se"].GetFloat();
   _mp = data["total-mp"].GetFloat();
+  _totalHp = data["total-hp"].GetFloat();
+  _totalSe = data["total-se"].GetFloat();
+  _totalMp = data["total-mp"].GetFloat();
+  _ifShield = true;
 
-  schedule(SEL_SCHEDULE(&Hero::shieldUpdate), 1.0f);
+  schedule(static_cast<SEL_SCHEDULE>(&Hero::timeUpdate));
+  schedule(static_cast<SEL_SCHEDULE>(&Hero::shieldUpdate), 1.0f);
 
   return true;
 }
 
+void Hero::timeUpdate(float dt) {
+  struct timeval now;
+  gettimeofday(&now, NULL);
+  if (now.tv_sec - _timeOfAttack == 3) {
+    _ifShield = true;
+  }
+}
+
 void Hero::shieldUpdate(float dt) {
-  if (_se < this->getTotalSe()) {
+  if (_se < this->getTotalSe() && _ifShield) {
     _se += 1;
   }
 }
@@ -244,15 +257,9 @@ void Hero::setHp(float hp) { _hp = hp; }
 void Hero::setSe(float se) { _se = se; }
 void Hero::setMp(float mp) { _mp = mp; }
 
-const float Hero::getTotalHp() {
-  return DataSet::getConfig()["heroes"][getHeroName()]["total-hp"].GetFloat();
-}
-const float Hero::getTotalSe() {
-  return DataSet::getConfig()["heroes"][getHeroName()]["total-se"].GetFloat();
-}
-const float Hero::getTotalMp() {
-  return DataSet::getConfig()["heroes"][getHeroName()]["total-mp"].GetFloat();
-}
+const float Hero::getTotalHp() { return _totalHp; }
+const float Hero::getTotalSe() { return _totalSe; }
+const float Hero::getTotalMp() { return _totalMp; }
 
 const float Hero::getHp() { return _hp; }
 const float Hero::getSe() { return _se; }
@@ -262,6 +269,9 @@ void Hero::die() {}
 
 void Hero::HeroInteraction::attack(Sprite* source, float damage) {
   auto hero = dynamic_cast<Hero*>(getOwner());
+
+  hero->_ifShield = false;
+
   const auto& data = DataSet::getConfig()["heroes"][hero->getHeroName()];
   if (hero->_se - damage < 0) {
     damage = damage - hero->_se;
@@ -273,4 +283,8 @@ void Hero::HeroInteraction::attack(Sprite* source, float damage) {
   if (hero->_hp < 0 || hero->_hp == 0) {
     hero->die();
   }
+
+  struct timeval now;
+  gettimeofday(&now, NULL);
+  hero->_timeOfAttack = now.tv_sec;
 }

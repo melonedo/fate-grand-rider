@@ -34,7 +34,7 @@ class Hero : public Mob {
   const float getSe();
   const float getMp();
 
-  void shieldUpdate(float);
+  
 
  protected:
   // 初始化，设置update，加载动画
@@ -87,12 +87,24 @@ class Hero : public Mob {
   std::string _heroName;
   const char* getHeroName() { return _heroName.c_str(); }
 
+  //更新盾
+  void shieldUpdate(float);
+  void timeUpdate(float);
+
   // hit point
   float _hp;
   // shield energy
   float _se;
   // magic point
   float _mp;
+
+  float _totalHp;
+  float _totalSe;
+  float _totalMp;
+
+
+  int _timeOfAttack;
+  bool _ifShield;
 
   friend HeroInteraction;
 };
