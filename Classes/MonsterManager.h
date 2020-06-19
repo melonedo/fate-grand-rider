@@ -27,5 +27,6 @@ class MonsterManager : public Node {
   int _aliveNum;
   Hero* _hero;
   Room* _room;
+  std::map<int, std::string> _monsterMap;
   MonsterManager* _monsterManager;
 };

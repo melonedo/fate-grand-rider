@@ -8,8 +8,7 @@
 	"debug-set": {
 		"map": "maps/sample_map.tmx",
 		"hero": "sample-man",
-		"weapon": "basic-bow",
-		"monster": "sample-monster"
+		"weapon": "basic-bow"
 	},
 	"heroes": {
 		"sample-man": {
@@ -105,6 +104,23 @@
 				"speed": 300,
 				"hurt": 2
 			}
+		},
+		"redball": {
+			"type": "redball",
+			"redball": {
+				"frame": "redball.png",
+				"speed": 50,
+				"hurt": 1
+			}
+		},
+		"knife": {
+			"type": "knife",
+			"knife": {
+				"frame": "W_Spear010.png",
+				"anchor": [ 0.5, 0.5 ],
+				"radius": 40,
+				"hurt": 2
+			}
 		}
 	},
 	"monsters": {
@@ -117,9 +133,18 @@
 			"hp": 5,
 			"visible-size": 100,
 			"attack-size": 100,
-			"speed": 40,
-			"ball": "ball.png",
-			"hurt": 1
+			"weapon": "redball"
+		},
+		"knife-monster": {
+			"walk": {
+				"interval": 0.2,
+				"frames":[ "monster1.png", "monster2.png" ]
+			},
+			"hand-pos": [ 0.75, 0.44 ],
+			"hp": 5,
+			"visible-size": 100,
+			"attack-size": 100,
+			"weapon": "knife"
 		}
 	},
 

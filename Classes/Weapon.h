@@ -103,3 +103,26 @@ class Darts : public Weapon {
   // 飞镖速度
   float _dartSpeed;
 };
+
+class RedBall : public Weapon {
+ public:
+  static RedBall* create(const std::string& name);
+  void pointTo(cocos2d::Vec2) override;
+  void fire(cocos2d::Vec2) override;
+ protected:
+  RedBall() = default;
+  float _hurt;
+  float _redBallSpeed;
+};
+
+class Knife : public Weapon {
+ public:
+  static Knife* create(const std::string& name);
+  void pointTo(cocos2d::Vec2) override;
+  void fire(cocos2d::Vec2) override;
+  AutoRef<Sprite> _knife;
+ protected:
+  Knife() = default;
+  float _hurt;
+  float _knifeRadius;
+};

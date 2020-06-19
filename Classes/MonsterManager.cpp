@@ -12,6 +12,8 @@ bool MonsterManager::init() {
   this->scheduleUpdate();
   this->schedule(SEL_SCHEDULE(&MonsterManager::updateMonsters), 1.0f);
   _monsterManager = this;
+  _monsterMap[1] = "sample-monster";
+  _monsterMap[2] = "knife-monster";
   return true;
 }
 
@@ -19,7 +21,7 @@ void MonsterManager::createMonsters(const Rect rect) {
   const auto& config = DataSet::getConfig();
   const auto& debug_set = config["debug-set"].GetObject();
   for (int i = 0; i < MAX_MONSTER_NUM; i++) {
-    auto monster = DataSet::loadMonster(debug_set["monster"].GetString());
+    auto monster = DataSet::loadMonster(_monsterMap[2]);
     this->addChild(monster, kMapPrioritySprite);
     monster->reset(rect);
     monster->show();
@@ -34,7 +36,7 @@ void MonsterManager::createMonsters(const Rect rect) {
                                    filter)) {
         Size visibleSize = Director::getInstance()->getVisibleSize();
         static std::default_random_engine e(time(0));
-        static std::uniform_int_distribution<unsigned> v(0, 10);
+        static std::uniform_int_distribution<unsigned> v(0, 20);
         int Z = v(e);
         if (Z == 0) {
           monster->_speed.x = 0;

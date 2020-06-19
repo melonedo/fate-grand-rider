@@ -24,10 +24,10 @@ bool GameScene::init() {
 
   runningGameScene = this;
 
-
   //暂停
-  auto m_pause = PauseGame::create();
-  this->addChild(m_pause);
+  auto pause = PauseGame::create();
+  this->addChild(pause);
+
   const auto& config = DataSet::getConfig();
 
   // 缩放

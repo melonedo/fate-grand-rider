@@ -345,3 +345,92 @@ void Darts::fire(Vec2 offset) {
   };
   darts->schedule(collision_detect, 0, "collistion_detect");
 }
+
+RedBall* RedBall::create(const std::string& name) {
+  RedBall* redBall = new RedBall;
+  redBall->Weapon::init();
+  redBall->setName(name);
+  const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
+  const auto& redBall_data = data["redball"];
+  redBall->_hurt = redBall_data["hurt"].GetFloat();
+  redBall->_redBallSpeed = redBall_data["speed"].GetFloat();
+
+  return redBall;
+}
+
+void RedBall::pointTo(Vec2 offset) {}
+
+void RedBall::fire(Vec2 vec) { 
+  Sprite* redBall;
+  int hurt = _hurt;
+  redBall = Sprite::create();
+  redBall->setPosition((_owner->getPosition()));
+  const auto& data = DataSet::getConfig()["weapon"]["redball"];
+  const auto& redBall_data = data["redball"];
+  redBall->setSpriteFrame(
+      DataSet::loadFrame(redBall_data["frame"].GetString(), kWeaponResolution));
+  redBall->setVisible(true);
+  getScene()->addChild(redBall);
+  
+  auto speed = _redBallSpeed;
+  Vec2 _speed;
+  auto X = vec.x - _owner->getPosition().x;
+  auto Y = vec.y - _owner->getPosition().y;
+  _speed.x = speed * X / sqrt(X * X + Y * Y);
+  _speed.y = speed * Y / sqrt(X * X + Y * Y);
+  redBall->runAction(RepeatForever::create(MoveBy::create(1.0f, _speed)));
+
+  auto space = GameScene::getRunningScene()->getPhysicsSpace();
+  auto filter = _owner->getBody().getFilter();
+  auto collision_detect = [redBall, space, filter, hurt, _speed](float) {
+    if (auto target = space->querySegmentFirst(
+            redBall->getPosition(), redBall->getPosition() + _speed, filter)) {
+      if (dynamic_cast<Monster*>(target)) return;
+      redBall->setVisible(false);
+      redBall->stopAllActions();
+      redBall->unscheduleAllCallbacks();
+      getInteraction(target)->attack(redBall, hurt);
+    }
+  };
+  redBall->schedule(collision_detect, 0, "collistion_detect");
+}
+
+Knife* Knife::create(const std::string& name) {
+  Knife* knife = new Knife; 
+  knife->Weapon::init();
+  knife->setName(name);
+  const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
+  const auto& knife_data = data["knife"];
+  knife->setSpriteFrame  (DataSet::loadFrame(knife_data["frame"].GetString(), kWeaponResolution));
+  knife->_hurt = knife_data["hurt"].GetFloat();
+ knife->_knifeRadius = knife_data["radius"].GetFloat();
+ 
+ knife->_knife = Sprite::create();
+ knife->_knife->setSpriteFrame(
+     DataSet::loadFrame(knife_data["frame"].GetString(), kWeaponResolution));
+ const auto& anchor_data = knife_data["anchor"].GetArray();
+ knife->setAnchorPoint(
+     Vec2(anchor_data[0].GetFloat(), anchor_data[1].GetFloat()));
+ return knife;
+}
+
+void Knife::pointTo(Vec2 offset) {}
+
+void Knife::fire(Vec2 offset) { 
+  auto rotate = RotateBy::create(0.5f, 180);
+  _knife->runAction(rotate);
+
+/*    auto space = GameScene::getRunningScene()->getPhysicsSpace();
+  auto filter = _owner->getBody().getFilter();
+  auto collision_detect = [this, space, filter ](float) {
+    if (auto target = space->queryPointAll(
+           this->_knife ->getPosition(), 47.6, filter)) {
+      if (dynamic_cast<Monster*>(target)) return;
+      redBall->setVisible(false);
+      redBall->stopAllActions();
+      redBall->unscheduleAllCallbacks();
+      getInteraction(target)->attack(redBall, hurt);
+    }
+  };
+  redBall->schedule(collision_detect, 0, "collistion_detect");*/
+}
