@@ -89,6 +89,7 @@ class Hero : public Mob {
 
   //更新盾
   void shieldUpdate(float);
+  //更新是否回复盾值的时间
   void timeUpdate(float);
 
   // hit point
@@ -98,12 +99,15 @@ class Hero : public Mob {
   // magic point
   float _mp;
 
+  //总能量
   float _totalHp;
   float _totalSe;
   float _totalMp;
 
-
+  //实现在被攻击后一段时间回复盾值
+  //被攻击的时间
   int _timeOfAttack;
+  //是否进行盾的回复
   bool _ifShield;
 
   friend HeroInteraction;
