@@ -34,13 +34,14 @@ HomeScene* HomeScene::create(callback_t on_start_pressed,
   scene->addChild(start_label, 0, "start_label"); 
 
   // 设置键
-  auto settings_label = Label::createWithSystemFont(
-      "设置", "Microsoft YaHei", 60, Size::ZERO, TextHAlignment::CENTER);
-  assert(settings_label);
-  settings_label->setAnchorPoint(Vec2(0.5f, 0.5f));
-  settings_label->setPosition(designResolutionSize.width / 2,
-                              designResolutionSize.height * 0.4f);
-  scene->addChild(settings_label, 0, "settings_label");
+  // 暂时无法正常工作
+  //auto settings_label = Label::createWithSystemFont(
+  //    "设置", "Microsoft YaHei", 60, Size::ZERO, TextHAlignment::CENTER);
+  //assert(settings_label);
+  //settings_label->setAnchorPoint(Vec2(0.5f, 0.5f));
+  //settings_label->setPosition(designResolutionSize.width / 2,
+  //                            designResolutionSize.height * 0.4f);
+  //scene->addChild(settings_label, 0, "settings_label");
 
   // 为各按键设置事件
   auto listener = EventListenerMouse::create();
@@ -63,15 +64,15 @@ HomeScene* HomeScene::create(callback_t on_start_pressed,
   start_label->getEventDispatcher()->addEventListenerWithSceneGraphPriority(
       listener, start_label);
   
-  listener = listener->clone();
-  listener->onMouseDown = [on_settings_pressed](EventMouse* event) {
-    auto bbox = event->getCurrentTarget()->getBoundingBox();
-    if (bbox.containsPoint(Vec2(event->getCursorX(), event->getCursorY()))) {
-      on_settings_pressed();
-    }
-  };
-  settings_label->getEventDispatcher()->addEventListenerWithSceneGraphPriority(
-      listener, settings_label);
+  //listener = listener->clone();
+  //listener->onMouseDown = [on_settings_pressed](EventMouse* event) {
+  //  auto bbox = event->getCurrentTarget()->getBoundingBox();
+  //  if (bbox.containsPoint(Vec2(event->getCursorX(), event->getCursorY()))) {
+  //    on_settings_pressed();
+  //  }
+  //};
+  //settings_label->getEventDispatcher()->addEventListenerWithSceneGraphPriority(
+  //    listener, settings_label);
 
   return scene;
 }
