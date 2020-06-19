@@ -5,6 +5,7 @@
 #include <unordered_set>
 #include "GameScene.h"
 #include "Interaction.h"
+#include "Endgame.h"
 using namespace cocos2d;
 
 
@@ -240,6 +241,7 @@ float Hero::getMP() const { return _MP; }
 float Hero::getHP() const { return _HP; }
 float Hero::getShield() const { return _shield; }
 
-void Hero::die() {
-
+void Hero::die() { 
+  auto director = Director::getInstance();
+  director->replaceScene(EndScene::create(false));
 }

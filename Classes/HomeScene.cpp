@@ -2,6 +2,7 @@
 #include "HomeScene.h"
 #include "assert.h"
 #include "constants.h"
+#include "GameScene.h"
 
 using namespace cocos2d;
 
@@ -73,4 +74,10 @@ HomeScene* HomeScene::create(callback_t on_start_pressed,
       listener, settings_label);
 
   return scene;
+}
+
+HomeScene* HomeScene::createScene() {
+  return create(
+      [] { Director::getInstance()->replaceScene(GameScene::create()); },
+      [] {});
 }
