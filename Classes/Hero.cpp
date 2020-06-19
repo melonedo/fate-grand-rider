@@ -4,6 +4,7 @@
 #include "DataSet.h"
 #include "GameScene.h"
 #include "Interaction.h"
+#include "Endgame.h"
 #include "cocos2d.h"
 #include "ui.h"
 using namespace cocos2d;
@@ -265,7 +266,10 @@ const float Hero::getHp() { return _hp; }
 const float Hero::getSe() { return _se; }
 const float Hero::getMp() { return _mp; }
 
-void Hero::die() {}
+void Hero::die() {
+  auto director = Director::getInstance();
+  director->replaceScene(EndScene::create(false));
+}
 
 void Hero::HeroInteraction::attack(Sprite* source, float damage) {
   auto hero = dynamic_cast<Hero*>(getOwner());

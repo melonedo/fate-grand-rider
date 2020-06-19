@@ -85,6 +85,7 @@ list(APPEND GAME_SOURCE
      Classes/MonsterManager.cpp
      Classes/FlowWord.cpp
      Classes/DialogBox.cpp
+     Classes/Endgame.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -109,6 +110,7 @@ list(APPEND GAME_HEADER
      Classes/MonsterManager.h
      Classes/FlowWord.h
      Classes/DialogBox.h
+     Classes/Endgame.h
      )
 
 if(ANDROID)

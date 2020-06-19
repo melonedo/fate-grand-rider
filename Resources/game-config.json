@@ -2,7 +2,7 @@
   "use-debug-mode": true,
   "global-zoom-scale": 2,
   "show-physics-debug-boxes": false,
-  "display-cocos-stats": true,
+  "display-cocos-stats": false,
   "skip-starting-scene": true,
   "hero-speed-scale": 100,
   "debug-set": {

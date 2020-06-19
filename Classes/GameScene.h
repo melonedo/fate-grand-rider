@@ -45,5 +45,3 @@ class GameScene : public cocos2d::Scene {
 
    void update(float);
 };
-
-
