@@ -112,7 +112,10 @@ void Monster::MonsterInteraction::attack(Sprite* source, float hit) {
   }
 }
 
-void Monster::dieUpdate(float dt) { this->setVisible(false); }
+void Monster::dieUpdate(float dt) {
+  this->removeFromParent();
+  _body.clear();
+}
 
 void Monster::die() {
   this->_isAlive = false;

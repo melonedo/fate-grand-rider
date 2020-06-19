@@ -26,7 +26,7 @@ class SliderEx : public Slider {
 class Pause : public cocos2d::Scene {
  public:
   //创建一个暂停的场景
-  static cocos2d::Scene* createScene(Sprite* sp);
+  static cocos2d::Scene* createScene(Sprite* screenshot = nullptr);
 
   //暂停场景的初始化，包括了音量的调节
   bool init()override;
