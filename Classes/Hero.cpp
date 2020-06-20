@@ -10,8 +10,8 @@
 using namespace cocos2d;
 
 bool Hero::init() {
-  if (!Mob::init()) return false;
-  // 衍生类如果不需要这些直接重写即可
+  if (!Mob::init(kShapeMaskHero)) return false;
+
   scheduleUpdate();
   loadAnimation();
   // 手的位置

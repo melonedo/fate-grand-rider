@@ -7,7 +7,7 @@ USING_NS_CC;
 using namespace cocos2d;
 
 bool Monster::init() {
-  if (!Mob::init()) return false;
+  if (!Mob::init(kShapeMaskMob)) return false;
   srand((UINT)GetCurrentTime());
   _isCounted = false;
   _isAlive = false;
