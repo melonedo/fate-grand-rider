@@ -401,6 +401,8 @@ Knife* Knife::create(const std::string& name) {
   knife->setName(name);
   const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
   const auto& knife_data = data["knife"];
+  knife->setSpriteFrame(
+      DataSet::loadFrame(knife_data["frame"].GetString(), kWeaponResolution));
   knife->_hurt = knife_data["hurt"].GetFloat();
  knife->_knifeRadius = knife_data["radius"].GetFloat();
  const auto& anchor_data = knife_data["anchor"].GetArray();
@@ -412,6 +414,7 @@ Knife* Knife::create(const std::string& name) {
 void Knife::pointTo(Vec2 offset) {}
 
 void Knife::fire(Vec2 offset) {
+  setVisible(false);
   Sprite* knife;
   int hurt = _hurt;
   knife = Sprite::create();
@@ -440,7 +443,10 @@ void Knife::fire(Vec2 offset) {
       getInteraction(target.sprite)->attack(knife, hurt);
     }
   };
-  auto disappear = [knife](float) { knife->setVisible(false); };
+  auto disappear = [this,knife](float) {
+    knife->setVisible(false);
+    setVisible(true);
+  };
   knife->scheduleOnce(disappear, 0.3, "disappear");
   knife->schedule(collision_detect, 0, "collistion_detect");
 }
