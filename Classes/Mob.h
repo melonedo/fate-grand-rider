@@ -22,7 +22,9 @@ class Mob : public cocos2d::Sprite {
  protected:
   Mob() = default;
   // 设置锚点，并加入碰撞箱（圆形）
-  bool init(unsigned int category = kShapeMaskMob) override;
+  bool init() override;
+  // 禁忌之术之重载又重写
+  bool init(unsigned int category);
 
   // 碰撞箱
   chipmunk::Body _body;

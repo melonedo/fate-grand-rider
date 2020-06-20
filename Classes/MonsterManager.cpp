@@ -6,7 +6,6 @@
 #include"GameScene.h"
 #include"Map.h"
 bool MonsterManager::init() {
-  srand((UINT)GetCurrentTime());
   // createMonsters();
   this->_aliveNum = MAX_MONSTER_NUM;
   this->scheduleUpdate();

@@ -68,6 +68,8 @@ bool GameScene::init() {
 
   this->nextLevel();
 
+  srand(std::chrono::system_clock::now().time_since_epoch().count());
+
   return true;
 }
 

@@ -8,7 +8,6 @@ using namespace cocos2d;
 
 bool Monster::init() {
   if (!Mob::init(kShapeMaskMob)) return false;
-  srand((UINT)GetCurrentTime());
   _isCounted = false;
   _isAlive = false;
   _speed.x = _speed.y = 0;
