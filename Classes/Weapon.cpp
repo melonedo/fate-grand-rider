@@ -401,13 +401,8 @@ Knife* Knife::create(const std::string& name) {
   knife->setName(name);
   const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
   const auto& knife_data = data["knife"];
-  knife->setSpriteFrame  (DataSet::loadFrame(knife_data["frame"].GetString(), kWeaponResolution));
   knife->_hurt = knife_data["hurt"].GetFloat();
  knife->_knifeRadius = knife_data["radius"].GetFloat();
- 
- knife->_knife = Sprite::create();
- knife->_knife->setSpriteFrame(
-     DataSet::loadFrame(knife_data["frame"].GetString(), kWeaponResolution));
  const auto& anchor_data = knife_data["anchor"].GetArray();
  knife->setAnchorPoint(
      Vec2(anchor_data[0].GetFloat(), anchor_data[1].GetFloat()));
@@ -416,21 +411,36 @@ Knife* Knife::create(const std::string& name) {
 
 void Knife::pointTo(Vec2 offset) {}
 
-void Knife::fire(Vec2 offset) { 
-  auto rotate = RotateBy::create(0.5f, 180);
-  _knife->runAction(rotate);
+void Knife::fire(Vec2 offset) {
+  Sprite* knife;
+  int hurt = _hurt;
+  knife = Sprite::create();
+  const auto& data = DataSet::getConfig()["weapon"]["knife"];
+  const auto& knife_data = data["knife"];
+  const auto& anchor_data = knife_data["anchor"].GetArray();
+  knife->setSpriteFrame(DataSet::loadFrame(knife_data["frame"].GetString()));
+  knife->setAnchorPoint(
+      Vec2(anchor_data[0].GetFloat(), anchor_data[1].GetFloat()));
+  knife->setPosition((_owner->getPosition()));
 
-/*    auto space = GameScene::getRunningScene()->getPhysicsSpace();
+  auto space = GameScene::getRunningScene()->getPhysicsSpace();
+  auto radius = _knifeRadius;
+  knife->setVisible(true);
+  getScene()->addChild(knife);
+  RotateBy* rotateby = RotateBy::create(0.3f, 360);
+  knife->runAction(rotateby);
   auto filter = _owner->getBody().getFilter();
-  auto collision_detect = [this, space, filter ](float) {
-    if (auto target = space->queryPointAll(
-           this->_knife ->getPosition(), 47.6, filter)) {
-      if (dynamic_cast<Monster*>(target)) return;
-      redBall->setVisible(false);
-      redBall->stopAllActions();
-      redBall->unscheduleAllCallbacks();
-      getInteraction(target)->attack(redBall, hurt);
+  auto collision_detect = [space, knife,this, radius, filter, hurt = _hurt](float) {
+    knife->setPosition(this->_owner->getPosition());
+    auto targets = space->queryPointAll(knife->getPosition(), radius, filter);
+    for (auto& target : targets) {
+      if (static_cast<Monster*>(target.sprite)) continue;
+      knife->stopAllActions();
+      knife->unscheduleAllCallbacks();
+      getInteraction(target.sprite)->attack(knife, hurt);
     }
   };
-  redBall->schedule(collision_detect, 0, "collistion_detect");*/
+  auto disappear = [knife](float) { knife->setVisible(false); };
+  knife->scheduleOnce(disappear, 0.3, "disappear");
+  knife->schedule(collision_detect, 0, "collistion_detect");
 }

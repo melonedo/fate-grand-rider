@@ -133,18 +133,20 @@
 			"hp": 5,
 			"visible-size": 100,
 			"attack-size": 100,
-			"weapon": "redball"
+			"weapon": "redball",
+			"updateattacktime": 1
 		},
 		"knife-monster": {
 			"walk": {
 				"interval": 0.2,
-				"frames":[ "monster1.png", "monster2.png" ]
+				"frames": [ "monster1.png", "monster2.png" ]
 			},
 			"hand-pos": [ 0.75, 0.44 ],
 			"hp": 5,
 			"visible-size": 100,
 			"attack-size": 100,
-			"weapon": "knife"
+			"weapon": "knife",
+			"updateattacktime": 2
 		}
 	},
 

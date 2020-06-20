@@ -29,8 +29,9 @@ class Monster : public Mob {
   void loadAnimation();
   //获取怪物名字
   virtual const char* getMonsterName() const = 0;
-  //每隔一秒重置isAttack
-  void updateMonster(float delta);
+  //每隔x秒重置isAttack
+   void updateMonster(float delta);
+   int _updateAttackTime;
     //拾取武器
   void pickWeapon(Weapon*);
   //武器

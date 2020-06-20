@@ -24,7 +24,8 @@ bool Monster::init() {
   //武器
   this->pickWeapon(DataSet::loadWeapon(data["weapon"].GetString ()));
   this->scheduleUpdate();
-  this->schedule(SEL_SCHEDULE(&Monster::updateMonster), 1.0f);
+  _updateAttackTime = data["updateattacktime"].GetFloat();
+  this->schedule(SEL_SCHEDULE(&Monster::updateMonster), _updateAttackTime);
   addComponent(MonsterInteraction::create());
   return true;
 }

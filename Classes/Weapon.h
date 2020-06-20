@@ -120,7 +120,6 @@ class Knife : public Weapon {
   static Knife* create(const std::string& name);
   void pointTo(cocos2d::Vec2) override;
   void fire(cocos2d::Vec2) override;
-  AutoRef<Sprite> _knife;
  protected:
   Knife() = default;
   float _hurt;
