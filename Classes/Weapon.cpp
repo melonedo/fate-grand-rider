@@ -444,7 +444,7 @@ void RedBall::fire(Vec2 vec) {
   auto collision_detect = [redBall, space, filter, hurt, _speed](float) {
     if (auto target = space->querySegmentFirst(
             redBall->getPosition(), redBall->getPosition() + _speed, filter)) {
-      //if (dynamic_cast<Monster*>(target)) return;
+     if (dynamic_cast<Monster*>(target)) return;
       redBall->setVisible(false);
       redBall->stopAllActions();
       redBall->unscheduleAllCallbacks();
