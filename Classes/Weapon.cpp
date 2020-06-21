@@ -30,7 +30,7 @@ void Weapon::preparefire(Sprite* weapon, Vec2 offset) {
   weapon->setAnchorPoint(_fireweapon->getAnchorPoint());
 
   weapon->setVisible(true);
-  getScene()->getChildByName("map")->addChild(weapon);
+  getScene()->addChild(weapon);
 }
 
 
@@ -40,16 +40,24 @@ BlinkBow* BlinkBow::createweapon(const std::string& name) {
   blinkbow->Weapon::init();
 
   const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
+
   const auto& blinkbow_data = data["bow"];
-
   blinkbow->load(name, blinkbow, data, blinkbow_data);
-
+  /*blinkbow->setName(name);
+  blinkbow->_bowAngleOffset = blinkbow_data["angle-offset"].GetFloat();
+  blinkbow->setSpriteFrame(DataSet::loadFrame(
+      blinkbow_data["frame"].GetString(), kWeaponResolution));
+  blinkbow->_hurt = blinkbow_data["hurt"].GetFloat();*/
   blinkbow->_bowNumber = blinkbow_data["number"].GetInt();
   blinkbow->_angleConstant = blinkbow_data["angleconstant"].GetInt();
+
 
   const auto& arrow_data = data["arrow"];
   blinkbow->_fireweapon = Sprite::create();
   blinkbow->loadfire(blinkbow, arrow_data);
+  /*blinkbow->_fireweapon->setSpriteFrame(
+      DataSet::loadFrame(arrow_data["frame"].GetString()));
+  blinkbow->_fireweapon->setRotation(arrow_data["angle-offset"].GetFloat());*/
   blinkbow->_arrowSpeed = arrow_data["speed"].GetFloat();
 
     const auto& arrow_data2 = data["arrow2"];
@@ -73,7 +81,6 @@ void BlinkBow::fire(Vec2 offset) {
   Sprite* arrows;   // 飞行中的箭
   Sprite* arrows2;  // 爆炸的箭
   int hurt = _hurt;
-
   arrows2 = Sprite::create();
   arrows2->setSpriteFrame(_arrow2->getSpriteFrame());
   arrows2->setAnchorPoint(
@@ -81,20 +88,24 @@ void BlinkBow::fire(Vec2 offset) {
   arrows2->setRotation(-offset.getAngle() * 180 / M_PI +
                        _arrow2->getRotation());
   arrows2->setVisible(false);
-  getScene()->getChildByName("map")->addChild(arrows2);
+  getScene()->addChild(arrows2);
 
   arrows = Sprite::create();
+
   arrows->setPosition((_owner->getPosition()));
-  
   Vec2 speed;
   auto space = GameScene::getRunningScene()->getPhysicsSpace();
+
   speed = _arrowSpeed * (offset) / offset.getLength();
   Vec2 delta = speed / _arrowSpeed;
  preparefire(arrows, offset);
+ /* arrows->setSpriteFrame(_fireweapon->getSpriteFrame());
+  arrows->setAnchorPoint(_fireweapon->getAnchorPoint());
+  arrows->setVisible(true);
+  getScene()->addChild(arrows);*/
  arrows->setRotation(-offset.getAngle() * 180 / M_PI +
                      _fireweapon->getRotation());
   arrows->runAction(RepeatForever::create(MoveBy::create(1, speed)));
-
   auto& lambdaArrow = arrows;
   auto& lambdaArrow2 = arrows2;
   auto filter = _owner->getBody().getFilter();
@@ -147,12 +158,23 @@ Bow* Bow::createweapon(const std::string& name) {
   const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
   const auto& bow_data = data["bow"];
   bow->load(name, bow, data, bow_data);
+  /*bow->setName(name);
+  bow->_bowAngleOffset = bow_data["angle-offset"].GetFloat();
+  bow->setSpriteFrame(DataSet::loadFrame(
+      bow_data["frame"].GetString(), kWeaponResolution));
+  bow->_hurt = bow_data["hurt"].GetFloat();*/
   bow->_bowNumber = bow_data["number"].GetInt();
   bow->_angleConstant = bow_data["angleconstant"].GetInt();
+
+
+ // bow->_hurt = bow_data["hurt"].GetInt();
 
   const auto& arrow_data = data["arrow"];
   bow->_fireweapon = Sprite::create();
   bow->loadfire(bow, arrow_data);
+  /*bow->_fireweapon->setSpriteFrame(
+      DataSet::loadFrame(arrow_data["frame"].GetString()));
+  bow->_arrow->setRotation(arrow_data["angle-offset"].GetFloat());*/
   bow->_arrowSpeed = arrow_data["speed"].GetFloat();
 
   const auto& anchor_data = bow_data["anchor"].GetArray();
@@ -187,6 +209,10 @@ void Bow::fire(Vec2 offset) {
     speed = _arrowSpeed * (v[i]) / offset.getLength();
     Vec2 delta = speed / _arrowSpeed;
     preparefire(arrows[i], offset);
+    /*arrows[i]->setSpriteFrame(_fireweapon->getSpriteFrame());
+    arrows[i]->setAnchorPoint(_fireweapon->getAnchorPoint());
+    arrows[i]->setVisible(true);
+    getScene()->addChild(arrows[i]);*/
     arrows[i]->runAction(RepeatForever::create(MoveBy::create(1, speed)));
     auto lambdaArrow = arrows[i];
     auto filter = _owner->getBody().getFilter();
@@ -214,6 +240,13 @@ Spear* Spear::createweapon(const std::string& name) {
   const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
   const auto& spear_data = data["spear"];
   spear->load(name, spear, data, spear_data);
+  /*spear->setName(name);
+  spear->_spearAngleOffset = spear_data["angle-offset"].GetFloat();
+  spear->setSpriteFrame(
+      DataSet::loadFrame(spear_data["frame"].GetString(), kWeaponResolution));
+
+  spear->_hurt = spear_data["hurt"].GetFloat();*/
+
   const auto& anchor_data = spear_data["anchor"].GetArray();
   spear->_spearSpeed = spear_data["speed"].GetFloat();
   return spear;
@@ -250,6 +283,10 @@ Magic* Magic::createweapon(const std::string& name) {
   const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
   const auto& magic_data = data["magicball"];
   magic->load(name, magic, data, magic_data);
+  /*magic->setName(name);
+  magic->setSpriteFrame(
+      DataSet::loadFrame(magic_data["frame"].GetString(), kWeaponResolution));
+        magic->_hurt = magic_data["hurt"].GetFloat();*/
   const auto& anchor_data = magic_data["anchor"].GetArray();
   magic->setAnchorPoint(
       Vec2(anchor_data[0].GetFloat(), anchor_data[1].GetFloat()));
@@ -277,6 +314,10 @@ void Magic::fire(Vec2 offset) {
   magicSquare->setPosition((_owner->getPosition()));
   Vec2 centre = _owner->getPosition();
   preparefire(magicSquare, offset);
+ /* magicSquare->setSpriteFrame(_fireweapon->getSpriteFrame());
+  magicSquare->setAnchorPoint(_fireweapon->getAnchorPoint());
+  magicSquare->setVisible(true);
+  getScene()->addChild(magicSquare);*/
  magicSquare->runAction(RotateBy::create(5.0f, 360));
  DelayTime* delayTime = DelayTime::create(5.0f);
   FadeOut*fadeout = FadeOut::create(1.0f);
@@ -307,10 +348,16 @@ Darts* Darts::createweapon(const std::string& name) {
   const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
   const auto& dart_data = data["darts"];
   dart->load(name, dart, data, dart_data);
+    /*dart->setName(name);
+  dart->setSpriteFrame(
+      DataSet::loadFrame(dart_data["frame"].GetString(), kWeaponResolution));
+  dart->_hurt = dart_data["hurt"].GetFloat();*/
 
   const auto& dart_out_data = data["darts"];
   dart->_fireweapon = Sprite::create();
   dart->loadfire(dart, dart_out_data);
+  /*dart->_fireweapon->setSpriteFrame(
+      DataSet::loadFrame(dart_out_data["frame"].GetString()));*/
   dart->_dartSpeed = dart_out_data["speed"].GetFloat();
 
   const auto& anchor_data = dart_out_data["anchor"].GetArray();
@@ -334,6 +381,10 @@ void Darts::fire(Vec2 offset) {
   speed = _dartSpeed * (offset) / offset.getLength();
   Vec2 delta = speed / _dartSpeed;
   preparefire(darts,offset);
+  /*darts->setSpriteFrame(_fireweapon->getSpriteFrame());
+  darts->setAnchorPoint(_fireweapon->getAnchorPoint());
+  darts->setVisible(true);
+  getScene()->addChild(darts);*/
   MoveBy* moveby = MoveBy::create(1, 2*speed);
   RotateBy* rotateby = RotateBy::create(1.5f,1080);
   Action* action = Spawn::create(moveby, rotateby, NULL);
@@ -376,7 +427,7 @@ void RedBall::fire(Vec2 vec) {
   redBall->setSpriteFrame(
       DataSet::loadFrame(redBall_data["frame"].GetString(), kWeaponResolution));
   redBall->setVisible(true);
-  getScene()->getChildByName("map")->addChild(redBall);
+  getScene()->addChild(redBall);
   
   auto speed = _redBallSpeed;
   Vec2 _speed;
@@ -438,7 +489,7 @@ void Knife::fire(Vec2 offset) {
   auto space = GameScene::getRunningScene()->getPhysicsSpace();
   auto radius = _knifeRadius;
   knife->setVisible(true);
-  getScene()->getChildByName("map")->addChild(knife);
+  getScene()->addChild(knife);
   RotateBy* rotateby = RotateBy::create(0.3f, 360);
   knife->runAction(rotateby);
   auto filter = _owner->getBody().getFilter();
@@ -447,7 +498,7 @@ void Knife::fire(Vec2 offset) {
     auto targets = space->queryPointAll(knife->getPosition(), radius, filter);
     for (auto& target : targets) {
       //if (static_cast<Monster*>(target.sprite)) continue;
-      knife->stopAllActions();
+      //knife->stopAllActions();
       knife->unschedule("collistion_detect");
       getInteraction(target.sprite)->attack(knife, hurt);
     }
