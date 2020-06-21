@@ -5,6 +5,7 @@
 #include "constants.h"
 #include "Map.h"
 #include "Weapon.h"
+#include "Item.h"
 #include "GameScene.h"
 #include "constants.h"
 #include "DialogBox.h"
@@ -76,6 +77,25 @@ void Chest::touch(Hero* source) {
 }
 
 void Chest::endTouch(Hero* source) {
+  auto layer = getLayerForTileComponent(this);
+  layer->setTileGID(layer->getTileGIDAt(_position) - _tileOffset, _position);
+}
+
+ItemChest* ItemChest::load(const Vec2& position, const ValueMap& property,
+                   chipmunk::Body&& body) {
+  auto item_chest = create();
+  item_chest->_body = std::move(body);
+  item_chest->_position = position;
+  item_chest->_tileOffset = property.at("offset").asInt();
+  return item_chest;
+}
+
+void ItemChest::touch(Hero* source) {
+  auto layer = getLayerForTileComponent(this);
+  layer->setTileGID(layer->getTileGIDAt(_position) + _tileOffset, _position);
+}
+
+void ItemChest::endTouch(Hero* source) {
   auto layer = getLayerForTileComponent(this);
   layer->setTileGID(layer->getTileGIDAt(_position) - _tileOffset, _position);
 }
@@ -174,6 +194,41 @@ void Chest::dialog(Hero*) {
   getOwner()->getParent()->getParent()->addChild(weapon, kMapPriorityBackground);
 }
 
+DroppedItem* DroppedItem::create(Item* item) {
+  DroppedItem* dropped = create();
+  dropped->_body =
+      GameScene::getRunningScene()->getPhysicsSpace()->addBoxForTile(item);
+  setBodyTypeToItem(dropped->_body);
+  return dropped;
+}
+
+void DroppedItem::touch(Hero*) {
+  createDialog(getOwner(), getOwner()->getName());
+}
+
+void DroppedItem::endTouch(Hero*) { destroyDialog(getOwner()); }
+
+void DroppedItem::dialog(Hero* hero) {
+  Item* item = dynamic_cast<Item*>(getOwner());
+  item->Impact(hero);
+  item->setVisible(false);
+  item->removeComponent(this);
+  endInteracting(hero);
+  destroyDialog(item);
+}
+
+void ItemChest::dialog(Hero* hero) {
+  // 首先随便找一个道具
+  const auto& names = DataSet::getConfig()["item"].GetObject();
+  std::string name;
+  name = names.MemberBegin()[rand() % names.MemberCount()].name.GetString();
+  // 加载
+  Item* item = DataSet::loadItem(name);
+  // 放到地上
+  item->setPosition(getOwner()->getPosition() + Vec2(0, -kTileResolution));
+  item->addComponent(DroppedItem::create(item));
+  getOwner()->getParent()->getParent()->addChild(item, kMapPriorityBackground);
+}
 
 Teleport* Teleport::load(const Vec2& position, const ValueMap& property,
                          chipmunk::Body&& body) {

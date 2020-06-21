@@ -7,10 +7,12 @@
 #include "LevelManager.h"
 
 // 静止节点，会自动同步位置和缩放比例，保持相对窗口不动
+// Hero::update中每次都会调整位置。
 class StaticNode : public cocos2d::Node {
  public:
   CREATE_FUNC(StaticNode);
   const cocos2d::Size& getVisibleSize() const;
+
 
  protected:
   bool init() override;
@@ -49,4 +51,5 @@ class GameScene : public cocos2d::Scene {
   LevelManager _levelManager;
 
   void update(float);
+
 };

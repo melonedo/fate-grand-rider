@@ -6,6 +6,7 @@
 #include "Mob.h"
 #include "constants.h"
 class Weapon;
+class Item;
 
 // 英雄
 class Hero : public Mob {
@@ -16,6 +17,8 @@ class Hero : public Mob {
 
   // 拾取武器，返回旧武器
   Weapon* pickWeapon(Weapon*);
+  //
+  Item* pickItem(Item*);
   // 监听键盘和鼠标移动
   void registerUserInput();
 

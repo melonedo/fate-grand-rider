@@ -1,11 +1,12 @@
 #include "DataSet.h"
-#include "cocos2d.h"
-#include "json/document.h"
-#include "constants.h"
 #include "Hero.h"
 #include "Interaction.h"
+#include "Item.h"
 #include "Map.h"
 #include "Pause.h"
+#include "cocos2d.h"
+#include "constants.h"
+#include "json/document.h"
 using namespace cocos2d;
 
 DataSet* DataSet::getInstance() {
@@ -31,20 +32,22 @@ void DataSet::init() {
 const static std::unordered_map<
     std::string,
     std::function<Interaction*(const Vec2&, const ValueMap&, chipmunk::Body&&)>>
-    kInteractionSet{{"wall", NoInteraction::load}, {"hide", HideSpot::load},
-                    {"chest", Chest::load},        {"gate", Gate::load},
-                    {"target", Target::load},      {"item-chest", Chest::load},
-                    {"teleport", Teleport::load}};
+    kInteractionSet{
+        {"wall", NoInteraction::load}, {"hide", HideSpot::load},
+        {"chest", Chest::load},        {"gate", Gate::load},
+        {"target", Target::load},      {"item-chest", ItemChest::load},
+        {"teleport", Teleport::load}};
 
 Interaction* DataSet::loadInteraction(const std::string& interaction_name,
-                                       const Vec2& position,
-                                       const ValueMap& property,
-                                       chipmunk::Body&& body) {
+                                      const Vec2& position,
+                                      const ValueMap& property,
+                                      chipmunk::Body&& body) {
   auto create_func = kInteractionSet.at(interaction_name);
   return create_func(position, property, std::move(body));
 }
 
-TMXTiledMap* DataSet::loadMap(const std::string& map_dir, std::vector<Room>& rooms) {
+TMXTiledMap* DataSet::loadMap(const std::string& map_dir,
+                              std::vector<Room>& rooms) {
   auto map = TMXTiledMap::create(map_dir);
   rooms = std::move(processMap(map));
   return map;
@@ -55,7 +58,6 @@ const static std::unordered_map<std::string, std::function<Hero*()>> kHeroSet{
     {"sample-man", SampleHero::create}};
 
 Hero* DataSet::loadHero(const std::string& hero_name) {
-
   Hero* hero = kHeroSet.at(hero_name)();
   hero->setTag(kTagHero);
   return hero;
@@ -66,11 +68,11 @@ const static std::unordered_map<std::string, std::function<Monster*()>>
     kMonsterSet{{"sample-monster", SampleMonster::create},
                 {"knife-monster", KnifeMonster::create}};
 
-Monster* DataSet::loadMonster(const std::string& monster_name){
-    Monster* monster = kMonsterSet.at(monster_name)();
-    //monster->setTag(kTagMonster);
-    return monster;
- }
+Monster* DataSet::loadMonster(const std::string& monster_name) {
+  Monster* monster = kMonsterSet.at(monster_name)();
+  // monster->setTag(kTagMonster);
+  return monster;
+}
 
 SpriteFrame* DataSet::loadFrame(const std::string& frame_dir, int size) {
   auto frame = SpriteFrame::create(frame_dir, Rect(0, 0, size, size));
@@ -103,5 +105,19 @@ Weapon* DataSet::loadWeapon(const std::string& weapon_name) {
   const auto& weapon_data = getConfig()["weapon"][weapon_name.c_str()];
   auto res = kWeaponSet.at(weapon_data["type"].GetString())(weapon_name);
   res->setName(weapon_name);
+  return res;
+}
+
+
+//各种类的道具及其对应的构造函数
+const static std::unordered_map<std::string,
+                                std::function<Item*(const std::string&)>>
+    kItemSet{{"health-bottle", HealthBottle::create},
+             {"magic-bottle", MagicBottle::create}};
+
+Item* DataSet::loadItem(const std::string& item_name) {
+  const auto& item_data = getConfig()["item"][item_name.c_str()];
+  auto res = kItemSet.at(item_data["type"].GetString())(item_name);
+  res->setName(item_name);
   return res;
 }

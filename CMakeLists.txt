@@ -74,19 +74,19 @@ list(APPEND GAME_SOURCE
      Classes/Mob.cpp
      Classes/Weapon.cpp
      Classes/Interaction.cpp
-	Classes/Music.cpp
-	Classes/Pause.cpp
+     Classes/Music.cpp
+     Classes/Pause.cpp
      Classes/Map.cpp
      Classes/PauseScene.cpp
      Classes/PauseGame.cpp
      Classes/Monster.cpp
      Classes/MonsterManager.cpp
      Classes/FlowWord.cpp
-	Classes/UI.cpp
-
+     Classes/UI.cpp
      Classes/DialogBox.cpp
      Classes/Endgame.cpp
      Classes/LevelManager.cpp
+     Classes/Item.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -100,18 +100,19 @@ list(APPEND GAME_HEADER
      Classes/Physics.h
      Classes/Weapon.h
      Classes/Interaction.h
-	Classes/Music.h
-	Classes/Pause.h
+     Classes/Music.h
+     Classes/Pause.h
      Classes/Map.h
      Classes/PauseScene.h
      Classes/PauseGame.h
      Classes/Monster.h
      Classes/MonsterManager.h
      Classes/FlowWord.h
-	Classes/UI.h
+     Classes/UI.h
      Classes/DialogBox.h
      Classes/Endgame.h
      Classes/LevelManager.h
+     Classes/Item.h
      )
 
 if(ANDROID)

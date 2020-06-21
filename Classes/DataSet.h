@@ -39,6 +39,9 @@ class DataSet {
   // 根据武器的名字创建对应的武器。
   static Weapon* loadWeapon(const std::string& weapon_name);
 
+  //根据道具名字创建对应的道具
+  static Item* loadItem(const std::string& item_name);
+
   // 根据互动的名字创建对应的互动。
   static Interaction* loadInteraction(const std::string& interaction_name,
                                        const cocos2d::Vec2& position,
