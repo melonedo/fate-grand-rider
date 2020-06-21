@@ -194,8 +194,6 @@ void Chest::dialog(Hero*) {
   GameScene::getRunningScene()->addChild(weapon, kMapPriorityBackground);
 }
 
-
-//
 DroppedItem* DroppedItem::create(Item* item) {
   DroppedItem* dropped = create();
   dropped->_body =
@@ -212,7 +210,7 @@ void DroppedItem::endTouch(Hero*) { destroyDialog(getOwner()); }
 
 void DroppedItem::dialog(Hero* hero) {
   Item* item = dynamic_cast<Item*>(getOwner());
-  item->Impact();
+  item->Impact(hero);
   item->setVisible(false);
   item->removeComponent(this);
   endInteracting(hero);
@@ -220,20 +218,18 @@ void DroppedItem::dialog(Hero* hero) {
 }
 
 void ItemChest::dialog(Hero* hero) {
-  // 首先随便找一个武器
+  // 首先随便找一个道具
   const auto& names = DataSet::getConfig()["item"].GetObject();
   std::string name;
   name = names.MemberBegin()[rand() % names.MemberCount()].name.GetString();
   // 加载
   Item* item = DataSet::loadItem(name);
-  item->setOwner(hero);
   // 放到地上
   item->setPosition(getOwner()->getPosition() + Vec2(0, -kTileResolution));
   item->addComponent(DroppedItem::create(item));
   getOwner()->getParent()->getParent()->addChild(item, kMapPriorityBackground);
 }
 
-//
 Teleport* Teleport::load(const Vec2& position, const ValueMap& property,
                          chipmunk::Body&& body) {
   

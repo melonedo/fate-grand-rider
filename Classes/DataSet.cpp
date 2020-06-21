@@ -105,8 +105,8 @@ Weapon* DataSet::loadWeapon(const std::string& weapon_name) {
   return res;
 }
 
-//
 
+//各种类的道具及其对应的构造函数
 const static std::unordered_map<std::string,
                                 std::function<Item*(const std::string&)>>
     kItemSet{{"health-bottle", HealthBottle::create},

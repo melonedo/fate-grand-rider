@@ -18,8 +18,7 @@ HealthBottle* HealthBottle::create(const std::string& name) {
   return ret;
 }
 
-void HealthBottle::Impact() {
-  auto hero = static_cast<Hero*>(_owner);
+void HealthBottle::Impact(Hero* hero) {
   const auto& data =
       DataSet::getConfig()["item"]["health-bottle"]["health-point"];
   float healthpoint = data.GetFloat() + hero->getHp();
@@ -45,8 +44,7 @@ MagicBottle* MagicBottle::create(const std::string& name) {
   return ret;
 }
 
-void MagicBottle::Impact() {
-  auto hero = static_cast<Hero*>(_owner);
+void MagicBottle::Impact(Hero* hero) {
   const auto& data =
       DataSet::getConfig()["item"]["magic-bottle"]["magic-point"];
   float magicpoint = data.GetFloat() + hero->getMp();

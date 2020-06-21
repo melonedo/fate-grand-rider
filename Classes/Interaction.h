@@ -93,6 +93,7 @@ class Chest : public Interaction {
   cocos2d::Vec2 _position;
 };
 
+//道具宝箱
 class ItemChest : public Interaction {
  public:
   static ItemChest* load(const cocos2d::Vec2& position,
@@ -100,7 +101,7 @@ class ItemChest : public Interaction {
 
   void touch(Hero*) override;
   void endTouch(Hero*) override;
-  // 放一个武器在地上
+  // 放一个道具在地上
   void dialog(Hero*) override;
 
  private:
