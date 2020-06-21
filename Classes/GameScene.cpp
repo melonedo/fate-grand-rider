@@ -158,6 +158,7 @@ void addUI(StaticNode* node) {
   weaponbg->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
   weaponbg->setPosition(node->getVisibleSize().width - 50, 50);
   weaponbg->setGlobalZOrder(kMapPriorityUI);
+  weaponbg->setVisible(false);
   node->addChild(weaponbg);
 }
 
