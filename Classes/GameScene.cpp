@@ -23,8 +23,9 @@ bool GameScene::init() {
   runningGameScene = this;
 
   //暂停
-  auto m_pause = PauseGame::create();
-  this->addChild(m_pause);
+  auto pause = PauseGame::create();
+  this->addChild(pause);
+
   const auto& config = DataSet::getConfig();
 
   // 缩放
@@ -165,6 +166,7 @@ void addUI(StaticNode* node) {
   magicbar->setPosition(125, node->getVisibleSize().height - 70);
   magicbar->setBackgroundTexture(data["bar"].GetString());
   magicbar->setForegroundTexture(data["magic-progress"].GetString());
+
   magicbar->setTotalProgress(hero->getTotalMp());
   magicbar->setCurrentProgress(hero->getMp());
   setChildrenGlobalZOrder(magicbar, kUserInterfaceBars + 1);

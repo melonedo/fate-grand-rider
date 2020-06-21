@@ -62,8 +62,9 @@ Hero* DataSet::loadHero(const std::string& hero_name) {
 }
 
 //各怪物的名字和对应的构造函数
-const static std::unordered_map<std::string, std::function<Monster* ()>> kMonsterSet{
-    {"sample-monster", SampleMonster::create} };
+const static std::unordered_map<std::string, std::function<Monster*()>>
+    kMonsterSet{{"sample-monster", SampleMonster::create},
+                {"knife-monster", KnifeMonster::create}};
 
 Monster* DataSet::loadMonster(const std::string& monster_name){
     Monster* monster = kMonsterSet.at(monster_name)();
@@ -94,7 +95,9 @@ const static std::unordered_map<std::string,
                {"bow", Bow::createweapon},
                {"darts", Darts::createweapon},
                {"spear", Spear::createweapon},
-               {"blinkbow", BlinkBow::createweapon}};
+               {"blinkbow", BlinkBow::createweapon},
+               {"redball", RedBall::create},
+               {"knife", Knife::create}};
 
 Weapon* DataSet::loadWeapon(const std::string& weapon_name) {
   const auto& weapon_data = getConfig()["weapon"][weapon_name.c_str()];

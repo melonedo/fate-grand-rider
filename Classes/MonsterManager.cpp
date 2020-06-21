@@ -11,6 +11,8 @@ bool MonsterManager::init() {
   this->scheduleUpdate();
   this->schedule(SEL_SCHEDULE(&MonsterManager::updateMonsters), 1.0f);
   _monsterManager = this;
+  _monsterMap[1] = "sample-monster";
+  _monsterMap[2] = "knife-monster";
   return true;
 }
 
@@ -18,7 +20,11 @@ void MonsterManager::createMonsters(const Rect rect) {
   const auto& config = DataSet::getConfig();
   const auto& debug_set = config["debug-set"].GetObject();
   for (int i = 0; i < MAX_MONSTER_NUM; i++) {
-    auto monster = DataSet::loadMonster(debug_set["monster"].GetString());
+    Monster* monster;
+    if (i % 2) {
+      monster = DataSet::loadMonster(_monsterMap[2]);
+    }else
+      monster = DataSet::loadMonster(_monsterMap[1]);
     this->addChild(monster, kMapPrioritySprite);
     monster->reset(rect);
     monster->show();
@@ -33,21 +39,21 @@ void MonsterManager::createMonsters(const Rect rect) {
                                    filter)) {
         Size visibleSize = Director::getInstance()->getVisibleSize();
         static std::default_random_engine e(time(0));
-        static std::uniform_int_distribution<unsigned> v(0, 10);
+        static std::uniform_int_distribution<unsigned> v(0, 20);
         int Z = v(e);
         if (Z == 0) {
           monster->_speed.x = 0;
           monster->_speed.y = 0;
         } else {
           auto position = monster->getPosition();
-          if (!rect.containsPoint(Vec2(position.x+15,position.y))) {
+          if (!rect.containsPoint(Vec2(position.x+30,position.y))) {
             monster->_speed.x = -monster->_speed.x;
-          } else if (!rect.containsPoint(Vec2(position.x - 15, position.y))) {
+          } else if (!rect.containsPoint(Vec2(position.x - 30, position.y))) {
             monster->_speed.x = -monster->_speed.x;
           }
-          if (!rect.containsPoint(Vec2(position.x, position.y+15))) {
+          if (!rect.containsPoint(Vec2(position.x, position.y+30))) {
             monster->_speed.y = -monster->_speed.y;
-          } else if (!rect.containsPoint(Vec2(position.x, position.y - 15))) {
+          } else if (!rect.containsPoint(Vec2(position.x, position.y - 30))) {
             monster->_speed.y = -monster->_speed.y;
           }
          /* monster->_speed.x = -monster->_speed.x;

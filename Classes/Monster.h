@@ -17,7 +17,6 @@ class Monster : public Mob {
   // 初始化
   bool init() override;
   virtual void update(float dt);
-  virtual void fire(cocos2d::Vec2)=0;
   //可视范围
   int _visibleRange = 100;
   //攻击范围
@@ -30,8 +29,9 @@ class Monster : public Mob {
   void loadAnimation();
   //获取怪物名字
   virtual const char* getMonsterName() const = 0;
-  //每隔一秒重置isAttack
-  void updateMonster(float delta);
+  //每隔x秒重置isAttack
+   void updateMonster(float delta);
+   int _updateAttackTime;
     //拾取武器
   void pickWeapon(Weapon*);
   //武器
@@ -76,6 +76,11 @@ class SampleMonster : public Monster {
   bool init() override;
   CREATE_FUNC(SampleMonster);
   const char* getMonsterName() const override { return "sample-monster"; }
- protected:
-  void fire(cocos2d::Vec2) override;
+};
+
+class KnifeMonster : public Monster {
+ public:
+  bool init() override;
+  CREATE_FUNC(KnifeMonster);
+  const char* getMonsterName() const override { return "knife-monster"; }
 };

@@ -12,12 +12,19 @@ bool Monster::init() {
   _isAlive = false;
   _speed.x = _speed.y = 0;
   loadAnimation();
-  _hp = DataSet::getConfig()["monsters"][getMonsterName()]["hp"].GetInt();
-  const auto& hand_data =
-      DataSet::getConfig()["monsters"][getMonsterName()]["hand-pos"];
+  const auto& data = DataSet::getConfig()["monsters"][getMonsterName()];
+  _hp = data["hp"].GetInt();
+  const auto& hand_data = data["hand-pos"];
   _handPos = Vec2(hand_data[0].GetFloat(), hand_data[1].GetFloat());
+
+  _visibleRange = data["visible-size"].GetInt();
+  _attackRange = data["attack-size"].GetInt();
+  _hp = data["hp"].GetInt();
+  //武器
+  this->pickWeapon(DataSet::loadWeapon(data["weapon"].GetString ()));
   this->scheduleUpdate();
-  this->schedule(SEL_SCHEDULE(&Monster::updateMonster), 1.0f);
+  _updateAttackTime = data["updateattacktime"].GetFloat();
+  this->schedule(SEL_SCHEDULE(&Monster::updateMonster), _updateAttackTime);
   addComponent(MonsterInteraction::create());
   return true;
 }
@@ -73,7 +80,7 @@ void Monster::judgeAttack(Hero* hero) {
   if (this->_isAttack) return;
   int x = rand() % 100;
   if (x < 30) {
-    this->fire(Vec2(hero->getPosition().x, hero->getPosition().y));
+    this->_weapon->fire(Vec2(hero->getPosition().x, hero->getPosition().y));
     this->_isAttack = true;
   }
 }
@@ -99,6 +106,7 @@ void Monster::pickWeapon(Weapon* weapon) {
 void Monster::updateMonster(float delta) { this->_isAttack = false; }
 
 void Monster::MonsterInteraction::attack(Sprite* source, float hit) {
+//  if (!dynamic_cast<Hero *>(source->getParent ())) return;
   auto target = dynamic_cast<Monster*>(getOwner());
   if (!target->isAlive()) return;
   FlowWord* flowWord = FlowWord::create();
@@ -120,6 +128,7 @@ void Monster::die() {
   this->_isAlive = false;
   setColor(Color3B::GRAY);
   auto backeRodate = RotateBy::create(0.1f, -10, 0);
+  _body.clear();
   this->runAction(backeRodate);
   this->stopAllActions();
   this->unscheduleAllCallbacks();
@@ -136,39 +145,10 @@ int Monster::getHp() { return this->_hp; }
 
 bool SampleMonster::init() {
   if (!Monster::init()) return false;
-  const auto& data = DataSet::getConfig()["monsters"][getMonsterName()];
-  _visibleRange = data["visible-size"].GetInt();
-  _attackRange = data["attack-size"].GetInt();
-  _hp = data["hp"].GetInt();
-  _weapon = NULL;
   return true;
 }
 
-void SampleMonster::fire(cocos2d::Vec2 vec) {
-  const auto& data = DataSet::getConfig()["monsters"][getMonsterName()];
-  Sprite* ball = Sprite::create(data["ball"].GetString());
-  ball->setPosition(this->getPosition());
-  getScene()->addChild(ball);
-  ball->setVisible(true);
-  auto speed = data["speed"].GetInt();
-  Vec2 _speed;
-  auto X = vec.x - this->getPosition().x;
-  auto Y = vec.y - this->getPosition().y;
-  _speed.x = speed * X / sqrt(X * X + Y * Y);
-  _speed.y = speed * Y / sqrt(X * X + Y * Y);
-  ball->runAction(RepeatForever::create(MoveBy::create(1.0f, _speed)));
-  auto hurt = data["hurt"].GetInt();
-  auto space = GameScene::getRunningScene()->getPhysicsSpace();
-  auto filter = this->getBody().getFilter();
-  auto collision_detect = [ball, space, filter, hurt, _speed](float) {
-    if (auto target = space->querySegmentFirst(
-            ball->getPosition(), ball->getPosition() + _speed, filter)) {
-      ball->setVisible(false);
-      ball->stopAllActions();
-      ball->unscheduleAllCallbacks();
-      getInteraction(target)->attack(ball, hurt);
-      ball->removeFromParent();
-    }
-  };
-  ball->schedule(collision_detect, 0,  "collistion_detect");
+bool KnifeMonster::init() {
+  if (!Monster::init()) return false;
+  return true;
 }
