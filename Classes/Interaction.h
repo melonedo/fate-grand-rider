@@ -4,7 +4,8 @@
 class Hero;
 class Room;
 
-// 所有物品间的互动都通过Interaction来实现。交互时，先找到名为"interaction"的组件，然后调用对应的函数。
+// 所有物品间的互动都通过Interaction来实现。交互时，先用getInteraction找到名为"interaction"的组件，
+// 然后调用对应的接口函数。
 class Interaction : public cocos2d::Component {
  public:
   // 几个事件不需要全部实现，如果不响应对应的事件就直接留空即可。
@@ -16,6 +17,15 @@ class Interaction : public cocos2d::Component {
   virtual void endTouch(Hero* source) {}
   // 靠近并空格时触发
   virtual void dialog(Hero* source) {}
+  // 攻击时触发，适用于会被破坏的建筑和生物。source应该是Weapon*，这里暂时不强制要求。
+  virtual void attack(cocos2d::Sprite* source, float damage) {}
+
+  // 从地图中加载的互动对应的工厂函数都应为以下形式
+  //（其中position为格子的位置，property为该格子对应的属性列表，body是对应的刚体，有需要可以调用）
+  // static Interaction* load(const cocos2d::Vec2& position,
+  //                          const cocos2d::ValueMap& property
+  //                          chipmunk::Body&& body);
+  // 从地图中加载出来后，与房间想关联需要以下方法：
   // 连接到对应的房间,通常只有门需要实现
   virtual void linkRoom(Room**) {}
   // 进入房间时调用
@@ -23,22 +33,19 @@ class Interaction : public cocos2d::Component {
   // 离开房间（结束关卡）时调用
   virtual void leaveRoom(Room*) {}
 
-  // 从地图中加载的互动对应的工厂函数都应为以下形式
-  //（其中position为格子的位置，property为该格子对应的属性列表，body是对应的刚体，有需要可以调用）
-  // static Interaction* load(const cocos2d::Vec2& position,
-  //                          const cocos2d::ValueMap& property
-  //                          chipmunk::Body&& body);
 
-  // 攻击时触发，适用于会被破坏的建筑和生物。
-  virtual void attack(cocos2d::Sprite* source, float damage) {}
-
-  // 强制结束互动，防止出现dangling pointer
+  // 强制结束互动，防止出现dangling pointer。注意删除互动的时候一定要调用这个函数，否则立刻报错。
   void endInteracting(Hero*);
+
  protected:
   bool init() override;
 };
+// 关于析构，需要注意：
+// 1.英雄可能会有残存的指针，需要析构Interaction的方法必须手动调用 endInteracting清除。
+// 2.touch中有局部变量指向当前的互动，不能立即析构当前互动，可以把对应的函数用scheduleOnce包装。
 
-// 获取对应的互动组件
+// 获取对应的互动组件。
+// cocos2d-x引擎中，根本没有组件的对象连组件容器都是空指针，直接就空指针报错了，无法检查。
 inline Interaction* getInteraction(cocos2d::Node* node) {
   return dynamic_cast<Interaction*>(node->getComponent("interaction"));
 }
@@ -134,6 +141,8 @@ class DroppedWeapon : public Interaction {
  public:
   // 展示武器名
   void touch(Hero*) override;
+  // 关掉对话框
+  void endTouch(Hero*) override;
   // 捡起武器
   void dialog(Hero*) override;
   // 生成对应于地上的武器所需的交互。
@@ -142,5 +151,18 @@ class DroppedWeapon : public Interaction {
  private:
   CREATE_FUNC(DroppedWeapon);
 
+  chipmunk::Body _body;
+};
+
+// 传送门
+class Teleport : public Interaction {
+ public:
+  static Teleport* load(const cocos2d::Vec2& position,
+                    const cocos2d::ValueMap& property, chipmunk::Body&&);
+  void onAdd() override;
+  void touch(Hero*) override;
+  CREATE_FUNC(Teleport);
+
+ private:
   chipmunk::Body _body;
 };

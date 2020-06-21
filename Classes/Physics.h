@@ -84,10 +84,11 @@ class Space : public std::enable_shared_from_this<Space> {
 
  private:
   cpSpace* _space;
-  // 往Sprite里面注入有关的管理代码不太现实，所以在外部进行管理。
+  // 空间主动管理的刚体列表
   std::vector<Body> _bodies;
-  // 或许可以用Component管理?
+  // 现在这里已经没有东西了，所有的刚体都在Interaction或者Mob里面管理。
 
+  // 组的计数，用来给每个刚体分配一个单独的组。
   mutable int _groupCount;
 };
 
@@ -134,6 +135,8 @@ class Body {
   cpBody* _body;
   cpShape* _shape;
   std::shared_ptr<Space> _space;
+  // 由于chipmunk引擎中cpSpace在销毁的时候会遍历地解除所有的变量与空间的联系，必须保证空间在
+  // 所有的刚体之后销毁，用shared_ptr保证。
 };
 
 // 为地图中的瓦片生成对应碰撞箱。

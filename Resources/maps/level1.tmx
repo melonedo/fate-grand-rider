@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="2020.05.27" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="7">
+ <properties>
+  <property name="bg-layers" value="bg invisible building-bg"/>
+  <property name="fg-layers" value="fg building-fg"/>
+ </properties>
+ <tileset firstgid="1" source="walls.tsx"/>
+ <tileset firstgid="257" source="buildings.tsx"/>
+ <objectgroup id="4" name="obj" locked="1">
+  <object id="1" name="spawn" x="169.333" y="640.333">
+   <point/>
+  </object>
+ </objectgroup>
+ <layer id="5" name="invisible" width="60" height="60" locked="1">
+  <data encoding="base64" compression="zlib">
+   eJzt19ENgzAMRVG2YadOU4kVGLj0n8g2MSYv3CPxF8VcaEEsCwAAAADgitV5jMzb4G1R6PWu8/ZmXr9sd/Vmzs5Eb3sdvdfXnc2u+L8/3RvpUe+NquyN7KfWuyXse4cR72/LcQ2/vXso9WZQ753h+dwz+w3v32r0ttfN0pv9vT9yb8QM3/sR3l4Vmb9nhfv6P49Pwj67Y84Iqs6D3mfQqz3HQq/2HAu92nMs9GrPsdCrPcdCr/YcC73acyz0as+xvLG36gDQ5wfVoijZ
+  </data>
+ </layer>
+ <layer id="3" name="bg" width="60" height="60" locked="1">
+  <data encoding="base64" compression="zlib">
+   eJzt1NEJwyAQgGHbbNCu0CwgdLIs4Oj1pRAkelqr3Mn/w0EeTMgXkzhHREREREREv/YQZrUOYSwk7dl531bwSoajYe23+IyCNKNduUZ443GQZrQrlxbvLc69MJtx7yvx7K78HTyNe69MpWvP9Po4736vS46bZqa3duIzCT6/p13X1ugV3uF03ererv3Ga8vbei8zvQ1ru7wz+qf3tA4vXvXhvfau0mpeL4zklc738yhV1fy7ekdTePHixYsXr4bw4sWLFy9eDeHFixevFS8R2egDdzsm/A==
+  </data>
+ </layer>
+ <layer id="7" name="building-bg" width="60" height="60" locked="1">
+  <data encoding="base64" compression="zlib">
+   eJzt0ckNACAIBEBsyWKplxJMfGgCMxXsEQEAAAAAMNNevxO8deqbzfbwb2/T+gIAAAAAAADAjQJxhQGX
+  </data>
+ </layer>
+ <layer id="6" name="building-fg" width="60" height="60" locked="1">
+  <data encoding="base64" compression="zlib">
+   eJzt1bERgCAQRUFsyaYswfK0IIvQxJxhBhX/bnwB74KjFAAAAAAAvmie3n7Bs2p6/7QTvW0zo0jrrZHWC0AfS9h/sob13rare29sP0J3BozP/QIAAAB6OQFRPQY6
+  </data>
+ </layer>
+ <layer id="2" name="fg" width="60" height="60" locked="1">
+  <data encoding="base64" compression="zlib">
+   eJztmlsOgjAQRaviAgy4AB4uANxgl+70w4QQhQt0mKbck9wfM6E905TUqnOEEEIIIYQQEoeL5LqQm9ns4vMAakr1WewDWbPvuuXgW4N1wQPxlRovvfFXINJrv33m29DwLUGPmr7q0Pc3Gr4WoL6d5AXU5eKLIj3x3Yl8U4e+x1G448/flr6VZJgkvBf/nWljgPqGtbhHGnM0tp9+NvUf5x1nTIiwFk+gTnriiwzOG63DzhvSE18l7tsAQX3DeaNN2Ld383tmvHfW+DZALHzXgPpKb/wApM/EV3sesQh3O3N7GPm+0C08IySVOz1k/WLQHjTOEvTVgb420FcH+tpAXx3oawN9daCvDfTVgb420FcH+toQfJH/Ju1NKr7oXfTexPgdiBByLj6V8TtD
+  </data>
+ </layer>
+</map>
