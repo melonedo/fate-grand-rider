@@ -8,14 +8,14 @@
   "debug-set": {
     "maps": ["maps/level2.tmx"],
     "hero": "sample-man",
-    "weapon": "金闪闪",
+    "weapon": "single-bow",
     "monster": "sample-monster"
   },
   "start-set": {
     "maps": ["maps/safe-room.tmx", "maps/level1.tmx", "maps/level2.tmx"],
     "hero": "sample-man",
-    "weapon": "redball"
-  },
+    "weapon": "basic-bow"
+   },
   "heroes": {
     "sample-man": {
       "stand": {
