@@ -497,7 +497,7 @@ void Knife::fire(Vec2 offset) {
     knife->setPosition(this->_owner->getPosition());
     auto targets = space->queryPointAll(knife->getPosition(), radius, filter);
     for (auto& target : targets) {
-      //if (static_cast<Monster*>(target.sprite)) continue;
+      if (dynamic_cast<Monster*>(target.sprite)) continue;
       //knife->stopAllActions();
       knife->unschedule("collistion_detect");
       getInteraction(target.sprite)->attack(knife, hurt);
