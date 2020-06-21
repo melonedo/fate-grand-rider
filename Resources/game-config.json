@@ -145,12 +145,12 @@
   "item": {
     "health-bottle": {
       "type": "health-bottle",
-      "frame": "小红瓶.png",
+      "frame": "P_Red02.png",
       "health-point": 3
     },
       "magic-bottle": {
         "type": "magic-bottle",
-        "frame": "小蓝瓶.png",
+        "frame": "P_Blue02.png",
         "magic-point": 50
       }
     },
