@@ -110,12 +110,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     if (DataSet::getConfig()["skip-starting-scene"].GetBool()) {
       scene = GameScene::create();
     } else {
-      scene = HomeScene::create(
-          [director] { director->replaceScene(GameScene::create()); },[] {
-            log("settings");
-          }
-       // ,[director] { director->replaceScene(Pause::createScene()); }
-      );
+      scene = HomeScene::createScene();
     }
 
     Music music;

@@ -29,7 +29,8 @@ void PauseGame::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event) {
 void PauseGame::capture(Ref* sender)
 {
 	CCLOG("ScreenShot");
-	utils::captureScreen(CC_CALLBACK_2(PauseGame::afterCapture, this), "D:/fate-grand-rider/Resources/ScreenShot.png");
+  auto path = FileUtils::getInstance()->getDefaultResourceRootPath();
+	utils::captureScreen(CC_CALLBACK_2(PauseGame::afterCapture, this), path + "ScreenShot.png");
 }
 
 //截图后执行afterCapture

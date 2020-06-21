@@ -7,6 +7,7 @@
 #include "Weapon.h"
 #include "GameScene.h"
 #include "constants.h"
+#include "DialogBox.h"
 using namespace cocos2d;
 
 // 获取对应的图层用来动态调整GID
@@ -29,7 +30,11 @@ bool Interaction::init() {
   }
 }
 
-void Interaction::endInteracting(Hero* hero) { hero->_interacting = nullptr; }
+void Interaction::endInteracting(Hero* hero) {
+  if (hero->_interacting == this) {
+    hero->_interacting = nullptr;
+  }
+}
 
 HideSpot* HideSpot::load(const cocos2d::Vec2&, const cocos2d::ValueMap&,
                          chipmunk::Body&& body) {
@@ -142,13 +147,18 @@ DroppedWeapon* DroppedWeapon::create(Weapon* weapon) {
   return dropped;
 }
 
-void DroppedWeapon::touch(Hero*) { log("%s", getOwner()->getName().c_str()); }
+void DroppedWeapon::touch(Hero*) {
+  createDialog(getOwner(), getOwner()->getName());
+}
+
+void DroppedWeapon::endTouch(Hero*) { destroyDialog(getOwner()); }
 
 void DroppedWeapon::dialog(Hero* hero) {
   Weapon* weapon = dynamic_cast<Weapon*>(getOwner());
   hero->pickWeapon(weapon);
   weapon->removeComponent(this);
   endInteracting(hero);
+  destroyDialog(weapon);
 }
 
 void Chest::dialog(Hero*) {
@@ -162,4 +172,31 @@ void Chest::dialog(Hero*) {
   weapon->setPosition(getOwner()->getPosition() + Vec2(0, -kTileResolution));
   weapon->addComponent(DroppedWeapon::create(weapon));
   GameScene::getRunningScene()->addChild(weapon, kMapPriorityBackground);
+}
+
+
+Teleport* Teleport::load(const Vec2& position, const ValueMap& property,
+                         chipmunk::Body&& body) {
+  
+  Teleport* teleport = create();
+  teleport->_body = std::move(body);
+  return teleport;
+}
+
+void Teleport::onAdd() {
+  // 加载图片
+  auto teleport = Sprite::create("teleport.png");
+  teleport->setPosition(getOwner()->getPosition() +
+                        getOwner()->getBoundingBox().size / 2);
+  teleport->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+  getOwner()->getParent()->getParent()->addChild(teleport);
+}
+
+void Teleport::touch(Hero* hero) {
+  GameScene::getRunningScene()->scheduleOnce(
+      [this, hero] (float) {
+        this->endInteracting(hero);
+        GameScene::getRunningScene()->nextLevel();
+      },
+      0, "next-level");
 }

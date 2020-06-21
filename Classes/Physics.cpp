@@ -46,7 +46,7 @@ Body Space::addBoxForTile(Sprite* tile, cpShapeFilter filter) {
   // 存储指针到shape
   cpShapeSetUserData(body.getShape(), tile);
   // 设置筛选器
-  if (filter.group == 0) filter.group = _groupCount++;
+  if (filter.group == 0) filter.group = ++_groupCount;
   cpShapeSetFilter(body.getShape(), filter);
   addBody(&body);
 
@@ -71,7 +71,7 @@ void Space::addCircleForMob(Mob* mob, cpShapeFilter filter) {
   // 存储指针在shape里
   cpShapeSetUserData(mob->_body.getShape(), mob);
   // 设置筛选器
-  if (filter.group == 0) filter.group = _groupCount++;
+  if (filter.group == 0) filter.group = ++_groupCount;
   cpShapeSetFilter(mob->_body.getShape(), filter);
   addBody(&mob->_body);
 
