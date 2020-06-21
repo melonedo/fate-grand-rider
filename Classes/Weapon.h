@@ -15,20 +15,26 @@ class Weapon : public cocos2d::Sprite {
   void setOwner(Mob* owner) { _owner = owner; }
   // 设置为掉落物
   void drop();
+  //加载武器
   void load(const std::string& name, Weapon* weaponLoading,
                     const rapidjson::Value& data,
                     const rapidjson::Value& weapon_data);
+  //加载弹药类武器（箭，飞镖，魔法阵）
   void loadfire(Weapon* weaponLoading,
                         const rapidjson::Value& weapon_data);
+ //开火前的准备
   void preparefire(Sprite* weapon, Vec2 offset);
+  //伤害
   float _hurt;
+  //武器角度
   float _weaponAngleOffset;
+  //弹药类武器
   AutoRef<Sprite> _fireweapon;
-    using Sprite::init;
+
+ using Sprite::init;
+
  protected:
-
   Mob* _owner;
-
 };
 
 // 弓
@@ -39,17 +45,11 @@ class Bow : public Weapon {
   void pointTo(cocos2d::Vec2) override;
   void fire(cocos2d::Vec2) override;
   Bow() = default;
-  // 弓图片的角度
- /* float _hurt;
-  float _bowAngleOffset;*/
   int _angleConstant;
+  //箭的支数
   int _bowNumber;
-  // 箭
-  //AutoRef<Sprite> _arrow;
- 
   // 箭的速度
   float _arrowSpeed;
-
 };
 
 class BlinkBow : public Bow {
@@ -60,13 +60,9 @@ class BlinkBow : public Bow {
 
  protected:
   BlinkBow() = default;
-  // 弓图片的角度
-  /*float _hurt;
-  float _bowAngleOffset;*/
   int _angleConstant;
   int _bowNumber;
-  // 箭
-  //AutoRef<Sprite> _arrow;
+  //爆炸时箭的特效
   AutoRef<Sprite> _arrow2;
   // 箭的速度
   float _arrowSpeed;
@@ -82,7 +78,6 @@ class Spear : public Weapon {
 
  protected:
   Spear() = default;
-  //float _hurt;
   // 矛图片的角度
   float _spearAngleOffset;
   // 矛刺出的速度
@@ -99,8 +94,6 @@ class Magic : public Weapon {
 
  protected:
   Magic() = default;
-  //float _hurt;
-  //AutoRef<Sprite> _magicSquare;
   friend Hero;
 };
 
@@ -111,11 +104,9 @@ class Darts : public Weapon {
   static Darts* createweapon(const std::string& name);
   void pointTo(cocos2d::Vec2) override;
   void fire(cocos2d::Vec2) override;
-  //AutoRef<Sprite> _dart;
 
  protected:
   Darts() = default;
-  //float _hurt;
   // 飞镖速度
   float _dartSpeed;
 };
