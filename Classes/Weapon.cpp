@@ -30,7 +30,7 @@ void Weapon::preparefire(Sprite* weapon, Vec2 offset) {
   weapon->setAnchorPoint(_fireweapon->getAnchorPoint());
 
   weapon->setVisible(true);
-  getScene()->addChild(weapon);
+  getScene()->getChildByName("map")->addChild(weapon);
 }
 
 
@@ -81,7 +81,7 @@ void BlinkBow::fire(Vec2 offset) {
   arrows2->setRotation(-offset.getAngle() * 180 / M_PI +
                        _arrow2->getRotation());
   arrows2->setVisible(false);
-  getScene()->addChild(arrows2);
+  getScene()->getChildByName("map")->addChild(arrows2);
 
   arrows = Sprite::create();
   arrows->setPosition((_owner->getPosition()));
@@ -376,7 +376,7 @@ void RedBall::fire(Vec2 vec) {
   redBall->setSpriteFrame(
       DataSet::loadFrame(redBall_data["frame"].GetString(), kWeaponResolution));
   redBall->setVisible(true);
-  getScene()->addChild(redBall);
+  getScene()->getChildByName("map")->addChild(redBall);
   
   auto speed = _redBallSpeed;
   Vec2 _speed;
@@ -438,7 +438,7 @@ void Knife::fire(Vec2 offset) {
   auto space = GameScene::getRunningScene()->getPhysicsSpace();
   auto radius = _knifeRadius;
   knife->setVisible(true);
-  getScene()->addChild(knife);
+  getScene()->getChildByName("map")->addChild(knife);
   RotateBy* rotateby = RotateBy::create(0.3f, 360);
   knife->runAction(rotateby);
   auto filter = _owner->getBody().getFilter();
