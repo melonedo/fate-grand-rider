@@ -5,16 +5,19 @@
 
 // Pause场景实现
 Scene* Pause::createScene(Sprite *sp) {
-  	Pause* myscene = Pause::create();
+  Pause* myscene = Pause::create();
   auto visibleSize = Director::getInstance()->getVisibleSize();
-  Sprite* _sp = sp;
+  if (sp != nullptr) {
+    Sprite* _sp = sp;
     _sp->setPosition(
-      Point(visibleSize.width / 2, visibleSize.height / 2));  //中心位置
+        Point(visibleSize.width / 2, visibleSize.height / 2));  //中心位置
 
-  _sp->setColor(Color3B::GRAY);//颜色改为灰色
-  myscene->addChild(_sp,0);
+    _sp->setColor(Color3B::GRAY);  //颜色改为灰色
+    myscene->addChild(_sp, 0);
     _sp->setGlobalZOrder(0);
-  return myscene; }
+  }
+    return myscene;
+}
 
 int Pause::_audioID = AudioEngine::INVALID_AUDIO_ID;
 bool Pause::_loopEnabled =
