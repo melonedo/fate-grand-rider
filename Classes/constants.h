@@ -17,7 +17,7 @@ enum MapPriority {
 };
 
 const static int kTileResolution = 16, kWeaponResolution = 34,
-                 kItemResolution = 40;
+                 kItemResolution = 34;
 static int kSpriteResolution = 32;
 
 enum AnimationTag{ 
