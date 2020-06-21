@@ -7,8 +7,7 @@ USING_NS_CC;
 using namespace cocos2d;
 
 bool Monster::init() {
-  if (!Mob::init()) return false;
-  srand((UINT)GetCurrentTime());
+  if (!Mob::init(kShapeMaskMob)) return false;
   _isCounted = false;
   _isAlive = false;
   _speed.x = _speed.y = 0;
@@ -112,7 +111,10 @@ void Monster::MonsterInteraction::attack(Sprite* source, float hit) {
   }
 }
 
-void Monster::dieUpdate(float dt) { this->setVisible(false); }
+void Monster::dieUpdate(float dt) {
+  this->removeFromParent();
+  _body.clear();
+}
 
 void Monster::die() {
   this->_isAlive = false;

@@ -6,7 +6,6 @@
 #include"GameScene.h"
 #include"Map.h"
 bool MonsterManager::init() {
-  srand((UINT)GetCurrentTime());
   // createMonsters();
   this->_aliveNum = MAX_MONSTER_NUM;
   this->scheduleUpdate();
@@ -61,7 +60,11 @@ void MonsterManager::createMonsters(const Rect rect) {
 }
 
 void MonsterManager::update(float dt) {
-  if (isAllDead()) _room->leaveRoom();
+  if (isAllDead()) {
+    _room->leaveRoom();
+    removeFromParent();
+    return;
+  }
   followRun();
 }
 

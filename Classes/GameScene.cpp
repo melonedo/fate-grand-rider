@@ -1,29 +1,26 @@
 #include "GameScene.h"
-#include "cocos2d.h"
 #include "DataSet.h"
-#include "constants.h"
-#include "UI.h"
-#include "Physics.h"
 #include "MonsterManager.h"
+#include "Physics.h"
+#include "UI.h"
+#include "cocos2d.h"
+#include "constants.h"
+#include "Endgame.h"
 using namespace cocos2d;
 
-// ui
+// 添加ui（以静态节点）
 void addUI(StaticNode*);
 
-
 bool GameScene::init() {
-
   bool result;
   if (DataSet::getShowPhysicsDebugBoxes()) {
     result = Scene::initWithPhysics();
-  }
-  else {
+  } else {
     result = Scene::init();
   }
   if (!result) return false;
 
   runningGameScene = this;
-
 
   //暂停
   auto m_pause = PauseGame::create();
@@ -36,45 +33,61 @@ bool GameScene::init() {
   // 物理空间
   _space = std::make_shared<chipmunk::Space>();
 
+  Hero* hero;
+  // 判断是不是用测试集
+  if (config["use-debug-mode"].GetBool()) {
+    const auto& debug_set = config["debug-set"].GetObject();
+    // 加载地图
+    _levelManager = LevelManager(debug_set["maps"]);
+    // 加载角色
+    hero = DataSet::loadHero(debug_set["hero"].GetString());
+    // 配上武器
+    hero->pickWeapon(DataSet::loadWeapon(debug_set["weapon"].GetString()));
+  } else {
+    const auto& start_set = config["start-set"];
+    _levelManager = LevelManager(start_set["maps"]);
+    hero = DataSet::loadHero(start_set["hero"].GetString());
+    hero->pickWeapon(DataSet::loadWeapon(start_set["weapon"].GetString()));
+  }
+
+  hero->setName("hero");
+  this->addChild(hero, kMapPrioritySprite, kTagHero);
+  hero->registerUserInput();
+
+  if (config["show-physics-debug-boxes"].GetBool()) {
+    this->getPhysicsWorld()->setDebugDrawMask(~0);
+  }
+
   // 静态节点
   auto static_node = StaticNode::create();
   this->addChild(static_node, 0, "static");
   addUI(static_node);
+  _node = static_node;
 
-  // 首先判断是不是用测试集
+  scheduleUpdate();
 
-  if (config["use-debug-mode"].GetBool()) {
-    const auto& debug_set = config["debug-set"].GetObject();
+  this->nextLevel();
 
-    // 加载地图
-    auto map_dir = debug_set["map"].GetString();
-    auto map = DataSet::loadMap(map_dir, _rooms);
+  srand(std::chrono::system_clock::now().time_since_epoch().count());
 
-    if (config["show-physics-debug-boxes"].GetBool()) {
-      this->getPhysicsWorld()->setDebugDrawMask(~0);
-    }
+  return true;
+}
 
-    this->addChild(map);
-
-    // 加载角色
-    auto hero = DataSet::loadHero(debug_set["hero"].GetString());
-    auto spawn = map->getObjectGroup("obj")->getObject("spawn");
-    hero->setPosition(spawn["x"].asFloat(), spawn["y"].asFloat());
-    hero->setName("hero");
-    this->addChild(hero, kMapPrioritySprite, kTagHero);
-    hero->registerUserInput();
-
-    // 配上武器
-    auto a = debug_set["weapon"].GetString();
-    hero->pickWeapon(DataSet::loadWeapon(debug_set["weapon"].GetString()));
-
-
-    return true;
+void GameScene::nextLevel() {
+  auto map = _levelManager.getMap(_rooms);
+  if (map == nullptr) {
+    // 通关拉
+    Director::getInstance()->replaceScene(EndScene::create(true));
+    return;
   }
-  else {
-    CCASSERT(false, "Only debug set is supported now");
-    return false;
-  }
+
+  this->removeChildByName("map");
+  map->setName("map");
+  this->addChild(map);
+
+  auto hero = this->getChildByTag(kTagHero);
+  auto spawn = map->getObjectGroup("obj")->getObject("spawn");
+  hero->setPosition(spawn["x"].asFloat(), spawn["y"].asFloat());
 }
 
 GameScene* GameScene::runningGameScene = nullptr;
@@ -107,56 +120,60 @@ void addUI(StaticNode* node) {
 
   auto health = cocos2d::Sprite::create(data["health"].GetString());
   health->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  health->setPosition(3, node->getVisibleSize().height - 1);
-  health->setGlobalZOrder(kBars);
+  health->setPosition(7, node->getVisibleSize().height - 10);
+  health->setGlobalZOrder(kUserInterfaceBars);
   node->addChild(health);
 
   auto shield = cocos2d::Sprite::create(data["shield"].GetString());
   shield->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  shield->setPosition(3, node->getVisibleSize().height - 11);
-  shield->setGlobalZOrder(kBars);
+  shield->setPosition(7, node->getVisibleSize().height - 35);
+  shield->setGlobalZOrder(kUserInterfaceBars);
   node->addChild(shield);
 
   auto magic = cocos2d::Sprite::create(data["magic"].GetString());
   magic->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  magic->setPosition(3, node->getVisibleSize().height - 21);
-  magic->setGlobalZOrder(kBars);
+  magic->setPosition(7, node->getVisibleSize().height - 60);
+  magic->setGlobalZOrder(kUserInterfaceBars);
   node->addChild(magic);
+
+  auto hero =
+      static_cast<Hero*>(GameScene::getRunningScene()->getChildByTag(kTagHero));
 
   auto healthbar = UIBar::create();
   healthbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  healthbar->setPosition(30, node->getVisibleSize().height - 5);
+  healthbar->setPosition(125, node->getVisibleSize().height - 20);
   healthbar->setBackgroundTexture(data["bar"].GetString());
   healthbar->setForegroundTexture(data["health-progress"].GetString());
-  healthbar->setTotalProgress(120.0f);
-  healthbar->setCurrentProgress(22.0f);
-  setChildrenGlobalZOrder(healthbar, kBars + 1);
-  node->addChild(healthbar,kBars,kTagHealth);
+  healthbar->setTotalProgress(hero->getTotalHp());
+  healthbar->setCurrentProgress(hero->getHp());
+  setChildrenGlobalZOrder(healthbar, kUserInterfaceBars + 1);
+  node->addChild(healthbar, kUserInterfaceBars);
+  healthbar->setTag(kTagHealth);
 
   auto shieldbar = UIBar::create();
   shieldbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  shieldbar->setPosition(30, node->getVisibleSize().height - 15);
+  shieldbar->setPosition(125, node->getVisibleSize().height - 45);
   shieldbar->setBackgroundTexture(data["bar"].GetString());
   shieldbar->setForegroundTexture(data["shield-progress"].GetString());
-  shieldbar->setTotalProgress(120.0f);
-  shieldbar->setCurrentProgress(22.0f);
-  setChildrenGlobalZOrder(shieldbar, kBars + 1);
-  node->addChild(shieldbar, kBars, kTagShield);
+  shieldbar->setTotalProgress(hero->getTotalSe());
+  shieldbar->setCurrentProgress(hero->getSe());
+  setChildrenGlobalZOrder(shieldbar, kUserInterfaceBars + 1);
+  node->addChild(shieldbar, kUserInterfaceBars, kTagShield);
 
   auto magicbar = UIBar::create();
   magicbar->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-  magicbar->setPosition(30, node->getVisibleSize().height - 25);
+  magicbar->setPosition(125, node->getVisibleSize().height - 70);
   magicbar->setBackgroundTexture(data["bar"].GetString());
   magicbar->setForegroundTexture(data["magic-progress"].GetString());
-  magicbar->setTotalProgress(120.0f);
-  magicbar->setCurrentProgress(22.0f);
-  setChildrenGlobalZOrder(magicbar, kBars + 1);
-  node->addChild(magicbar,kBars,kTagMagic);
+  magicbar->setTotalProgress(hero->getTotalMp());
+  magicbar->setCurrentProgress(hero->getMp());
+  setChildrenGlobalZOrder(magicbar, kUserInterfaceBars + 1);
+  node->addChild(magicbar, kUserInterfaceBars, kTagMagic);
 
   auto weaponbg = Sprite::create(data["bg-weapon"].GetString());
   weaponbg->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
-  weaponbg->setPosition(node->getVisibleSize().width-50, 50);
-  weaponbg->setGlobalZOrder(kUserInterfaceBackground);
+  weaponbg->setPosition(node->getVisibleSize().width - 50, 50);
+  weaponbg->setGlobalZOrder(kMapPriorityUI);
   node->addChild(weaponbg);
 }
 
@@ -164,4 +181,18 @@ void setChildrenGlobalZOrder(Node* node, float zorder) {
   for (auto child : node->getChildren()) {
     child->setGlobalZOrder(zorder);
   }
+}
+
+void GameScene::update(float dt) {
+  auto hero =
+      static_cast<Hero*>(GameScene::getRunningScene()->getChildByTag(kTagHero));
+  auto healthbar = static_cast<UIBar*>(
+      GameScene::getRunningScene()->getStaticNode()->getChildByTag(kTagHealth));
+  auto shieldbar = static_cast<UIBar*>(
+      GameScene::getRunningScene()->getStaticNode()->getChildByTag(kTagShield));
+  auto magicbar = static_cast<UIBar*>(
+      GameScene::getRunningScene()->getStaticNode()->getChildByTag(kTagMagic));
+  healthbar->setCurrentProgress(hero->getHp());
+  shieldbar->setCurrentProgress(hero->getSe());
+  magicbar->setCurrentProgress(hero->getMp());
 }
