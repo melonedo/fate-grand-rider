@@ -15,7 +15,7 @@
     "maps": ["maps/safe-room.tmx", "maps/level1.tmx", "maps/level2.tmx"],
     "hero": "sample-man",
     "weapon": "basic-spear"
-  },
+   },
   "heroes": {
     "sample-man": {
       "stand": {
@@ -129,11 +129,13 @@
       "type": "magicball",
       "magicball": {
         "frame": "magicball.png",
+        "angle-offset": 0,
         "anchor": [ 0.3, 0.6 ],
         "hurt": 0.25
       },
       "magic": {
         "frame": "magic.png",
+        "angle-offset":0,
         "anchor": [ 0.5, 0.5 ]
       }
     },
@@ -141,6 +143,7 @@
       "type": "darts",
       "darts": {
         "frame": "W_Throw004.png",
+        "angle-offset": 0,
         "anchor": [ 0.5, 0.5 ],
         "speed": 300,
         "hurt": 2
