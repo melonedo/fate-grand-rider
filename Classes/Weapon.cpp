@@ -404,6 +404,7 @@ void Darts::fire(Vec2 offset) {
 
 RedBall* RedBall::create(const std::string& name) {
   RedBall* redBall = new RedBall;
+  redBall->autorelease();
   redBall->Weapon::init();
   redBall->setName(name);
   const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
@@ -430,18 +431,20 @@ void RedBall::fire(Vec2 vec) {
   
   auto speed = _redBallSpeed;
   Vec2 _speed;
-  auto X = vec.x - _owner->getPosition().x;
-  auto Y = vec.y - _owner->getPosition().y;
+  auto X = vec.x;
+  auto Y = vec.y;
   _speed.x = speed * X / sqrt(X * X + Y * Y);
   _speed.y = speed * Y / sqrt(X * X + Y * Y);
   redBall->runAction(RepeatForever::create(MoveBy::create(1.0f, _speed)));
+
+  _speed = _speed / _speed.length();
 
   auto space = GameScene::getRunningScene()->getPhysicsSpace();
   auto filter = _owner->getBody().getFilter();
   auto collision_detect = [redBall, space, filter, hurt, _speed](float) {
     if (auto target = space->querySegmentFirst(
             redBall->getPosition(), redBall->getPosition() + _speed, filter)) {
-      if (dynamic_cast<Monster*>(target)) return;
+      //if (dynamic_cast<Monster*>(target)) return;
       redBall->setVisible(false);
       redBall->stopAllActions();
       redBall->unscheduleAllCallbacks();
@@ -453,6 +456,7 @@ void RedBall::fire(Vec2 vec) {
 
 Knife* Knife::create(const std::string& name) {
   Knife* knife = new Knife; 
+  knife->autorelease();
   knife->Weapon::init();
   knife->setName(name);
   const auto& data = DataSet::getConfig()["weapon"][name.c_str()];
@@ -493,14 +497,14 @@ void Knife::fire(Vec2 offset) {
     knife->setPosition(this->_owner->getPosition());
     auto targets = space->queryPointAll(knife->getPosition(), radius, filter);
     for (auto& target : targets) {
-      if (static_cast<Monster*>(target.sprite)) continue;
+      //if (static_cast<Monster*>(target.sprite)) continue;
       knife->stopAllActions();
-      knife->unscheduleAllCallbacks();
+      knife->unschedule("collistion_detect");
       getInteraction(target.sprite)->attack(knife, hurt);
     }
   };
   auto disappear = [this,knife](float) {
-    knife->setVisible(false);
+    knife->removeFromParent();
     setVisible(true);
   };
   knife->scheduleOnce(disappear, 0.3, "disappear");

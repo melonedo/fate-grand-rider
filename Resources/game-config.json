@@ -14,7 +14,7 @@
   "start-set": {
     "maps": ["maps/safe-room.tmx", "maps/level1.tmx", "maps/level2.tmx"],
     "hero": "sample-man",
-    "weapon": "knife"
+    "weapon": "redball"
   },
   "heroes": {
     "sample-man": {

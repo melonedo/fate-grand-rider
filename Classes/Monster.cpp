@@ -80,7 +80,7 @@ void Monster::judgeAttack(Hero* hero) {
   if (this->_isAttack) return;
   int x = rand() % 100;
   if (x < 30) {
-    this->_weapon->fire(Vec2(hero->getPosition().x, hero->getPosition().y));
+    this->_weapon->fire(Vec2(hero->getPosition() - getPosition()));
     this->_isAttack = true;
   }
 }
