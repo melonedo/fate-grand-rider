@@ -13,6 +13,12 @@ HomeScene* HomeScene::create(callback_t on_start_pressed,
   assert(scene);
 
   // 首先加载背景（未实现）
+  const auto& data = DataSet::getConfig()["background"];
+  auto background = Sprite::create(data["picture"].GetString());
+  background->setAnchorPoint(Vec2(0.5f, 0.5f));
+  background->setPosition(designResolutionSize.width / 2,
+                          designResolutionSize.height /2);
+  scene->addChild(background);
 
   const auto& data = DataSet::getConfig()["background"];
   auto background = Sprite::create(data["picture"].GetString());
