@@ -244,6 +244,7 @@ Weapon* Hero::pickWeapon(Weapon* weapon) {
   if (_weapon) {
     _weapon->drop();
   }
+  AutoRef<Weapon> keep_ref(weapon);
   auto res = _weapon;
   _weapon = weapon;
   weapon->setVisible(true);
