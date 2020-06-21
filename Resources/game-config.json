@@ -6,13 +6,13 @@
   "skip-starting-scene": true,
   "hero-speed-scale": 100,
   "debug-set": {
-    "maps": ["maps/level1.tmx"],
+    "maps": ["maps/level2.tmx"],
     "hero": "sample-man",
     "weapon": "金闪闪",
     "monster": "sample-monster"
   },
   "start-set": {
-    "maps": ["maps/safe-room.tmx", "maps/level1.tmx"],
+    "maps": ["maps/safe-room.tmx", "maps/level1.tmx", "maps/level2.tmx"],
     "hero": "sample-man",
     "weapon": "basic-spear"
   },

@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.2" tiledversion="2020.05.27" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="3">
  <properties>
-  <property name="bg-layers" value="wall-bg building-bg"/>
+  <property name="bg-layers" value="wall-bg building-bg invisible"/>
   <property name="fg-layers" value="building-fg wall-fg"/>
  </properties>
  <tileset firstgid="1" source="walls.tsx"/>
  <tileset firstgid="257" source="buildings.tsx"/>
- <tileset firstgid="513" source="buildings.tsx"/>
  <layer id="4" name="invisible" width="60" height="60">
   <data encoding="base64" compression="zlib">
-   eJztzzEKgEAQBMHDz/j/HxqZmHhw2IJWwWY7MDMGAAAAAMB37Tc3+3Panq+85Nq3ztfsbfM1e9t8zd42X7O3zdf+uHf1AAAAAAAA3nIAnDsIFg==
+   eJzt0kEKwCAMBEDpZ/z/D3svOQjaLdYZyM0Fl6Q1AAAAABjTi/mzZz9991TdbXW/o++uNz+7wOzedtu7vtl8mr7ZfJq+2Xyavtl82ol9ZwcAAAAAAOArNw9OCSc=
   </data>
  </layer>
  <layer id="1" name="wall-bg" width="60" height="60">
@@ -19,7 +18,7 @@
  </layer>
  <layer id="3" name="building-bg" width="60" height="60">
   <data encoding="base64" compression="zlib">
-   eJztzjENAAAIA7AF/zd6OTFAwtMqaAIAAAAAsLq+BwAAAAAAAAAAwIUBoJkAmQ==
+   eJztzjENAAAIA7Dh/0cvJwZIeFoFTQAAAAAAVtf3AAAAAAAAAAAAuDB8jgCY
   </data>
  </layer>
  <layer id="5" name="wall-fg" width="60" height="60">

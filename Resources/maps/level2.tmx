@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="2020.05.27" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="2">
+ <properties>
+  <property name="bg-layers" value="building-bg wall-bg invisible"/>
+  <property name="fg-layers" value="building-fg wall-fg"/>
+ </properties>
+ <tileset firstgid="1" source="walls.tsx"/>
+ <tileset firstgid="257" source="buildings.tsx"/>
+ <layer id="6" name="invisible" width="60" height="60">
+  <data encoding="base64" compression="zlib">
+   eJzt10EOhCAMQFFv40Hn4rNyS5TOSFveS9gYJP4N4HEAAAAAAHecD0YHdzv01qQ3Ni87vbF52e3YOzpfu52/l1FvR3rHzzOL3I8r3qv/+U1616vWG/1Hrdgbmde59+09dGVvxGfyvaq9s/TmXPNXVu9Xb1vdu9P+3On83el+FaW3xtqz9NZYe9aT/W5mAAD5fAFfwhhv
+  </data>
+ </layer>
+ <layer id="5" name="wall-bg" width="60" height="60">
+  <data encoding="base64" compression="zlib">
+   eJzt10EKgzAQQNFRT2A9QaVeQLxRj+D9oc2iu6QZopLM+B/MMuhHEqIIAAAAAAAAUKb7zqyYodYLXmBVjCe7Yjyhl15P6KXXm1HinVPNl7oQvXZ7wx25z8wi8d5XZl2L9+rw7R6KifXm1rToKbozuGRaZLH3t19i/6a5vWSxV7P/UmepxV7Ns1Nnaerstd67/RmPvTWGXnrpPac3eCfGa++R9fTW6z2KXnrppddKLwAAuJcPs8gVhA==
+  </data>
+ </layer>
+ <layer id="4" name="building-bg" width="60" height="60">
+  <data encoding="base64" compression="zlib">
+   eJzt1bEJACAMBMBkJYd1HkdzAAstBMHcwff55hMBAAAAAAD19Hx9AQDU0XINAGeGzdyq9lf0/Zu+AAAAwG0T+vsDVw==
+  </data>
+ </layer>
+ <layer id="3" name="building-fg" width="60" height="60">
+  <data encoding="base64" compression="zlib">
+   eJztzgENAAAIA6Dbv64BjKFukIAEAAAAAAAAAAAAAAD4pmt7AABcNw6nAPY=
+  </data>
+ </layer>
+ <layer id="1" name="wall-fg" width="60" height="60">
+  <data encoding="base64" compression="zlib">
+   eJzt2FsKwjAQheEKugC1bqCuwLr/vTkBfZEZHZpMLuX/4DylLTkUQqfTBAAAAAAAAMDj7LzuGrqLeuiro++Y6Kuj75hS30VyMtaP7+yl70OySm7G+iy5SJ7VdgSglr2cY170zXcIeGYpEX2930At0DcffftB33z01aW5bVFizXoltOybZrdViTXrlRDVV3tv37n/uD9KRN/PTP4v1kw+Wt9c9C2Hvu15z7st6bGv97zbEv5bAgCAHrwA37YRZA==
+  </data>
+ </layer>
+ <objectgroup id="2" name="obj">
+  <object id="1" name="spawn" x="286.5" y="697">
+   <point/>
+  </object>
+ </objectgroup>
+</map>
