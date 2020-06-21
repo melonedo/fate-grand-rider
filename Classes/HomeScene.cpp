@@ -20,14 +20,6 @@ HomeScene* HomeScene::create(callback_t on_start_pressed,
                           designResolutionSize.height /2);
   scene->addChild(background);
 
-  const auto& data = DataSet::getConfig()["background"];
-  auto background = Sprite::create(data["picture"].GetString());
-  background->setAnchorPoint(Vec2(0.5f, 0.5f));
-  background->setPosition(designResolutionSize.width / 2,
-                          designResolutionSize.height /2);
-  scene->addChild(background);
-
-
   // 游戏标题
   TTFConfig ttfconfig("fonts/arial.ttf", 60);
   auto title_label = Label::createWithTTF(ttfconfig, "Fate grand rider",
