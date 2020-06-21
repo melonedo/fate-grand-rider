@@ -71,8 +71,8 @@
       }
     },
     "金闪闪": {
-        "type": "bow",
-        "bow": {
+      "type": "bow",
+      "bow": {
         "frame": "W_Bow08.png",
         "angle-offset": 135,
         "anchor": [ 0.5, 0.5 ],
@@ -142,6 +142,18 @@
       }
     }
   },
+  "item": {
+    "health-bottle": {
+      "type": "health-bottle",
+      "frame": "小红瓶.png",
+      "health-point": 3
+    },
+      "magic-bottle": {
+        "type": "magic-bottle",
+        "frame": "小蓝瓶.png",
+        "magic-point": 50
+      }
+    },
   "monsters": {
     "sample-monster": {
       "walk": {

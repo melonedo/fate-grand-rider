@@ -1,6 +1,6 @@
 #pragma once
-#include "cocos2d.h"
 #include "Physics.h"
+#include "cocos2d.h"
 class Hero;
 class Room;
 
@@ -33,8 +33,8 @@ class Interaction : public cocos2d::Component {
   // 离开房间（结束关卡）时调用
   virtual void leaveRoom(Room*) {}
 
-
-  // 强制结束互动，防止出现dangling pointer。注意删除互动的时候一定要调用这个函数，否则立刻报错。
+  // 强制结束互动，防止出现dangling
+  // pointer。注意删除互动的时候一定要调用这个函数，否则立刻报错。
   void endInteracting(Hero*);
 
  protected:
@@ -93,6 +93,25 @@ class Chest : public Interaction {
   cocos2d::Vec2 _position;
 };
 
+class ItemChest : public Interaction {
+ public:
+  static ItemChest* load(const cocos2d::Vec2& position,
+                     const cocos2d::ValueMap& property, chipmunk::Body&&);
+
+  void touch(Hero*) override;
+  void endTouch(Hero*) override;
+  // 放一个武器在地上
+  void dialog(Hero*) override;
+
+ private:
+  CREATE_FUNC(ItemChest);
+  chipmunk::Body _body;
+  // 开闭之间的GID差
+  int _tileOffset;
+  // 地图上的坐标
+  cocos2d::Vec2 _position;
+};
+
 class Gate : public Interaction {
  public:
   static Gate* load(const cocos2d::Vec2& position,
@@ -106,6 +125,7 @@ class Gate : public Interaction {
   void enterRoom(Room*) override;
   // 开门
   void leaveRoom(Room*) override;
+
  private:
   CREATE_FUNC(Gate);
   // 物理刚体
@@ -124,7 +144,7 @@ class Gate : public Interaction {
 class Target : public Interaction {
  public:
   static Target* load(const cocos2d::Vec2& position,
-                          const cocos2d::ValueMap& property, chipmunk::Body&&);
+                      const cocos2d::ValueMap& property, chipmunk::Body&&);
   void attack(cocos2d::Sprite*, float) override;
 
  private:
@@ -151,11 +171,30 @@ class DroppedWeapon : public Interaction {
   chipmunk::Body _body;
 };
 
+class Item;
+
+class DroppedItem:public Interaction {
+ public:
+  // 展示道具名
+  void touch(Hero*) override;
+  // 关掉对话框
+  void endTouch(Hero*) override;
+  // 捡起道具
+  void dialog(Hero*) override;
+  // 生成对应于地上的武器所需的交互。
+  static DroppedItem* create(Item* item);
+
+ private:
+  CREATE_FUNC(DroppedItem);
+
+  chipmunk::Body _body;
+};
+
 // 传送门
 class Teleport : public Interaction {
  public:
   static Teleport* load(const cocos2d::Vec2& position,
-                    const cocos2d::ValueMap& property, chipmunk::Body&&);
+                        const cocos2d::ValueMap& property, chipmunk::Body&&);
   void onAdd() override;
   void touch(Hero*) override;
   CREATE_FUNC(Teleport);
