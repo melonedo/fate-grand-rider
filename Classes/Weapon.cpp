@@ -441,10 +441,10 @@ void RedBall::fire(Vec2 vec) {
 
   auto space = GameScene::getRunningScene()->getPhysicsSpace();
   auto filter = _owner->getBody().getFilter();
-  auto collision_detect = [redBall, space, filter, hurt, _speed](float) {
+  auto collision_detect = [redBall,this, space, filter, hurt, _speed](float) {
     if (auto target = space->querySegmentFirst(
             redBall->getPosition(), redBall->getPosition() + _speed, filter)) {
-     if (dynamic_cast<Monster*>(target)) return;
+     if (dynamic_cast<Monster*>(target)&&dynamic_cast<Monster*>(_owner)) return;
       redBall->setVisible(false);
       redBall->stopAllActions();
       redBall->unscheduleAllCallbacks();
@@ -496,7 +496,8 @@ void Knife::fire(Vec2 offset) {
     knife->setPosition(this->_owner->getPosition());
     auto targets = space->queryPointAll(knife->getPosition(), radius, filter);
     for (auto& target : targets) {
-      if (dynamic_cast<Monster*>(target.sprite)) continue;
+      if (dynamic_cast<Monster*>(target.sprite) && dynamic_cast<Monster*>(_owner))
+        continue;
       //knife->stopAllActions();
       knife->unschedule("collistion_detect");
       getInteraction(target.sprite)->attack(knife, hurt);
