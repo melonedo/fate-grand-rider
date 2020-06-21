@@ -167,6 +167,7 @@ void SampleMonster::fire(cocos2d::Vec2 vec) {
       ball->stopAllActions();
       ball->unscheduleAllCallbacks();
       getInteraction(target)->attack(ball, hurt);
+      ball->removeFromParent();
     }
   };
   ball->schedule(collision_detect, 0,  "collistion_detect");

@@ -171,7 +171,7 @@ void Chest::dialog(Hero*) {
   // 放到地上
   weapon->setPosition(getOwner()->getPosition() + Vec2(0, -kTileResolution));
   weapon->addComponent(DroppedWeapon::create(weapon));
-  GameScene::getRunningScene()->addChild(weapon, kMapPriorityBackground);
+  getOwner()->getParent()->getParent()->addChild(weapon, kMapPriorityBackground);
 }
 
 
