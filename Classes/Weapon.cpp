@@ -105,6 +105,7 @@ void Bow::pointTo(Vec2 offset) {
 
 void Weapon::drop() {
   if (_owner) {
+    AutoRef<Weapon> ref(this);
     this->removeFromParent();
     this->setPosition(_owner->getPosition());
     _owner = nullptr;
