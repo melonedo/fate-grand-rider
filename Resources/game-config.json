@@ -3,13 +3,16 @@
   "global-zoom-scale": 2,
   "show-physics-debug-boxes": false,
   "display-cocos-stats": false,
-  "skip-starting-scene": true,
+  "skip-starting-scene": false,
   "hero-speed-scale": 100,
   "debug-set": {
-    "maps": ["maps/level2.tmx"],
+    "maps": [ "maps/level2.tmx" ],
     "hero": "sample-man",
     "weapon": "single-bow",
     "monster": "sample-monster"
+  },
+  "background": {
+    "picture": "background.png"
   },
   "start-set": {
     "maps": ["maps/safe-room.tmx", "maps/level1.tmx", "maps/level2.tmx"],
