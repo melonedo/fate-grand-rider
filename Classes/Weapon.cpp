@@ -474,7 +474,6 @@ Knife* Knife::create(const std::string& name) {
 void Knife::pointTo(Vec2 offset) {}
 
 void Knife::fire(Vec2 offset) {
-  setVisible(false);
   Sprite* knife;
   int hurt = _hurt;
   knife = Sprite::create();
@@ -505,7 +504,6 @@ void Knife::fire(Vec2 offset) {
   };
   auto disappear = [this,knife](float) {
     knife->removeFromParent();
-    setVisible(true);
   };
   knife->scheduleOnce(disappear, 0.3, "disappear");
   knife->schedule(collision_detect, 0, "collistion_detect");
