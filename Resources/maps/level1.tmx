@@ -23,7 +23,7 @@
  </layer>
  <layer id="7" name="building-bg" width="60" height="60">
   <data encoding="base64" compression="zlib">
-   eJzt0ckNACAIBEBsyWKplxJMfGgCMxXsEQEAAAAAMNNevxO8deqbzfbwb2/T+gIAAAAAAADAjQJxhQGX
+   eJzt08ENACAIA0BcyWFdx9UcwcSPAe4maCGNAAAAACCrPX4ngNxmsw3d+q5i9/Df2rr1BQAAAAAAAIAXBz43Alc=
   </data>
  </layer>
  <layer id="6" name="building-fg" width="60" height="60">

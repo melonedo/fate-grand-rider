@@ -6,32 +6,32 @@
  </properties>
  <tileset firstgid="1" source="walls.tsx"/>
  <tileset firstgid="257" source="buildings.tsx"/>
- <layer id="4" name="invisible" width="60" height="60">
+ <layer id="4" name="invisible" width="60" height="60" locked="1">
   <data encoding="base64" compression="zlib">
    eJzt0kEKwCAMBEDpZ/z/D3svOQjaLdYZyM0Fl6Q1AAAAABjTi/mzZz9991TdbXW/o++uNz+7wOzedtu7vtl8mr7ZfJq+2Xyavtl82ol9ZwcAAAAAAOArNw9OCSc=
   </data>
  </layer>
- <layer id="1" name="wall-bg" width="60" height="60">
+ <layer id="1" name="wall-bg" width="60" height="60" locked="1">
   <data encoding="base64" compression="zlib">
    eJzt0sEJwDAQA0HjEtJq+gc3oEdwXjpmQAUsaC0AAAAAbu2wyZ6wySb3pu+m3ikfT21f1+j9sUZ69erV20KvXr29vQAAAAAAAK0OZX1FnQ==
   </data>
  </layer>
- <layer id="3" name="building-bg" width="60" height="60">
+ <layer id="3" name="building-bg" width="60" height="60" locked="1">
   <data encoding="base64" compression="zlib">
-   eJztzjENAAAIA7Dh/0cvJwZIeFoFTQAAAAAAVtf3AAAAAAAAAAAAuDB8jgCY
+   eJzt0qEBADAIwDD43/POXptEoFCY5IKKRgAAAAAAtMrrAth7vgUAAAAAAAAAGD59BAFY
   </data>
  </layer>
- <layer id="5" name="wall-fg" width="60" height="60">
+ <layer id="5" name="wall-fg" width="60" height="60" locked="1">
   <data encoding="base64" compression="zlib">
    eJztz9EJgDAMRdGKE4gbuIG6/266QkgJLT0H8hl4tzUAAAAAYCVb8n/vsqLOkfw/u6yoozdG79j0xugdm96YGXuvxM3We//3JO6tnwwAAAAAALCsD9WaBr0=
   </data>
  </layer>
- <layer id="6" name="building-fg" width="60" height="60">
+ <layer id="6" name="building-fg" width="60" height="60" locked="1">
   <data encoding="base64" compression="zlib">
    eJzt1DENAEAIwEDwbwpBL+INMJIwcKegUyMAAAAAAOCOyu0CADrPnwEAAAAAAGDcB7c8Aa8=
   </data>
  </layer>
- <objectgroup id="2" name="obj">
+ <objectgroup id="2" name="obj" locked="1">
   <object id="2" name="spawn" x="520.783" y="442.608">
    <point/>
   </object>

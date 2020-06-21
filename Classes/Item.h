@@ -4,7 +4,7 @@
 
 class Item:public cocos2d::Sprite {
  public:
-  //道具功能
+  //閬撳叿鍔熻兘
   virtual void Impact(Hero*)=0;
  protected:
   using Sprite::init;
@@ -12,14 +12,14 @@ class Item:public cocos2d::Sprite {
 
 class HealthBottle : public Item {
  public:
-  //补血
+  //琛ヨ
   static HealthBottle* create(const std::string& name);
   void Impact(Hero*) override;
 };
 
 class MagicBottle : public Item {
  public:
-   //补魔
+   //琛ラ瓟
   static MagicBottle* create(const std::string& name);
   void Impact(Hero*) override;
 };
