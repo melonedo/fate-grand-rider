@@ -15,7 +15,7 @@ namespace chipmunk {
 using cocos2d::Vec2;
 class Body;
 // 整个空间，包含所有要查询的物体。
-class Space {
+class Space : public std::enable_shared_from_this<Space> {
  public:
   Space() : _space(cpSpaceNew()), _bodies(), _groupCount(0) {}
   Space(const Space&) = delete;
@@ -25,20 +25,20 @@ class Space {
 
   //// 管理空间中的刚体
 
-  // 添加一个body，并获得所有权，管理对应内存。
-  void addBodyAndOwn(Body&& body);
+  // 添加一个body，并获得所有权，管理对应内存。返回一个引用，注意在之后这个引用对应的指针可能会失效。
+  Body& addBodyAndOwn(Body&& body);
   // 添加一个body，但不管理对应内存。
   void addBody(Body* body);
   // 删除一个body，不管理对应内存。
   void removeBody(Body* body);
   // 将精灵对应为空间中静态的方形，并把指针写入cpShape中，若filter的第一个参数是0,则分配一个独立的组。
-  void addBoxForTile(cocos2d::Sprite* tile,
+  Body addBoxForTile(cocos2d::Sprite* tile,
                      cpShapeFilter filter = {0, kShapeMaskTile,
                                              CP_ALL_CATEGORIES});
   // 将精灵下部对应的圆形加入空间，并把指针写入cpShape中，若filter的第一个参数是0,则分配一个独立的组。
   // 注意为了保证位置对应关系，应将锚点设定为(0.5,0.25)。
   void addCircleForMob(Mob* mob, cpShapeFilter filter = {0, kShapeMaskMob,
-                                                         CP_ALL_CATEGORIES});
+                                                         kShapeMaskForMob});
   // 如果以其他的形状添加，请自行使用chipmunk的接口。
 
   //// 查询
@@ -84,10 +84,11 @@ class Space {
 
  private:
   cpSpace* _space;
-  // 往Sprite里面注入有关的管理代码不太现实，所以在外部进行管理。
+  // 空间主动管理的刚体列表
   std::vector<Body> _bodies;
-  // 或许可以用Component管理?
+  // 现在这里已经没有东西了，所有的刚体都在Interaction或者Mob里面管理。
 
+  // 组的计数，用来给每个刚体分配一个单独的组。
   mutable int _groupCount;
 };
 
@@ -103,6 +104,9 @@ class Body {
   void initAsCircle(cpFloat radius, cpVect offset = cpv(0, 0));
   // 初始化为方形，radius为边框的粗细。
   void initAsBox(cpFloat width, cpFloat height, cpFloat radius = 0);
+
+  // 清除原有的物理刚体和形状
+  void clear();
 
   // 获取cpBody，供chipmunk引擎使用。
   cpBody* getBody() { return _body; }
@@ -122,9 +126,17 @@ class Body {
     cpShapeSetFilter(_shape, filter);
   }
 
+  // 设置物理空间
+  void setSpace(const std::shared_ptr<Space>& space) { _space = space; }
+  // 获取物理空间
+  const std::shared_ptr<Space>& getSpace() const { return _space; }
+
  private:
   cpBody* _body;
   cpShape* _shape;
+  std::shared_ptr<Space> _space;
+  // 由于chipmunk引擎中cpSpace在销毁的时候会遍历地解除所有的变量与空间的联系，必须保证空间在
+  // 所有的刚体之后销毁，用shared_ptr保证。
 };
 
 // 为地图中的瓦片生成对应碰撞箱。

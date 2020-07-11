@@ -1,9 +1,12 @@
 #include "DataSet.h"
-#include "cocos2d.h"
-#include "json/document.h"
-#include "constants.h"
 #include "Hero.h"
 #include "Interaction.h"
+#include "Item.h"
+#include "Map.h"
+#include "Pause.h"
+#include "cocos2d.h"
+#include "constants.h"
+#include "json/document.h"
 using namespace cocos2d;
 
 DataSet* DataSet::getInstance() {
@@ -26,51 +29,27 @@ void DataSet::init() {
   _showPhysicsDebugBoxes = _config["show-physics-debug-boxes"].GetBool();
 }
 
-const static std::unordered_map<std::string, int> kTagSet{
-    {"wall", kTagWall}, {"interactable", kTagInteractable}};
+const static std::unordered_map<
+    std::string,
+    std::function<Interaction*(const Vec2&, const ValueMap&, chipmunk::Body&&)>>
+    kInteractionSet{
+        {"wall", NoInteraction::load}, {"hide", HideSpot::load},
+        {"chest", Chest::load},        {"gate", Gate::load},
+        {"target", Target::load},      {"item-chest", ItemChest::load},
+        {"teleport", Teleport::load}};
 
-const static std::unordered_map<std::string, std::function<Interaction*()>>
-    kInteractionSet{{"hide", HideSpot::create}};
+Interaction* DataSet::loadInteraction(const std::string& interaction_name,
+                                      const Vec2& position,
+                                      const ValueMap& property,
+                                      chipmunk::Body&& body) {
+  auto create_func = kInteractionSet.at(interaction_name);
+  return create_func(position, property, std::move(body));
+}
 
-TMXTiledMap* DataSet::load_map(const std::string& map_dir) {
+TMXTiledMap* DataSet::loadMap(const std::string& map_dir,
+                              std::vector<Room>& rooms) {
   auto map = TMXTiledMap::create(map_dir);
-
-  // 断言
-  CCASSERT(map, "Failed to load tiled map");
-  CCASSERT(map->getLayer("fg") && map->getLayer("bg") && map->getLayer("meta"),
-           "The map does not have layers fg, bg, obj and meta");
-
-  map->getLayer("bg")->setGlobalZOrder(kMapPriorityBackground);
-  map->getLayer("fg")->setGlobalZOrder(kMapPriorityForeground);
-  auto meta_layer = map->getLayer("meta");
-  meta_layer->setVisible(false);
-  
-  // 加入标签
-  auto layer_size = meta_layer->getLayerSize();
-  auto map_size = map->getMapSize();
-  CCASSERT(map_size.width == layer_size.width &&
-               map_size.height == layer_size.height,
-           "Size of map and meta layer must be the same.");
-  for (int x = 0; x < map_size.width; x++) {
-    for (int y = 0; y < map_size.height; y++) {
-      Vec2 pos(x, y);
-      auto prop = map->getPropertiesForGID(meta_layer->getTileGIDAt(pos));
-      if (!prop.isNull()) {
-        auto value_map = prop.asValueMap();
-        auto tile = meta_layer->getTileAt(pos);
-        chipmunk::initPhysicsForTile(tile);
-        auto type = value_map.at("type").asString();
-        tile->setTag(kTagSet.at(type));
-        if (type == "interactable") {
-          auto intraction =
-              kInteractionSet.at(value_map.at("interaction").asString())();
-          intraction->setName("interaction");
-          tile->addComponent(intraction);
-        }
-      }
-    }
-  }
-
+  rooms = std::move(processMap(map));
   return map;
 }
 
@@ -78,26 +57,35 @@ TMXTiledMap* DataSet::load_map(const std::string& map_dir) {
 const static std::unordered_map<std::string, std::function<Hero*()>> kHeroSet{
     {"sample-man", SampleHero::create}};
 
-Hero* DataSet::load_hero(const std::string& hero_name) {
-  const auto& hero_data =
-      DataSet::getConfig()["heroes"][hero_name.c_str()].GetObject();
+Hero* DataSet::loadHero(const std::string& hero_name) {
   Hero* hero = kHeroSet.at(hero_name)();
   hero->setTag(kTagHero);
   return hero;
 }
 
-SpriteFrame* DataSet::load_frame(const std::string& frame_dir, int size) {
+//各怪物的名字和对应的构造函数
+const static std::unordered_map<std::string, std::function<Monster*()>>
+    kMonsterSet{{"sample-monster", SampleMonster::create},
+                {"knife-monster", KnifeMonster::create}};
+
+Monster* DataSet::loadMonster(const std::string& monster_name) {
+  Monster* monster = kMonsterSet.at(monster_name)();
+  // monster->setTag(kTagMonster);
+  return monster;
+}
+
+SpriteFrame* DataSet::loadFrame(const std::string& frame_dir, int size) {
   auto frame = SpriteFrame::create(frame_dir, Rect(0, 0, size, size));
   CCASSERT(frame, "Unable to load frame");
   return frame;
 }
 
-Animation* DataSet::load_animation(const rapidjson::Value& animation_obj) {
+Animation* DataSet::loadAnimation(const rapidjson::Value& animation_obj) {
   auto animation = Animation::create();
   animation->setDelayPerUnit(animation_obj["interval"].GetFloat());
 
   for (const auto& frame_dir : animation_obj["frames"].GetArray()) {
-    animation->addSpriteFrame(load_frame(frame_dir.GetString()));
+    animation->addSpriteFrame(loadFrame(frame_dir.GetString()));
   }
   return animation;
 }
@@ -105,13 +93,31 @@ Animation* DataSet::load_animation(const rapidjson::Value& animation_obj) {
 // 各种类的武器和对应的构造函数
 const static std::unordered_map<std::string,
                                 std::function<Weapon*(const std::string&)>>
-    kWeaponSet{{"magicball", Magic::create},
-               {"bow", Bow::create},
-               {"darts", Darts::create},
-               {"spear", Spear::create},
-               {"blinkbow", BlinkBow::create}};
+    kWeaponSet{{"magicball", Magic::createweapon},
+               {"bow", Bow::createweapon},
+               {"darts", Darts::createweapon},
+               {"spear", Spear::createweapon},
+               {"blinkbow", BlinkBow::createweapon},
+               {"redball", RedBall::create},
+               {"knife", Knife::create}};
 
-Weapon* DataSet::load_weapon(const std::string& weapon_name) {
+Weapon* DataSet::loadWeapon(const std::string& weapon_name) {
   const auto& weapon_data = getConfig()["weapon"][weapon_name.c_str()];
-  return kWeaponSet.at(weapon_data["type"].GetString())(weapon_name);
+  auto res = kWeaponSet.at(weapon_data["type"].GetString())(weapon_name);
+  res->setName(weapon_name);
+  return res;
+}
+
+
+//各种类的道具及其对应的构造函数
+const static std::unordered_map<std::string,
+                                std::function<Item*(const std::string&)>>
+    kItemSet{{"health-bottle", HealthBottle::create},
+             {"magic-bottle", MagicBottle::create}};
+
+Item* DataSet::loadItem(const std::string& item_name) {
+  const auto& item_data = getConfig()["item"][item_name.c_str()];
+  auto res = kItemSet.at(item_data["type"].GetString())(item_name);
+  res->setName(item_name);
+  return res;
 }

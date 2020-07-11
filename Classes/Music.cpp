@@ -1,11 +1,13 @@
 #pragma once
 
 #include "Music.h"
+#include"DataSet.h"
 
 void Music::PlayMusic() {
+  const auto& data = DataSet::getConfig()["music"]["song"];
   if (Pause::_audioID == cocos2d::AudioEngine::INVALID_AUDIO_ID) {
     Pause::_audioID =
-        cocos2d::AudioEngine::play2d("loser.mp3", Pause::_loopEnabled);
+        cocos2d::AudioEngine::play2d(data.GetString(), Pause::_loopEnabled);
     AudioEngine::setVolume(Pause::_audioID, Pause::_volume);
   }
   if (Pause::_audioID != cocos2d::AudioEngine::INVALID_AUDIO_ID) {

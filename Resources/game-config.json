@@ -1,101 +1,213 @@
 {
-	"use-debug-mode": true,
-	"global-zoom-scale": 2,
-	"show-physics-debug-boxes": false,
-	"display-cocos-stats": true,
-	"skip-starting-scene": true,
-	"hero-speed-scale": 100,
-	"debug-set": {
-		"map": "maps/sample_map.tmx",
-		"hero": "sample-man",
-		"weapon": "magic-power"
-	},
-	"pause": {
-		"volume-control": {
-			"silder-thumb": "sliderThumb.png",
-			"slider-progress": "sliderProgress.png",
-			"slider-track": "sliderTrack.png"
-		}
-	},
-	"heroes": {
-		"sample-man": {
-			"stand": {
-				"interval": 1,
-				"frames": [ "man1_rt2.png", "man1_rt1.png" ]
-			},
-			"walk": {
-				"interval": 0.2,
-				"frames": [ "man1_rt2.png", "man1_rt1.png" ]
-			},
-			"hand-pos": [ 0.75, 0.44 ]
-		}
-	},
-	"weapon": {
-		"basic-bow": {
-			"type": "bow",
-			"bow": {
-				"frame": "W_Bow02.png",
-				"angle-offset": -45,
-				"anchor": [ 0.5, 0.5 ],
-				"number": 3,
-				"angleconstant": 22
-			},
-			"arrow": {
-				"frame": "S_Bow04.png",
-				"angle-offset": -135,
-				"anchor": [ 0.3, 0.3 ],
-				"speed": 400
-			}
-		},
-		"single-bow": {
-			"type": "blinkbow",
-			"bow": {
-				"frame": "W_Bow03.png",
-				"angle-offset": 135,
-				"anchor": [ 0.5, 0.5 ],
-				"number": 1,
-				"angleconstant": 22
-			},
-			"arrow": {
-				"frame": "S_Bow01.png",
-				"angle-offset": -135,
-				"anchor": [ 0.3, 0.3 ],
-				"speed": 400
-			},
-			"arrow2": {
-				"frame": "S_Bow06.png",
-				"angle-offset": -135,
-				"anchor": [ 0.3, 0.3 ],
-				"speed": 400
-			}
-		},
-		"basic-spear": {
-			"type": "spear",
-			"spear": {
-				"frame": "long.png",
-				"angle-offset": 90,
-				"anchor": [ 0.5, 0.5 ],
-				"speed": 40
-			}
-		},
-		"magic-power": {
-			"type": "magicball",
-			"magicball": {
-				"frame": "magicball.png",
-				"anchor": [ 0.3, 0.6 ]
-			},
-			"magic": {
-				"frame": "magic.png",
-				"anchor": [ 0.5, 0.5 ]
-			}
-		},
-		"darts": {
-			"type": "darts",
-			"darts": {
-				"frame": "W_Throw004.png",
-				"anchor": [ 0.5, 0.5 ],
-				"speed": 300
-			}
-		}
-	}
+  "use-debug-mode": false,
+  "global-zoom-scale": 2,
+  "show-physics-debug-boxes": false,
+  "display-cocos-stats": false,
+  "skip-starting-scene": false,
+  "hero-speed-scale": 100,
+  "debug-set": {
+    "maps": [ "maps/level2.tmx" ],
+    "hero": "sample-man",
+    "weapon": "single-bow",
+    "monster": "sample-monster"
+  },
+  "background": {
+    "picture": "background.png"
+  },
+  "start-set": {
+    "maps": ["maps/safe-room.tmx", "maps/level1.tmx", "maps/level2.tmx"],
+    "hero": "sample-man",
+    "weapon": "basic-bow"
+   },
+  "heroes": {
+    "sample-man": {
+      "stand": {
+        "interval": 1,
+        "frames": ["man1_rt2.png", "man1_rt1.png"]
+      },
+      "walk": {
+        "interval": 0.2,
+        "frames": ["man1_rt2.png", "man1_rt1.png"]
+      },
+      "hand-pos": [0.75, 0.44],
+      "total-hp": 7.0,
+      "total-se": 6.0,
+      "total-mp": 200.0
+    }
+  },
+  "pause": {
+    "volume-control": {
+      "silder-thumb": "sliderThumb.png",
+      "slider-progress": "sliderProgress.png",
+      "slider-track": "sliderTrack.png"
+    }
+  },
+  "weapon": {
+    "basic-bow": {
+      "type": "bow",
+      "bow": {
+        "frame": "W_Bow02.png",
+        "angle-offset": -45,
+        "anchor": [0.5, 0.5],
+        "number": 3,
+        "angleconstant": 22,
+        "hurt": 1
+      },
+      "arrow": {
+        "frame": "S_Bow04.png",
+        "angle-offset": -135,
+        "hurt": 1,
+        "anchor": [ 0.3, 0.3 ],
+        "speed": 400
+      }
+    },
+    "金闪闪": {
+      "type": "bow",
+      "bow": {
+        "frame": "W_Bow08.png",
+        "angle-offset": 135,
+        "anchor": [ 0.5, 0.5 ],
+        "number": 3,
+        "angleconstant": 22,
+        "hurt": 3
+      },
+      "arrow": {
+        "frame": "S_Bow03.png",
+        "angle-offset": -135,
+        "anchor": [ 0.3, 0.3 ],
+        "speed": 400
+      }
+    },
+    "single-bow": {
+      "type": "blinkbow",
+      "bow": {
+        "frame": "W_Bow03.png",
+        "angle-offset": 135,
+        "anchor": [0.5, 0.5],
+        "number": 1,
+        "angleconstant": 22,
+        "hurt": 2
+      },
+      "arrow": {
+        "frame": "S_Bow01.png",
+        "angle-offset": -135,
+        "anchor": [0.3, 0.3],
+        "speed": 400,
+        "hurt": 2
+      },
+      "arrow2": {
+        "frame": "S_Bow06.png",
+        "angle-offset": -135,
+        "anchor": [0.3, 0.3],
+        "speed": 400
+      }
+    },
+    "basic-spear": {
+      "type": "spear",
+      "spear": {
+        "frame": "long.png",
+        "angle-offset": 90,
+        "anchor": [0.5, 0.5],
+        "speed": 40,
+        "hurt": 1
+      }
+    },
+    "magic-power": {
+      "type": "magicball",
+      "magicball": {
+        "frame": "magicball.png",
+        "angle-offset": 0,
+        "anchor": [0.3, 0.6],
+        "hurt": 0.25
+      },
+      "magic": {
+        "frame": "magic.png",
+        "angle-offset": 0,
+        "anchor": [0.5, 0.5]
+      }
+    },
+    "darts": {
+      "type": "darts",
+      "darts": {
+        "frame": "W_Throw004.png",
+        "speed": 300,
+        "hurt": 2,
+        "angle-offset": 0,
+        "anchor": [0.5, 0.5]
+      }
+    },
+    "redball": {
+      "type": "redball",
+      "redball": {
+        "frame": "redball.png",
+        "speed": 50,
+        "hurt": 1
+      }
+    },
+    "knife": {
+      "type": "knife",
+      "knife": {
+        "frame": "W_Spear010.png",
+        "anchor": [0.5, 0.5],
+        "radius": 40,
+        "hurt": 2
+      }
+    }
+  },
+  "item": {
+    "health-bottle": {
+      "type": "health-bottle",
+      "frame": "P_Red02.png",
+      "health-point": 3
+    },
+      "magic-bottle": {
+        "type": "magic-bottle",
+        "frame": "P_Blue02.png",
+        "magic-point": 50
+      }
+    },
+  "monsters": {
+    "sample-monster": {
+      "walk": {
+        "interval": 0.2,
+        "frames": ["monster1.png", "monster2.png"]
+      },
+      "hand-pos": [0.75, 0.44],
+      "hp": 5,
+      "visible-size": 100,
+      "attack-size": 100,
+      "weapon": "redball",
+      "updateattacktime": 1
+    },
+    "knife-monster": {
+      "walk": {
+        "interval": 0.2,
+        "frames": ["monster1.png", "monster2.png"]
+      },
+      "hand-pos": [0.75, 0.44],
+      "hp": 5,
+      "visible-size": 100,
+      "attack-size": 100,
+      "weapon": "knife",
+      "updateattacktime": 2
+    }
+  },
+  "music": {
+    "loop-enabled": true,
+    "init-volume": 0.0,
+    "song": "loser.mp3"
+  },
+  "UI": {
+    "bars": {
+      "bg-bars": "bgBars.jpg",
+      "health": "health.jpg",
+      "health-progress": "healthProgress.jpg",
+      "shield": "shield.jpg",
+      "shield-progress": "shieldProgress.jpg",
+      "magic": "magic.jpg",
+      "magic-progress": "magicProgress.jpg",
+      "bar": "bar.jpg",
+      "bg-weapon": "weaponBg.png"
+    }
+  }
 }

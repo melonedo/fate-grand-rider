@@ -54,34 +54,65 @@ if(APPLE OR WINDOWS)
     cocos_mark_multi_resources(common_res_files RES_TO "Resources" FOLDERS ${GAME_RES_FOLDER})
 endif()
 
-# add cross-platforms source files and header files 
+if(WINDOWS)
+    # use utf-8 encoding
+    add_compile_options(/wo4244 /wo4996 /utf-8)
+    # set startup project
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT APP_NAME)
+    # suppress warnings in cocos2d
+    target_compile_options(cocos2d PRIVATE /w)
+endif()
+
+# add cross-platforms source files and header files
 list(APPEND GAME_SOURCE
      Classes/AppDelegate.cpp
-	 Classes/HomeScene.cpp
-	 Classes/DataSet.cpp
-	 Classes/GameScene.cpp
+     Classes/HomeScene.cpp
+     Classes/DataSet.cpp
+     Classes/GameScene.cpp
      Classes/Hero.cpp
      Classes/Physics.cpp
      Classes/Mob.cpp
      Classes/Weapon.cpp
      Classes/Interaction.cpp
-	Classes/Music.cpp
-	Classes/Pause.cpp
+     Classes/Music.cpp
+     Classes/Pause.cpp
+     Classes/Map.cpp
+     Classes/PauseScene.cpp
+     Classes/PauseGame.cpp
+     Classes/Monster.cpp
+     Classes/MonsterManager.cpp
+     Classes/FlowWord.cpp
+     Classes/UI.cpp
+     Classes/DialogBox.cpp
+     Classes/Endgame.cpp
+     Classes/LevelManager.cpp
+     Classes/Item.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
-	 Classes/HomeScene.h
-	 Classes/constants.h
-	 Classes/DataSet.h
-	 Classes/GameScene.h
-	 Classes/AutoRef.h
+     Classes/HomeScene.h
+     Classes/constants.h
+     Classes/DataSet.h
+     Classes/GameScene.h
+     Classes/AutoRef.h
      Classes/Mob.h
      Classes/Hero.h
      Classes/Physics.h
      Classes/Weapon.h
      Classes/Interaction.h
-	Classes/Music.h
-	Classes/Pause.h
+     Classes/Music.h
+     Classes/Pause.h
+     Classes/Map.h
+     Classes/PauseScene.h
+     Classes/PauseGame.h
+     Classes/Monster.h
+     Classes/MonsterManager.h
+     Classes/FlowWord.h
+     Classes/UI.h
+     Classes/DialogBox.h
+     Classes/Endgame.h
+     Classes/LevelManager.h
+     Classes/Item.h
      )
 
 if(ANDROID)

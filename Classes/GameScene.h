@@ -2,6 +2,22 @@
 #include "cocos2d.h"
 #include "DataSet.h"
 #include "Physics.h"
+#include "Map.h"
+#include "PauseGame.h"
+#include "LevelManager.h"
+
+// 静止节点，会自动同步位置和缩放比例，保持相对窗口不动
+// Hero::update中每次都会调整位置。
+class StaticNode : public cocos2d::Node {
+ public:
+  CREATE_FUNC(StaticNode);
+  const cocos2d::Size& getVisibleSize() const;
+
+
+ protected:
+  bool init() override;
+  cocos2d::Size _visibleSize;
+};
 
 class GameScene : public cocos2d::Scene {
  public:
@@ -11,15 +27,29 @@ class GameScene : public cocos2d::Scene {
 
   // 获取当前的场景
   static GameScene* getRunningScene() { return runningGameScene; }
-  
+
+  StaticNode* getStaticNode() { return _node; }
+
   // 获取物理空间
-  chipmunk::Space* getPhysicsSpace() { return &_space; }
+  chipmunk::Space* getPhysicsSpace() { return _space.get(); }
+
+  // 进入下一张地图
+  void nextLevel();
+
  private:
   bool init() override;
-  
-  chipmunk::Space _space;
+
+  std::shared_ptr<chipmunk::Space> _space;
+
+  std::vector<Room> _rooms;
 
   // 当前运行的场景，否则获取的时候要dynamic_cast一遍
   static GameScene* runningGameScene;
-};
 
+  StaticNode* _node;
+
+  LevelManager _levelManager;
+
+  void update(float);
+
+};

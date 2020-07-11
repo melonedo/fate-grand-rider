@@ -1,6 +1,7 @@
 #pragma once
 #include "cocos2d.h"
 #include "Physics.h"
+#include "constants.h"
 
 // 生物，具有一个碰撞箱。
 // 判断是否是生物应该先用tag判断，之后就可以直接dynamic_cast。
@@ -22,6 +23,8 @@ class Mob : public cocos2d::Sprite {
   Mob() = default;
   // 设置锚点，并加入碰撞箱（圆形）
   bool init() override;
+  // 禁忌之术之重载又重写
+  bool init(unsigned int category);
 
   // 碰撞箱
   chipmunk::Body _body;

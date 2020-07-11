@@ -1,14 +1,28 @@
 #pragma once
 
 #include "Pause.h"
-using namespace cocos2d;
+#include "DataSet.h"
 
-// Pause����ʵ��
-Scene* Pause::createScene() { return Pause::create(); }
+// Pause场景实现
+Scene* Pause::createScene(Sprite *sp) {
+  Pause* myscene = Pause::create();
+  auto visibleSize = Director::getInstance()->getVisibleSize();
+  if (sp != nullptr) {
+    Sprite* _sp = sp;
+    _sp->setPosition(
+        Point(visibleSize.width / 2, visibleSize.height / 2));  //中心位置
+
+    _sp->setColor(Color3B::GRAY);  //颜色改为灰色
+    myscene->addChild(_sp, 0);
+    _sp->setGlobalZOrder(0);
+  }
+    return myscene;
+}
 
 int Pause::_audioID = AudioEngine::INVALID_AUDIO_ID;
-bool Pause::_loopEnabled = true;
-float Pause::_volume = 0.1f;
+bool Pause::_loopEnabled =
+    DataSet::getConfig()["music"]["loop-enabled"].GetBool();
+float Pause::_volume = DataSet::getConfig()["music"]["init-volume"].GetFloat();
 
 bool Pause::init() {
   if (!Scene::init()) {
@@ -23,7 +37,7 @@ bool Pause::init() {
   label->setPosition(Vec2(origin.x + visibleSize.width / 8,
                           origin.y + visibleSize.height / 2));
   this->addChild(label);
-
+  label->setGlobalZOrder(2);
   auto volumeSlider = SliderEx::create();
   volumeSlider->setPercent(_volume * 100);
   volumeSlider->addEventListener([&](Ref* sender, Slider::EventType event) {
@@ -36,16 +50,46 @@ bool Pause::init() {
   volumeSlider->setPosition(Vec2(origin.x + visibleSize.width / 2,
                                  origin.y + visibleSize.height / 2));
 
-  addChild(volumeSlider);
+ this->addChild(volumeSlider,4);
+  volumeSlider->setGlobalZOrder(5);
+
+  	//继续游戏
+  auto label2 = Label::createWithTTF("go on", "fonts/Marker Felt.ttf", 60);
+  assert(label);
+  label2->setAnchorPoint(Vec2(0.5f, 0.5f));
+  label2->setPosition(Point(visibleSize.width / 8, visibleSize.height / 8));
+  this->addChild(label2);
+  label2->setGlobalZOrder(4);
+  auto listener = EventListenerMouse::create();
+  listener->onMouseMove = [](EventMouse* event) {
+    // 鼠标移动到标签上时放大标签
+    auto target = event->getCurrentTarget();
+    auto bbox = target->getBoundingBox();
+    if (bbox.containsPoint(Vec2(event->getCursorX(), event->getCursorY()))) {
+      target->setScale(1.1f);
+    } else {  // 移出时设回原比例
+      target->setScale(1);
+    }
+  };
+  listener->onMouseDown = [&](EventMouse* event) {
+    auto target = event->getCurrentTarget();
+    auto bbox = target->getBoundingBox();
+    if (bbox.containsPoint(Vec2(event->getCursorX(), event->getCursorY()))) {
+      Director::getInstance()->resume();
+      Director::getInstance()->popScene();  //返回上一个场景，即继续游戏
+    }
+  };
+  label2->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener,
+                                                                      label2);
 
   return true;
 }
 
 /*
-��pushSceneʵ�ֳ�����ͣ
+用pushScene实现场景暂停
 */
 
-//��ͣ�����������ƻ���ʵ��
+//暂停背景音量控制滑块实现
 SliderEx* SliderEx::create() {
   auto ret = new (std::nothrow) SliderEx();
   const auto& data = DataSet::getConfig()["pause"]["volume-control"];
@@ -65,7 +109,7 @@ SliderEx* SliderEx::create() {
   return ret;
 }
 
-void SliderEx::setRatio(float ratio) 
+void SliderEx::setRatio(float ratio)
 {
    ratio = cocos2d::clampf(ratio, 0.0f, 1.0f);
 
